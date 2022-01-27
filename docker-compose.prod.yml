@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  psychmatch-backend:
+    image: ghcr.io/jimmylevell/psychmatch/psychmatch_backend:latest
+    networks:
+      - traefik-public
+      - psychmatch
+    environment: 
+      NODE_ENV: production
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      labels:
+        - traefik.enable=true # enable traefik
+        - traefik.docker.network=traefik-public # put it in the same network as traefik
+        - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
+        - traefik.http.routers.counterbackend.rule=Host(`api.psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.counterbackend.entrypoints=http
+        - traefik.http.routers.counterbackend.middlewares=https-redirect
+        - traefik.http.middlewares.counterbackend.redirectscheme.scheme=https # redirect traffic to https
+        - traefik.http.middlewares.counterbackend.redirectscheme.permanent=true # redirect traffic to https
+        - traefik.http.routers.counterbackend-secured.rule=Host(`api.psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.counterbackend-secured.entrypoints=https
+        - traefik.http.routers.counterbackend-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
+        - traefik.http.services.counterbackend-secured.loadbalancer.server.port=3000 # ask Traefik to search for port of the service container
+        
+        # redundancy required configuration - allowing load balancer to handle multiple replicas
+        - traefik.http.services.counterbackend-secured.loadbalancer.sticky=true
+        - traefik.http.services.counterbackend-secured.loadbalancer.sticky.cookie.name=StickyCookie
+        - traefik.http.services.counterbackend-secured.loadbalancer.sticky.cookie.secure=true
+        - traefik.http.services.counterbackend-secured.loadbalancer.healthcheck.path=/api/documents
+        - traefik.http.services.counterbackend-secured.loadbalancer.healthcheck.interval=10s
+        - traefik.http.services.counterbackend-secured.loadbalancer.healthcheck.timeout=10s
+
+  psychmatch-frontend:
+    image: ghcr.io/jimmylevell/psychmatch/psychmatch_frontend:latest
+    networks:
+      - traefik-public
+    environment:
+      REACT_APP_BACKEND_URL: https://api.psychmatch.app.levell.ch
+      NODE_OPTIONS: --openssl-legacy-provider
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      labels:
+      - traefik.enable=true # enable traefik
+      - traefik.docker.network=traefik-public # put it in the same network as traefik
+      - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
+      - traefik.http.routers.counterfrontend.rule=Host(`psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
+      - traefik.http.routers.counterfrontend.entrypoints=http
+      - traefik.http.routers.counterfrontend.middlewares=https-redirect
+      - traefik.http.middlewares.counterfrontend.redirectscheme.scheme=https # redirect traffic to https
+      - traefik.http.middlewares.counterfrontend.redirectscheme.permanent=true # redirect traffic to https
+      - traefik.http.routers.counterfrontend-secured.rule=Host(`psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
+      - traefik.http.routers.counterfrontend-secured.entrypoints=https
+      - traefik.http.routers.counterfrontend-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
+      - traefik.http.services.counterfrontend-secured.loadbalancer.server.port=3100 # ask Traefik to search for port service container
+      
+      # redundancy required configuration - allowing load balancer to handle multiple replicas
+      - traefik.http.services.counterfrontend-secured.loadbalancer.sticky=true
+      - traefik.http.services.counterfrontend-secured.loadbalancer.sticky.cookie.name=StickyCookie
+      - traefik.http.services.counterfrontend-secured.loadbalancer.sticky.cookie.secure=true
+      - traefik.http.services.counterfrontend-secured.loadbalancer.healthcheck.path=/
+      - traefik.http.services.counterfrontend-secured.loadbalancer.healthcheck.interval=10s
+      - traefik.http.services.counterfrontend-secured.loadbalancer.healthcheck.timeout=10s
+
+networks:
+  traefik-public:
+    external: true
+  psychmatch: 
+    external: true

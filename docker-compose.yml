@@ -1,0 +1,52 @@
+version: '3.8'
+services:
+  psychmatch-backend:
+    build: 
+      context: backend
+      target: psychmatch-backend-dev
+      dockerfile: Dockerfile
+    ports: 
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - psychmatch-database
+    volumes:
+      # Mount the root folder that contains .git
+      - .:/workspace:cached
+      # mount code
+      - ./backend:/srv/app
+      # speeds up the compiling
+      - /srv/app/node_modules
+    networks:
+      - psychmatch
+      
+  psychmatch-frontend:
+    build: 
+      context: frontend
+      target: psychmatch-frontend-dev
+      dockerfile: Dockerfile
+    ports: 
+      - "3100:3100"
+    restart: always
+    volumes:
+      # Mount the root folder that contains .git
+      - .:/workspace:cached
+      # mount code
+      - ./frontend:/srv/app
+      # speeds up the compiling
+      - /srv/app/node_modules
+    networks:
+      - psychmatch
+
+  psychmatch-database: 
+    image: mongo:latest
+    networks:
+      - psychmatch
+    ports: 
+      - "27017:27017"
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+networks: 
+  psychmatch:
