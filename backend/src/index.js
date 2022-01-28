@@ -1,10 +1,11 @@
+require('dotenv').config({ path: '.env' });
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const dbConfig = require('./database/db');
 const documentApi = require('./routes/documentRoutes')
 const psychologistApi = require('./routes/psychologistRoutes')
 const dockerSecret = require('./utils/dockersecret');
