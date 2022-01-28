@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# publish app
-npm start
+# call docker secret expansion in env variables
+source /docker/set_env_secrets.sh
 
-tail -f /dev/null
+# publish app
+npm run build
+
+npm start
