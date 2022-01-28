@@ -7,12 +7,17 @@ const path = require('path');
 const dbConfig = require('./database/db');
 const documentApi = require('./routes/documentRoutes')
 const psychologistApi = require('./routes/psychologistRoutes')
+const dockerSecret = require('./utils/dockersecret');
 const app = express();
 const port = process.env.BACKEND_PORT || 3000;
 
 // MongoDB configuration
+let db = process.env.MARIAN_DB_STRING
+if (process.env.NODE_ENV === "production") {
+    dockerSecret.read('MARIAN_DB_STRING')
+}
 mongoose.Promise = global.Promise;
-mongoose.connect(dbConfig.db, {
+mongoose.connect(db, {
     useNewUrlParser: true
 }).then(() => {
     console.log('Database sucessfully connected')

@@ -7,6 +7,9 @@ services:
       - psychmatch
     environment: 
       NODE_ENV: production
+      MARIAN_DB_STRING: /run/secret/MARIAN_DB_STRING
+    secrets:
+      - MARIAN_DB_STRING
     deploy:
       replicas: 3
       update_config:
@@ -76,4 +79,8 @@ networks:
   traefik-public:
     external: true
   psychmatch: 
+    external: true
+
+secrets:
+  MARIAN_DB_STRING:
     external: true
