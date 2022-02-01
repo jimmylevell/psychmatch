@@ -6,8 +6,7 @@ import {
   CardActions,
   Modal,
   Button,
-  Typography,
-  Grid
+  Typography
 } from '@material-ui/core';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
@@ -22,8 +21,6 @@ const styles = theme => ({
   modalCard: {
     width: '90%',
     maxWidth: 700,
-    height: '85%',
-    overflowY: 'scroll',
   },
   modalCardContent: {
     display: 'flex',
@@ -31,19 +28,6 @@ const styles = theme => ({
   },
   marginTop: {
     marginTop: theme.spacing(5),
-  },
-  textCenter: {
-    margin: 'auto'
-  },
-  images: {
-    width: '100%'
-  },
-  links: {
-    textDecoration: 'none',
-    color: 'black'
-  },
-  header: {
-    marginTop: theme.spacing(2)
   },
   text: {
     marginTop: theme.spacing(2)

@@ -12,7 +12,7 @@ const dockerSecret = require('./utils/dockersecret');
 const app = express();
 const port = process.env.BACKEND_PORT || 3000;
 
-// MongoDB configuration
+// load environmental dependent MongoDB configuration
 let db = process.env.MARIAN_DB_STRING
 if (process.env.NODE_ENV === "production") {
     db = dockerSecret.read('MARIAN_DB_STRING')
@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // publish API
 app.use('/api/documents', documentApi)
-app.use('/api/psychologist', psychologistApi)
+app.use('/api/psychologists', psychologistApi)
 
 // start app
 const server = app.listen(port, () => {

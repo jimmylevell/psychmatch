@@ -3,20 +3,20 @@
 Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.  
 
 ## Productive Infrastructure
-The application consists of a frontend end written in react and a backend written in NodeJS. For the storage of the data mongodb is used.  
+The application consists of a frontend written in react and a backend written in NodeJS. For the storage of the data mongodb is used.  
 
 ## Design
 ### Frontend
 Using react in combination with the material design to create a intuitive UI.  
 
 ### Backend
-Backend API is using node and mongodb as datastore.  
+Backend API is using nodeJS and mongodb as datastore.  
 
 # Development
-Backend and frontend are combined in this project but each with individual package.json. and .env.  
+Backend and frontend are combined in this project but each with an individual package.json. and .env file.  
 
 ## Backend
-For the runtime the following env variable can control the application:  
+For the configuration of the app the following environment variable can be used:  
 
     PORT=3000
 
@@ -24,7 +24,7 @@ For the runtime the following env variable can control the application:
     MARIAN_DB_STRING=mongodb://mongoadmin:password@localhost:27017/psychmatch?authSource=admin
 
 ## Frontend
-For the runtime the following env variable can control the application:  
+For the configuration of the app the following environment variable can be used:  
 
     # react port
     PORT=3100

@@ -6,11 +6,11 @@ let Psychologist = require('../database/models/Psychologist');
 const router = express.Router();
 
 // post method - creation of a new psychologist
-router.post('/psychologists', (req, res, next) => {
+router.post('/', (req, res, next) => {
     const psychologist = new Psychologist({
         _id: new mongoose.Types.ObjectId(),
-        name: req.file.originalname,
-        website: req.body.meetingId,
+        name: req.body.name,
+        website: req.body.website,
         keywords_cz: [],
         keywords_en: [],
     });
@@ -19,7 +19,7 @@ router.post('/psychologists', (req, res, next) => {
     .then(result => {
         res.status(200).json({
             message: "Psychologist uploaded successfully!",
-            psychologistCreated: {
+            psychologist: {
                 _id: result._id,
                 psychologist: result,
             }
@@ -34,7 +34,7 @@ router.post('/psychologists', (req, res, next) => {
 })
 
 // get all psychologists
-router.get("/psychologists", (req, res, next) => {
+router.get("/", (req, res, next) => {
     Psychologist.find()
     .then(data => {
         res.status(200).json({
@@ -45,7 +45,7 @@ router.get("/psychologists", (req, res, next) => {
 });
 
 // get specific psychologist by id
-router.get("/psychologists/:id", (req, res, next) => {
+router.get("/:id", (req, res, next) => {
     let psychologistId = req.params.id
 
     Psychologist.findOne({ '_id': psychologistId})
@@ -58,26 +58,26 @@ router.get("/psychologists/:id", (req, res, next) => {
 });
 
 // update psychologist content based on psychologist id
-router.put("/psychologists/:id", (req, res, next) => {
+router.put("/:id", (req, res, next) => {
     let psychologistId = req.params.id
     
     Psychologist.findOneAndUpdate({ '_id': psychologistId}, req.body)
     .then(data => {
         res.status(200).json({
             message: "Psychologist updated successfully!",
-            psychologists: data
+            psychologist: data
         });
     });
 });
 
 // delete psychologist based on id
-router.delete("/psychologists/:id", (req, res, next) => {
+router.delete("/:id", (req, res, next) => {
     let psychologistId = req.params.id
 
     Psychologist.deleteOne({ '_id': psychologistId})
     .then(data => {
         res.status(200).json({
-            message: "Psychologist deleted retrieved successfully!",
+            message: "Psychologist deleted successfully!",
             psychologist: data
         });
     });

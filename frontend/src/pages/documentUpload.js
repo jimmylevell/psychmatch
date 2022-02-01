@@ -150,7 +150,7 @@ class DocumentUploadComponent extends Component {
         { /* Flag based display of error snackbar */ }
         {this.state.error && (
         <ErrorSnackbar
-          onClose={() => this.setState({ error: null })}
+          onClose={ () => this.setState({ error: null }) }
           message={ this.state.error.message }
         />
         )}
@@ -163,7 +163,7 @@ class DocumentUploadComponent extends Component {
         { /* Flag based display of info snackbar */ }
         {this.state.success && (
           <InfoSnackbar
-            onClose={() => this.setState({ success: null })}
+            onClose={ () => this.setState({ success: null }) }
             message={ this.state.success }
           />
         )}
@@ -175,4 +175,4 @@ class DocumentUploadComponent extends Component {
 export default compose(
     withRouter,
     withStyles(styles),
-  )(DocumentUploadComponent);
+)(DocumentUploadComponent);

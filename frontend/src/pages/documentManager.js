@@ -109,7 +109,7 @@ class DocumentManager extends Component {
   async deleteDocument(evt, document) {
     evt.preventDefault()
 
-    if (window.confirm(`Are you sure you want to delete the document`)) {
+    if (window.confirm(`Are you sure you want to delete this document`)) {
       await this.fetch('delete', `/documents/${ document._id }`);
 
       if(!this.state.error) {
@@ -128,7 +128,7 @@ class DocumentManager extends Component {
     navigator.clipboard.writeText(url)
 
     this.setState({
-      success: "Copied link to document to clipboard: " + url
+      success: "Copied document link to clipboard: " + url
     })
   }
 
@@ -144,9 +144,10 @@ class DocumentManager extends Component {
     // providing filtering of documents using query
     let that = this
     let documents = filter(this.state.documents, function(obj) {
-      return obj.content_cz.toUpperCase().includes(that.state.query.toUpperCase());
+      return (obj.content_cz.toUpperCase().includes(that.state.query.toUpperCase())) || 
+              (obj.content_en.toUpperCase().includes(that.state.query.toUpperCase()));
     })
-    
+
     return (
       <Fragment>
         { /* query input */ }
@@ -165,16 +166,16 @@ class DocumentManager extends Component {
 
         <Typography variant="h4">Documents</Typography>
         
-        {this.state.documents.length > 0 ? (
+        {documents.length > 0 ? (
           // documents available
           <Paper elevation={ 1 } className={ classes.documentsView }>
             <TableContainer component={ Paper }>
               <Table className={ classes.table } aria-label="data table">
                 <TableHead>
                   <TableRow>
-                    <TableCell className={ classes.tableHeader }>Matched Psychologists</TableCell>
-                    <TableCell className={ classes.tableHeader }>Extracted Keywords</TableCell>
-                    <TableCell className={ classes.tableHeader }>Content</TableCell>
+                    <TableCell className={ classes.tableHeader }>Content CZ</TableCell>
+                    <TableCell className={ classes.tableHeader }>Keywords CZ</TableCell>
+                    <TableCell className={ classes.tableHeader }>Keywords EN</TableCell>
                     <TableCell className={ classes.tableHeader }>Updated At</TableCell>
                     <TableCell className={ classes.tableHeader }>Share</TableCell>
                     <TableCell className={ classes.tableHeader }>Remove</TableCell>
@@ -183,28 +184,28 @@ class DocumentManager extends Component {
                 <TableBody>
                   {orderBy(documents, ['updatedAt'], ['desc']).map(document => (
                     <TableRow key={ document._id } className={ classes.tableRow } component={ Link } to={ `/documents/${ document._id }/` }>
-                      <TableCell component="th" scope="row">{ document.matched_psychologist.join(", ") }</TableCell>
-                      <TableCell component="th" scope="row">{ document.keywords_en.join(", ") }</TableCell>
                       { /* Only show substring of content if it is to large */ }
                       <TableCell>
-                        { document.content_en.length > MAX_LENGTH_OF_CONTENT_PREVIEW ? (
+                        { document.content_cz.length > MAX_LENGTH_OF_CONTENT_PREVIEW ? (
                           <div>
-                              {`${ document.content_en.substring(0, MAX_LENGTH_OF_CONTENT_PREVIEW) }...` }
+                              {`${ document.content_cz.substring(0, MAX_LENGTH_OF_CONTENT_PREVIEW) }...` }
                           </div>
                           ) : (
                           <div>
-                              { document.content_en }
+                              { document.content_cz }
                           </div>
                           ) 
                         }
                       </TableCell>
+                      <TableCell component="th" scope="row">{ document.keywords_cz.join(", ") }</TableCell>
+                      <TableCell component="th" scope="row">{ document.keywords_en.join(", ") }</TableCell>
                       <TableCell>{ document.updatedAt }</TableCell>
-                      <TableCell onClick={(evt) => this.shareDocumentLink(evt, document, navigator)} color="inherit">
+                      <TableCell onClick={ (evt) => this.shareDocumentLink(evt, document, navigator) } color="inherit">
                         <IconButton >
                           <ShareIcon />
                         </IconButton>
                       </TableCell>
-                      <TableCell onClick={(evt) => this.deleteDocument(evt, document)} color="inherit">
+                      <TableCell onClick={ (evt) => this.deleteDocument(evt, document) } color="inherit">
                         <IconButton >
                           <DeleteIcon />
                         </IconButton>
@@ -218,7 +219,7 @@ class DocumentManager extends Component {
         ) : (
           // no documents available
           !this.state.loading && (
-            <Typography variant="subtitle1">So far no documents have been uploaded, start uploading your first document now</Typography>
+            <Typography variant="subtitle1">So far no documents have been uploaded, start uploading your first document now!</Typography>
           )
         )}
   

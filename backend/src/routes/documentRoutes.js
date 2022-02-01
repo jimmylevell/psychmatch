@@ -20,7 +20,7 @@ router.post('/', (req, res, next) => {
     .then(result => {
         res.status(200).json({
             message: "Document uploaded successfully!",
-            documentCreated: {
+            document: {
                 _id: result._id,
                 document: result,
             }
@@ -53,7 +53,7 @@ router.get("/:id", (req, res, next) => {
     .then(data => {
         res.status(200).json({
             message: "Document retrieved successfully!",
-            documents: data
+            document: data
         });
     });
 });
@@ -66,7 +66,7 @@ router.put("/:id", (req, res, next) => {
     .then(data => {
         res.status(200).json({
             message: "Document updated successfully!",
-            documents: data
+            document: data
         });
     });
 });
@@ -78,8 +78,8 @@ router.delete("/:id", (req, res, next) => {
     Document.deleteOne({ '_id': documentId})
     .then(data => {
         res.status(200).json({
-            message: "Document deleted retrieved successfully!",
-            documents: data
+            message: "Document deleted successfully!",
+            document: data
         });
     });
 });

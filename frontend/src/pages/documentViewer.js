@@ -4,18 +4,24 @@ import {
   withStyles,
   Typography,
   Grid,
-  Paper
+  CardContent,
+  Card
 } from '@material-ui/core';
 import { compose } from 'recompose';
 
 import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar';
+import PsychologistCard from '../components/psychologistCard';
 
 const API = process.env.REACT_APP_BACKEND_URL;
 const styles = theme => ({
   title: {
     marginBottom: theme.spacing(1)
+  },
+  table: {
+    marginTop: theme.spacing(2),
+    marginLeft: theme.spacing(0.2),
   }
 });
 
@@ -26,6 +32,13 @@ class DocumentViewer extends Component {
     this.state = {
       documentId: null,
       document: null,
+
+      psychologists: [ 
+        { psychologist_id: '1', name: 'test', website: 'https://google.com', matched_keywords: ['test'], matched_score: 10 },
+        { psychologist_id: '2', name: 'test 1', matched_keywords: ['test'], matched_score: 10 },
+        { psychologist_id: '3', name: 'test 2', matched_keywords: ['test'], matched_score: 10 },
+        { psychologist_id: '4', name: 'test 3', matched_keywords: ['test'], matched_score: 10 },
+       ],
       
       success: null,          // flag to trigger success info
       loading: true,          // flag to trigger loading
@@ -36,7 +49,7 @@ class DocumentViewer extends Component {
   componentDidMount = () => {
     const documentId = this.props.match.params.id;
 
-    // wait till state is fully set, then load usecases
+    // wait till state is fully set, then load document
     this.setState({
       documentId: documentId,
     }, this.getDocument)
@@ -71,7 +84,7 @@ class DocumentViewer extends Component {
       }
 
       response = await response.json();
-      return response.documents
+      return response.document
     } catch (error) {
       console.error(error);
       this.setState({ error });
@@ -98,17 +111,45 @@ class DocumentViewer extends Component {
 
             <Grid container spacing={ 3 }>
               <Grid item xs={ 6 }>
-                <Paper className={ classes.paper }> { this.state.document.content_cz } </Paper>
+                <Card>
+                  <CardContent>
+                    <Typography color="textSecondary">Czech Content</Typography>
+                    <Typography component="p"> { this.state.document.content_cz }</Typography>
+                  </CardContent>
+                </Card>
               </Grid>
               <Grid item xs={ 6 }>
-                <Paper className={ classes.paper }> { this.state.document.content_en } </Paper>
+                <Card>
+                  <CardContent>
+                    <Typography color="textSecondary">English Content</Typography>
+                    <Typography component="p"> { this.state.document.content_en }</Typography>
+                  </CardContent>
+                </Card>
               </Grid>
 
               <Grid item xs={ 6 }>
-                <Paper className={ classes.paper }> { this.state.document.content_en } </Paper>
+                <Card>
+                  <CardContent>
+                    <Typography color="textSecondary">Czech Keywords</Typography>
+                    <Typography component="p"> { this.state.document.keywords_cz }</Typography>
+                  </CardContent>
+                </Card>
               </Grid>
               <Grid item xs={ 6 }>
-                <Paper className={ classes.paper }> { this.state.document.content_en } </Paper>
+                <Card>
+                  <CardContent>
+                    <Typography color="textSecondary">English Keywords</Typography>
+                    <Typography component="p"> { this.state.document.keywords_en }</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+
+              <Grid container className={ classes.table } spacing={ 3 }>
+                {this.state.psychologists && (
+                  this.state.psychologists.map(function(psychologist) {
+                    return <PsychologistCard key={ psychologist._id } psychologist={ psychologist } />
+                  })
+                )}
               </Grid>
             </Grid>
           </div>  
@@ -122,7 +163,7 @@ class DocumentViewer extends Component {
         { /* Flag based display of error snackbar */ }
         {this.state.error && (
           <ErrorSnackbar
-            onClose={() => this.setState({ error: null })}
+            onClose={ () => this.setState({ error: null }) }
             message={ this.state.error.message }
           />
         )}
@@ -135,7 +176,7 @@ class DocumentViewer extends Component {
         { /* Flag based display of info snackbar */ }
         {this.state.success && (
           <InfoSnackbar
-            onClose={() => this.setState({ success: null })}
+            onClose={ () => this.setState({ success: null }) }
             message={ this.state.success }
           />
         )}

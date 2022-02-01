@@ -16,7 +16,7 @@ import Help from './help'
 
 const styles = theme => ({
   header: {
-    backgroundColor: "#3892bd",
+    backgroundColor: "#82B282",
   },
   text: {
     fontSize: '4.5em',
@@ -83,6 +83,8 @@ class AppHeader extends Component {
             {/* whatever is on the left side */}
           <Link className={ classes.link } to="/upload">Upload</Link>
           <Link className={ classes.link } to="/documents">Documents</Link>
+
+          <Link className={ classes.link } to="/psychologists">Psychologists</Link>
         </Box>
       </Toolbar>
 
