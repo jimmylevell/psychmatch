@@ -82,9 +82,9 @@ networks:
     external: true
   psychmatch: 
     external: true
-  DEEPL_API_KEY:
-    external: true
 
 secrets:
   MARIAN_DB_STRING:
+    external: true
+  DEEPL_API_KEY:
     external: true
