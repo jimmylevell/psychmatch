@@ -5,9 +5,11 @@ import {
   Typography,
   Grid,
   CardContent,
-  Card
+  Card,
+  Button
 } from '@material-ui/core';
 import { compose } from 'recompose';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
@@ -22,6 +24,9 @@ const styles = theme => ({
   table: {
     marginTop: theme.spacing(2),
     marginLeft: theme.spacing(0.2),
+  },
+  buttons: {
+    margin: theme.spacing(1)
   }
 });
 
@@ -44,6 +49,8 @@ class DocumentViewer extends Component {
       loading: true,          // flag to trigger loading
       error: null,            // flag to trigger error messages
     };
+
+    this.handleReexecution = this.handleReexecution.bind(this);
   }
 
   componentDidMount = () => {
@@ -97,6 +104,18 @@ class DocumentViewer extends Component {
     })
   }
 
+  async handleReexecution() {
+    if (window.confirm(`Are you sure you reexecute the match making process for the given document?`)) {
+      await this.fetch('get', '/documents/' + this.state.documentId + "/reexecute")
+
+      if(!this.state.error) {
+        this.setState({
+          success: "Document rexecuted completed successfully"
+        }, this.getDocument)
+      }
+    }
+  }
+
   render() {
     const { classes } = this.props
 
@@ -107,7 +126,17 @@ class DocumentViewer extends Component {
         {this.state.document !== null ? (
           // document present
           <div>
-            <Typography variant="h5" className={ classes.title }> { this.state.document._id } </Typography>
+            <Typography variant="h5" className={ classes.title }> { this.state.document._id } 
+            
+            <Button 
+              size="small" 
+              color="primary" 
+              onClick={ this.handleReexecution }
+              className={ classes.buttons }
+            >
+              <RefreshIcon/>Update annotations
+            </Button>
+            </Typography>
 
             <Grid container spacing={ 3 }>
               <Grid item xs={ 6 }>

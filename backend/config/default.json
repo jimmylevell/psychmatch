@@ -1,0 +1,5 @@
+{
+    "deepl": {
+        "API": "https://api-free.deepl.com/v2/translate"
+    }
+}

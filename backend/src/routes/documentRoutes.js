@@ -1,9 +1,24 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const deepl = require('../utils/deepl.js');
 
 let Document = require('../database/models/Document');
 
 const router = express.Router();
+
+function processDocument(document) {
+    return new Promise(function(resolve, reject) {
+        deepl.translate(document.content_cz, 'CS', 'EN')
+        .then((result) => {
+            document.content_en = result.translations[0].text;
+            resolve(document)
+        })
+        .catch(err => {
+            console.log("Issue communicating with deepl: " + err);
+            reject(err);
+        })
+    })
+}
 
 // post method - creation of a new document
 router.post('/', (req, res, next) => {
@@ -16,15 +31,24 @@ router.post('/', (req, res, next) => {
         matched_psychologist: []
     });
 
-    document.save()
-    .then(result => {
-        res.status(200).json({
-            message: "Document uploaded successfully!",
-            document: {
-                _id: result._id,
-                document: result,
-            }
-        })  
+    processDocument(document)
+    .then(document => {
+        document.save()
+        .then(result => {
+            res.status(200).json({
+                message: "Document uploaded successfully!",
+                document: {
+                    _id: result._id,
+                    document: document,
+                }
+            })  
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                error: err
+            });
+        })
     })
     .catch(err => {
         console.log(err)
@@ -42,7 +66,13 @@ router.get("/", (req, res, next) => {
             message: "Document list retrieved successfully!",
             documents: data
         });
-    });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            error: err
+        });
+    })
 });
 
 // get specific document by id
@@ -55,7 +85,13 @@ router.get("/:id", (req, res, next) => {
             message: "Document retrieved successfully!",
             document: data
         });
-    });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            error: err
+        });
+    })
 });
 
 // update document content based on document id
@@ -68,7 +104,13 @@ router.put("/:id", (req, res, next) => {
             message: "Document updated successfully!",
             document: data
         });
-    });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            error: err
+        });
+    })
 });
 
 // delete document based on id
@@ -81,7 +123,47 @@ router.delete("/:id", (req, res, next) => {
             message: "Document deleted successfully!",
             document: data
         });
-    });
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            error: err
+        });
+    })
 });
+
+// get method - trigger rexexecution of document
+router.get('/:id/reexecute', (req, res, next) => {
+    let documentId = req.params.id
+
+    Document.findOne({ '_id': documentId})
+    .then(data => {
+        // reexecute document
+        processDocument(data)
+        .then(document => {
+            document.save().then(result => {
+                res.status(200).json({
+                    message: "Document reexecuted updated successfully!",
+                    documentCreated: {
+                        _id: result._id,
+                        document: result,
+                    }
+                })
+            })  
+        })
+        .catch(err => {
+            console.log(err)
+            res.status(500).json({
+                error: err
+            });
+        })
+    })
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            error: err
+        });
+    })
+})
 
 module.exports = router;
