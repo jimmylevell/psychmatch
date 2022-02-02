@@ -8,8 +8,10 @@ services:
     environment: 
       NODE_ENV: production
       MARIAN_DB_STRING: /run/secret/MARIAN_DB_STRING
+      DEEPL_API_KEY: /run/secret/DEEPL_API_KEY
     secrets:
       - MARIAN_DB_STRING
+      - DEEPL_API_KEY
     deploy:
       replicas: 3
       update_config:
@@ -79,6 +81,8 @@ networks:
   traefik-public:
     external: true
   psychmatch: 
+    external: true
+  DEEPL_API_KEY:
     external: true
 
 secrets:
