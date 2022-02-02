@@ -14,7 +14,7 @@ const port = process.env.BACKEND_PORT || 3000;
 
 // load environmental dependent MongoDB configuration
 let db = process.env.MARIAN_DB_STRING
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV !== "production") {
     db = dockerSecret.read('MARIAN_DB_STRING')
 }
 mongoose.Promise = global.Promise;

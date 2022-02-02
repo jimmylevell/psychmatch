@@ -1,7 +1,7 @@
 require('dotenv').config({ path: '.env' });
 const config = require('config');
 const fetch = require('node-fetch');
-const dockerSecret = require('./dockerSecret.js');
+const dockerSecret = require('./dockersecret.js');
 
 const deepl = {};
 
