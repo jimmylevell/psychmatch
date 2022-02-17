@@ -37,9 +37,6 @@ services:
         - traefik.http.services.psychmatchbackend-secured.loadbalancer.sticky=true
         - traefik.http.services.psychmatchbackend-secured.loadbalancer.sticky.cookie.name=StickyCookie
         - traefik.http.services.psychmatchbackend-secured.loadbalancer.sticky.cookie.secure=true
-        - traefik.http.services.psychmatchbackend-secured.loadbalancer.healthcheck.path=/api/documents
-        - traefik.http.services.psychmatchbackend-secured.loadbalancer.healthcheck.interval=10s
-        - traefik.http.services.psychmatchbackend-secured.loadbalancer.healthcheck.timeout=10s
 
   psychmatch-frontend:
     image: ghcr.io/jimmylevell/psychmatch/psychmatch_frontend:latest
@@ -73,9 +70,6 @@ services:
       - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky=true
       - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.name=StickyCookie
       - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.secure=true
-      - traefik.http.services.psychmatchfrontend-secured.loadbalancer.healthcheck.path=/
-      - traefik.http.services.psychmatchfrontend-secured.loadbalancer.healthcheck.interval=10s
-      - traefik.http.services.psychmatchfrontend-secured.loadbalancer.healthcheck.timeout=10s
 
 networks:
   traefik-public:
