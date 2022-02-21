@@ -160,7 +160,7 @@ class DocumentViewer extends Component {
                 <Card>
                   <CardContent>
                     <Typography color="textSecondary">Czech Keywords</Typography>
-                    <Typography component="p"> { this.state.document.keywords_cz }</Typography>
+                    <Typography component="p"> { this.state.document.keywords_cz.join(", ") }</Typography>
                   </CardContent>
                 </Card>
               </Grid>
@@ -168,7 +168,7 @@ class DocumentViewer extends Component {
                 <Card>
                   <CardContent>
                     <Typography color="textSecondary">English Keywords</Typography>
-                    <Typography component="p"> { this.state.document.keywords_en }</Typography>
+                    <Typography component="p"> { this.state.document.keywords_en.join(", ") }</Typography>
                   </CardContent>
                 </Card>
               </Grid>

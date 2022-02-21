@@ -15,17 +15,17 @@ const port = process.env.BACKEND_PORT || 3000;
 // load environmental dependent MongoDB configuration
 let db = process.env.MARIAN_DB_STRING
 if (process.env.NODE_ENV === "production") {
-    db = dockerSecret.read('MARIAN_DB_STRING')
+  db = dockerSecret.read('MARIAN_DB_STRING')
 }
 mongoose.Promise = global.Promise;
 mongoose.connect(db, {
-    useNewUrlParser: true
+  useNewUrlParser: true
 }).then(() => {
-    console.log('Database sucessfully connected')
+  console.log('Database sucessfully connected')
 },
-    error => {
-        console.log('Database could not be connected: ' + error)
-    }
+  error => {
+    console.log('Database could not be connected: ' + error)
+  }
 )
 
 // enable cors
@@ -39,5 +39,5 @@ app.use('/api/psychologists', psychologistApi)
 
 // start app
 const server = app.listen(port, () => {
-    console.log('Connected to port ' + port)
+  console.log('Connected to port ' + port)
 })
