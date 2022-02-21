@@ -27,6 +27,8 @@ const styles = theme => ({
     width: '100%',
     maxWidth: 800,
     maxHeight: "100%",
+    overflowY: 'scroll',
+    height: '80vh',
   },
   modalCardContent: {
     display: 'flex',
