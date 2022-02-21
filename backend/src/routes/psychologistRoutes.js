@@ -11,8 +11,8 @@ router.post('/', (req, res, next) => {
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     website: req.body.website,
-    keywords_cz: [],
-    keywords_en: [],
+    keywords_cz: req.body.keywords_cz,
+    keywords_en: req.body.keywords_en,
   });
 
   psychologist.save()
