@@ -107,12 +107,13 @@ class PsychologistManager extends Component {
     })   
   }
 
-  onSavePsychologist  = async (id, name, website, keywords_cz, keywords_en) => {
+  onSavePsychologist  = async (id, name, website, keywords_cz, keywords_en, translate_keywords) => {
     var postData = {
       name: name,
       website: website,
       keywords_cz: keywords_cz,
-      keywords_en: keywords_en
+      keywords_en: keywords_en,
+      translate_keywords: translate_keywords
     }
 
     if (id) {

@@ -7,6 +7,8 @@ import {
   CardActions,
   Modal,
   Button,
+  Checkbox,
+  FormControlLabel,
 } from '@material-ui/core';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -48,6 +50,7 @@ class PsychologistEditor extends Component {
       website: "",
       keywords_cz: [],
       keywords_en: [],
+      translate_keywords: false,
     };
   }
 
@@ -70,16 +73,16 @@ class PsychologistEditor extends Component {
     evt.preventDefault();
 
     const { onSave } = this.props
-    const { id, name, website, keywords_cz, keywords_en } = this.state;
+    const { id, name, website, keywords_cz, keywords_en, translate_keywords } = this.state;
 
     // execute parent function in psychologistManager
-    onSave(id, name, website, keywords_cz, keywords_en)
+    onSave(id, name, website, keywords_cz, keywords_en, translate_keywords)
   };
 
   handleChange = (evt) => {
     const target = evt.target
     const name = target.name
-    let value = target.value
+    const value = evt.target.type === 'checkbox' ? evt.target.checked : evt.target.value
 
     this.setState({
       [name]: value
@@ -170,6 +173,21 @@ class PsychologistEditor extends Component {
               value={ this.state.keywords_en }
               onAdd={ (chip) => this.handleAddKeyword(chip, "EN") }
               onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "EN") }
+            />
+
+            <FormControlLabel
+              className={ classes.input }
+              control={
+                <Checkbox
+                  id="translate_keywords"
+                  name="translate_keywords"
+                  value={ this.state.translate_keywords }
+                  onChange={ this.handleChange }
+                  color="primary"
+                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                />
+              }
+              label="Translate Keywords into other Language"
             />
 
             </CardContent>

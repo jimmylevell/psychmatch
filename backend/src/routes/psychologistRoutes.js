@@ -1,13 +1,53 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+const deepl = require('../utils/deepl.js');
 let Psychologist = require('../database/models/Psychologist');
 
 const router = express.Router();
 
+function processPsychologist(psychologist, translate_keywords) {
+  return new Promise(function(resolve, reject) {
+    let keywords = []
+    let source_lang = ""
+    let target_lang = ""
+
+    if(translate_keywords) {
+      if(psychologist.keywords_cz.length > 0) {
+        source_lang = "CS"
+        target_lang = "EN"
+        source_keywords = "keywords_cz"
+        target_keywords = "keywords_en"
+      } else if(psychologist.keywords_en.length > 0) {
+        source_lang = "EN"
+        target_lang = "CS"
+        source_keywords = "keywords_en"
+        target_keywords = "keywords_cz"
+      }
+  
+      psychologist[source_keywords].forEach(keyword => {
+        keywords.push(deepl.translate(keyword, source_lang, target_lang))
+      })
+  
+      // wait for all translations to complete
+      Promise.all(keywords)
+      .then(results => {
+        results.forEach(result => {
+          psychologist[target_keywords].push(result.translations[0].text)
+        })
+
+        resolve(psychologist)
+      })
+    } else {
+      // no translation required
+      resolve(psychologist)
+    }
+  })
+}
+
 // post method - creation of a new psychologist
 router.post('/', (req, res, next) => {
-  const psychologist = new Psychologist({
+  let psychologist = new Psychologist({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     website: req.body.website,
@@ -15,21 +55,24 @@ router.post('/', (req, res, next) => {
     keywords_en: req.body.keywords_en,
   });
 
-  psychologist.save()
-  .then(result => {
-    res.status(200).json({
-      message: "Psychologist uploaded successfully!",
-      psychologist: {
-        _id: result._id,
-        psychologist: result,
-      }
-    })  
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(500).json({
-      error: err
-    });
+  processPsychologist(psychologist, req.body.translate_keywords)
+  .then(() => {
+    psychologist.save()
+    .then(result => {
+      res.status(200).json({
+        message: "Psychologist uploaded successfully!",
+        psychologist: {
+          _id: result._id,
+          psychologist: result,
+        }
+      })  
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500).json({
+        error: err
+      });
+    })
   })
 })
 
@@ -61,12 +104,15 @@ router.get("/:id", (req, res, next) => {
 router.put("/:id", (req, res, next) => {
   let psychologistId = req.params.id
   
-  Psychologist.findOneAndUpdate({ '_id': psychologistId}, req.body)
-  .then(data => {
-    res.status(200).json({
-      message: "Psychologist updated successfully!",
-      psychologist: data
-    });
+  processPsychologist(req.body, req.body.translate_keywords)
+  .then(psychologist => {
+    Psychologist.findOneAndUpdate({ '_id': psychologistId}, psychologist)
+    .then(psychologist => {
+      res.status(200).json({
+        message: "Psychologist updated successfully!",
+        psychologist: psychologist
+      });
+    })
   });
 });
 
