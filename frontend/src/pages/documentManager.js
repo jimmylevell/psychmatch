@@ -53,7 +53,7 @@ class DocumentManager extends Component {
       query: "",
       documents: "",
 
-      service: ModelService.getInstance(),
+      service: null,
 
       loading: true,
       success: null,
@@ -62,7 +62,11 @@ class DocumentManager extends Component {
   }
 
   componentDidMount() {
-    this.getDocuments();
+    this.setState({
+      service: ModelService.getInstance(this.props.token)
+    }, () => {
+      this.getDocuments();
+    });
   }
 
   async getDocuments() {
@@ -78,6 +82,8 @@ class DocumentManager extends Component {
       })
     }
 
+    console.log(documents)
+
     this.setState({ 
       loading: false, 
       documents: documents || [] 
@@ -86,9 +92,15 @@ class DocumentManager extends Component {
 
   async deleteDocument(evt, document) {
     evt.preventDefault()
-
     if (window.confirm(`Are you sure you want to delete this document`)) {
-      await this.fetch('delete', `/documents/${ document._id }`);
+      try {
+        await this.state.service.deleteDocument(document._id)
+      }
+      catch {
+        this.setState({
+          error: { message: "Error deleting document" }
+        })
+      }
 
       if(!this.state.error) {
         this.setState({

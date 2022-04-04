@@ -47,7 +47,7 @@ class DocumentViewer extends Component {
         { psychologist_id: '4', name: 'test 3', matched_keywords: ['test'], matched_score: 10 },
        ],
 
-      service: ModelService.getInstance(),
+      service: null,
       
       success: null,          // flag to trigger success info
       loading: true,          // flag to trigger loading
@@ -62,6 +62,7 @@ class DocumentViewer extends Component {
 
     // wait till state is fully set, then load document
     this.setState({
+      service: ModelService.getInstance(this.props.token),
       documentId: documentId,
     }, this.getDocument)
   }

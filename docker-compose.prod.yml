@@ -9,9 +9,13 @@ services:
       NODE_ENV: production
       MARIAN_DB_STRING: /run/secrets/MARIAN_DB_STRING
       DEEPL_API_KEY: /run/secrets/DEEPL_API_KEY
+      AZURE_TENANT_ID: /run/secrets/AZURE_TENANT_ID
+      AZURE_CLIENT_ID: /run/secrets/AZURE_CLIENT_ID
     secrets:
       - MARIAN_DB_STRING
       - DEEPL_API_KEY
+      - AZURE_TENANT_ID
+      - AZURE_CLIENT_ID
     deploy:
       replicas: 3
       update_config:
@@ -93,4 +97,8 @@ secrets:
   MARIAN_DB_STRING:
     external: true
   DEEPL_API_KEY:
+    external: true
+  AZURE_TENANT_ID:
+    external: true
+  AZURE_CLIENT_ID:
     external: true

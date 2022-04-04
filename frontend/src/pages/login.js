@@ -3,7 +3,7 @@ import {
   withStyles,
 } from '@material-ui/core';
 import { compose } from 'recompose';
-import { useMsal } from "@azure/msal-react";
+import { withMsal } from "@azure/msal-react";
 
 import { tokenRequest } from "../authConfig";
 
@@ -27,60 +27,64 @@ function isTokenExpired(token) {
   return expired
 }
 
-function Authtemplate(props) {
-  const { instance, accounts  } = useMsal();
-
-  const request = {
-    ...tokenRequest,
-    account: accounts[0]
-  };
-
-  if (accounts.length > 0) {
-    if(!localStorage.getItem('token') || isTokenExpired(localStorage.getItem('token'))) {
-      instance.acquireTokenSilent(request).then((response) => {
-        localStorage.setItem('token', response.accessToken);
-      }).catch((error) => {
-        if (error.errorCode === "invalid_grant") {
-          // fallback to interaction when silent call fails
-          instance.acquireTokenPopup(request).then(
-            function (response) {
-                console.log(response)
-            }).catch(function (error) {
-                console.log(error);
-            });
-        } else {
-            console.error(error);   
-        }
-        
-        console.log(error)
-      })
-    }
-    
-    return (
-      <button onClick={() => instance.logout()}>Logout</button>
-    )
-  } else {
-      return <button onClick={() => instance.loginPopup()}>Login</button>
-  }
-}
-
 class Login extends Component {
   constructor() {
     super()
 
     this.state = {
+      token: null
+    }
+  }
+
+  componentDidMount() {
+    this.callLogin()
+  }
+
+  componentDidUpdate() {
+    this.callLogin() 
+  }
+
+  callLogin() {
+    const msalInstance = this.props.msalContext.instance;
+    const msalAccounts = this.props.msalContext.accounts;
+    const msalInProgress = this.context.inProgress;
+  
+    const request = {
+      ...tokenRequest,
+      account: msalAccounts[0]
+    };
+  
+    if (msalAccounts.length > 0) {
+      if((!this.state.token || isTokenExpired(this.state.token) && msalInProgress !== true)) {
+        msalInstance.acquireTokenSilent(request).then((response) => {
+          this.setState({ token: response.accessToken }, () => {this.props.tokenUpdated(response.accessToken)})
+        }).catch((error) => {
+          if (error.errorCode === "invalid_grant") {
+            // fallback to interaction when silent call fails
+            msalInstance.acquireTokenPopup(request).then(
+              function (response) {
+//                  console.log(response)
+              }).catch(function (error) {
+                  console.log(error);
+              });
+          } else {
+              console.error(error);   
+          }
+          
+          console.log(error)
+        })
+      }
+    } else {
+        msalInstance.loginPopup()
     }
   }
 
   render() {
     return (
       <div>
-        <Authtemplate/>
       </div>
     )
   }
 }
 
-export default compose(
-  withStyles(styles),
-)(Login);
+export default withMsal(Login);

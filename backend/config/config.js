@@ -37,9 +37,9 @@ module.exports = {
     },
     "SAML": {
       "credentials": {
-          "tenantID": process.env.AZURE_TENANT_ID || "154b8429-18b8-481c-9604-59f605cf9520",
-          "clientID": process.env.AZURE_CLIENT_ID || "35aef02e-4185-4203-ba60-a16bb4152c55",
-          "audience": process.env.AZURE_CLIENT_ID || "35aef02e-4185-4203-ba60-a16bb4152c55"
+          "tenantID": process.env.AZURE_TENANT_ID || "",
+          "clientID": process.env.AZURE_CLIENT_ID || "",
+          "audience": process.env.AZURE_CLIENT_ID || ""
       },
       "resource": {
           "scope": ["access_as_user"]
@@ -63,9 +63,9 @@ module.exports = {
     },
     "SAML": {
       "credentials": {
-          "tenantID": dockerSecret.read('AZURE_TENANT_ID') || "154b8429-18b8-481c-9604-59f605cf9520",
-          "clientID": dockerSecret.read('AZURE_CLIENT_ID') || "35aef02e-4185-4203-ba60-a16bb4152c55",
-          "audience": dockerSecret.read('AZURE_CLIENT_ID') || "35aef02e-4185-4203-ba60-a16bb4152c55"
+          "tenantID": dockerSecret.read('AZURE_TENANT_ID') || "",
+          "clientID": dockerSecret.read('AZURE_CLIENT_ID') || "",
+          "audience": dockerSecret.read('AZURE_CLIENT_ID') || ""
       },
       "resource": {
           "scope": ["access_as_user"]

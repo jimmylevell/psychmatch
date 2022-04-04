@@ -2,32 +2,18 @@ const API = process.env.REACT_APP_BACKEND_URL;
 
 export class ModelService {
   data = [];
-  authenticationToken = null;
 
   constructor() {
-    this.authenticationToken = localStorage.getItem('token');
-
     if (ModelService.instance) {
-        throw new Error("Error: Instantiation failed: Use ModelService.getInstance() instead of new.");
+      throw new Error("Error: Instantiation failed: Use ModelService.getInstance() instead of new.");
     }
   }
 
   // singleton static method to get instance of service
-  static getInstance() {
+  static getInstance(token) {
     ModelService.instance = ModelService.instance || new ModelService();
+    ModelService.token = token;
     return ModelService.instance;
-  }
-
-  async getToken() {
-    let token = localStorage.getItem('token');
-
-    if (token) {
-      return token;
-    } else {
-      token = await this.getNewToken();
-      localStorage.setItem('token', token);
-      return token;
-    }
   }
 
   // used to communicate with backend
@@ -39,7 +25,7 @@ export class ModelService {
           method,
           headers: {
             'content-type': 'application/json',
-            Authorization: `Bearer ${ this.authenticationToken }`,
+            Authorization: `Bearer ${ ModelService.token }`,
             'accept': 'application/json',
           },
         };
@@ -50,7 +36,7 @@ export class ModelService {
           body: body && JSON.stringify(body),
           headers: {
             'content-type': 'application/json',
-            Authorization: `Bearer ${ this.authenticationToken }`,
+            Authorization: `Bearer ${ ModelService.token }`,
             'accept': 'application/json',
             },
         };
@@ -72,19 +58,14 @@ export class ModelService {
    
   // returns all documents
   async getDocuments() {
-    if (this.data.length === 0) {
-      try {
-        return this.fetch('GET', '/documents', '').then((response) => {
-          this.data = response;
-          return this.data;
-        });
-      }
-      catch (error) {
-        throw new Error(String(error));
-      }
+    try {
+      return this.fetch('GET', '/documents', '').then((response) => {
+        this.data = response;
+        return this.data;
+      });
     }
-    else {
-      return this.data;
+    catch (error) {
+      throw new Error(String(error));
     }
   }
 
@@ -140,7 +121,7 @@ export class ModelService {
   // reexecute document
   async reexecuteDocument(documentId) {
     try {
-      return this.fetch('GET', '/documents' + documentId + "/reexecute", ).then((response) => {
+      return this.fetch('GET', '/documents/' + documentId + "/reexecute", ).then((response) => {
         return response.document;
       })
     }

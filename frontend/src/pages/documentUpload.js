@@ -35,7 +35,7 @@ class DocumentUploadComponent extends Component {
     this.state = {      
         document: '',
 
-        service: ModelService.getInstance(),
+        service: null,
 
         loading: true,                   // flag for displaying loading bar
         success: null,                   // flag for displaying success messages
@@ -48,6 +48,7 @@ class DocumentUploadComponent extends Component {
 
   componentDidMount() {
     this.setState({
+      service: ModelService.getInstance(this.props.token),
       loading: false
     })
   }

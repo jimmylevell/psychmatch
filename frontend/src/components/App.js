@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 import { Route } from 'react-router-dom';
 import {
   CssBaseline,
@@ -21,32 +21,76 @@ const styles = theme => ({
     },
   },
 });
+class App extends Component {
+  constructor() {
+    super()
 
-const App = ({ msalInstance, classes }) => (
-  <MsalProvider instance={ msalInstance }>
-    <Fragment>
-        <Login />
-        <CssBaseline />
-        <AppHeader />
-        <main className={ classes.main }>
-          <AuthenticatedTemplate>
-            <Route exact path="/" component={ DocumentManager } />
-            <Route exact path="/upload" component={ DocumentUpload } />
-            <Route exact path="/documents" component={ DocumentManager } />
-            <Route exact path="/documents/:id" component={ DocumentViewer } />
+    this.state = {
+      token: null,
 
-            <Route exact path="/psychologists" component={ PsychologistsManager } />
-            <Route exact path="/psychologists/:id" component={ PsychologistsManager } />
-            <Route exact path="/psychologists/:id/edit" component={ PsychologistsManager } />
-            <Route exact path="/psychologists/:id/copy" component={ PsychologistsManager } />
-          </AuthenticatedTemplate>
+    }
+  }
 
-          <UnauthenticatedTemplate>
-            <h5 className="card-title">Please sign-in to see use the application.</h5>
-          </UnauthenticatedTemplate>        
-        </main>
-      </Fragment>
-    </MsalProvider>
-  );
+  tokenUpdated = (token) => {
+    this.setState({
+      token: token
+    })
+  }
+
+  render() {
+    const { classes, msalInstance } = this.props;
+    return (
+      <MsalProvider instance={ msalInstance }>
+        <Fragment>
+            <Login tokenUpdated={ this.tokenUpdated } />
+            <CssBaseline />
+            <AppHeader />
+            <main className={ classes.main }>
+              { this.state.token && (
+              <AuthenticatedTemplate>
+                <Route exact path="/">
+                  <DocumentManager token={ this.state.token } />
+                </Route>
+
+                <Route exact path="/upload">
+                  <DocumentUpload token={ this.state.token } />
+                </Route>
+
+                <Route exact path="/documents">
+                  <DocumentManager token={ this.state.token } />
+                </Route>
+
+                <Route exact path="/documents/:id">
+                  <DocumentViewer token={ this.state.token } />
+                </Route>
+
+                <Route exact path="/psychologists">
+                  <PsychologistsManager token={ this.state.token } />
+                </Route>
+
+                <Route exact path="/psychologists/:id">
+                  <PsychologistsManager token={ this.state.token } />
+                </Route>
+
+                <Route exact path="/psychologists/:id/edit">
+                  <PsychologistsManager token={ this.state.token } />
+                </Route>
+
+                <Route exact path="/psychologists/:id/copy">
+                  <PsychologistsManager token={ this.state.token } />
+                </Route>
+                
+              </AuthenticatedTemplate>
+              )}
+
+              <UnauthenticatedTemplate>
+                <h5 className="card-title">Please sign-in to see use the application.</h5>
+              </UnauthenticatedTemplate>        
+            </main>
+          </Fragment>
+        </MsalProvider>
+     );
+  }
+}
   
-  export default withStyles(styles)(App);
+export default withStyles(styles)(App);

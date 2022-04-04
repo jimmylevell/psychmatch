@@ -65,15 +65,19 @@ class PsychologistManager extends Component {
     };
   }
 
-  componentDidMount() {    
-    this.getPsychologists();
+  componentDidMount() {
+    this.setState({
+      service: ModelService.getInstance(this.props.token)
+    }, () => {
+      this.getPsychologists();
+    })
   }
 
   getPsychologists() {
     this.state.service.getPsychologists()
       .then(psychologists => {
         this.setState({
-            psychologists: psychologists.psychologists || [] 
+            psychologists: psychologists || [] 
         })
     })   
   }
@@ -89,9 +93,9 @@ class PsychologistManager extends Component {
 
     try {
       if (id) {
-        await this.service.state.updatePsychologist(id, postData);
+        await this.state.service.updatePsychologist(id, postData);
       } else {
-        await this.service.state.newPsychologist(postData);
+        await this.state.service.newPsychologist(postData);
       }
     }
     catch {
