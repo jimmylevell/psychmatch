@@ -11,6 +11,8 @@ import {
 import { compose } from 'recompose';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
+import { ModelService } from '../service';
+
 import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar';
@@ -44,6 +46,8 @@ class DocumentViewer extends Component {
         { psychologist_id: '3', name: 'test 2', matched_keywords: ['test'], matched_score: 10 },
         { psychologist_id: '4', name: 'test 3', matched_keywords: ['test'], matched_score: 10 },
        ],
+
+      service: ModelService.getInstance(),
       
       success: null,          // flag to trigger success info
       loading: true,          // flag to trigger loading
@@ -62,51 +66,34 @@ class DocumentViewer extends Component {
     }, this.getDocument)
   }
 
-  async fetch(method, endpoint, body) {
-    try {
-      this.setState({
-        loading: true
-      })
-
-      let response = await fetch(`${ API }/api${ endpoint }`, {
-        method,
-        body: JSON.stringify(body),
-        headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-        },
-      });
-
-      this.setState({
-        loading: false
-      })
-
-      if(response.ok === false) {
-        console.error(response)
-        this.setState({
-          error: { message: "Error when talking with API. Error message: " + response.statusText}
-        })
-
-        return response
-      }
-
-      response = await response.json();
-      return response.document
-    } catch (error) {
-      console.error(error);
-      this.setState({ error });
-    }
-  }
-
   async getDocument() {
+    let document = null;
+
+    try {
+      document = await this.state.service.getDocument(this.state.documentId) || []
+    }
+    catch {
+      this.setState({
+        error: { message: "Error getting document" }
+      })
+    }
+
     this.setState({
-      document: (await this.fetch('get', '/documents/' + this.state.documentId)) || []
+      document: document,
+      loading: false
     })
   }
 
   async handleReexecution() {
     if (window.confirm(`Are you sure you reexecute the match making process for the given document?`)) {
-      await this.fetch('get', '/documents/' + this.state.documentId + "/reexecute")
+      try {
+        await this.state.service.reexecuteDocument(this.state.documentId);
+      }
+      catch {
+        this.setState({
+          error: { message: "Error getting documents" }
+        })
+      }
 
       if(!this.state.error) {
         this.setState({

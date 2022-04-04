@@ -71,6 +71,18 @@ services:
       - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.name=StickyCookie
       - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.secure=true
 
+  psychmatch-spacy:
+    image: jgontrum/spacyapi:en_v2
+    networks:
+      - psychmatch
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
 networks:
   traefik-public:
     external: true

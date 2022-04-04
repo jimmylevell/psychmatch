@@ -26,8 +26,12 @@
     "express": "^4.17.3",
     "keyword-extractor": "^0.0.21",
     "mongoose": "^6.2.3",
+    "morgan": "^1.10.0",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.15",
+    "passport": "^0.5.2",
+    "passport-azure-ad": "^4.3.1",
+    "swagger-ui-express": "^4.3.0",
     "uuid": "^8.3.2",
     "uuidv4": "^6.2.8"
   }

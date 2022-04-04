@@ -9,6 +9,8 @@ import {
 import AddIcon from '@material-ui/icons/Add';
 import { compose } from 'recompose';
 
+import { ModelService } from '../service';
+
 import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar'
@@ -33,6 +35,8 @@ class DocumentUploadComponent extends Component {
     this.state = {      
         document: '',
 
+        service: ModelService.getInstance(),
+
         loading: true,                   // flag for displaying loading bar
         success: null,                   // flag for displaying success messages
         error: null,                     // flag for displaying error messages
@@ -46,43 +50,6 @@ class DocumentUploadComponent extends Component {
     this.setState({
       loading: false
     })
-  }
-
-  async fetch(method, endpoint, body) {
-    try {
-      this.setState({
-        loading: true,
-      })
-
-      const response = await fetch(`${ API }/api${ endpoint }`, {
-        method,
-        body: body && JSON.stringify(body),
-        headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-        },
-      });
-
-      this.setState({
-        loading: false
-      })
-
-      if(response.ok === false) {
-        console.error(response)
-        this.setState({
-          error: { message: "Error when talking with API. Error message: " + response.statusText}
-        })
-
-        return response
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-      this.setState({ 
-        error: error 
-      });
-    }
   }
 
   handleChange = (evt) => {
@@ -102,7 +69,14 @@ class DocumentUploadComponent extends Component {
         document: this.state.document
       }
 
-      await this.fetch('post', "/documents", postData)
+      try {
+        await this.state.service.newDocument(postData)
+      }
+      catch {
+        this.setState({
+          error: { message: "Error getting uploading document" }
+        })
+      }  
 
       this.setState({
         document: '',

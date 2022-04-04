@@ -11,6 +11,7 @@ import {
 import { compose } from 'recompose';
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import { AuthenticatedTemplate, } from "@azure/msal-react";
 
 import Help from './help'
 
@@ -68,38 +69,40 @@ class AppHeader extends Component {
   render() {
     const { classes } = this.props;
     
+    
     return (
-    <AppBar position="static" className={ classes.header }>
-      <Toolbar className={ classes.toolBar }>
-        <Button color="inherit" component={ Link } to="/">
-          <FeedbackIcon/>
-          <Typography variant="h6" color="inherit">
-            Psychmatch 
-          </Typography>
+      <AppBar position="static" className={ classes.header }>
+        <Toolbar className={ classes.toolBar }>
+          <AuthenticatedTemplate>
+            <Button color="inherit" component={ Link } to="/">
+              <FeedbackIcon/>
+              <Typography variant="h6" color="inherit">
+                Psychmatch 
+              </Typography>
+            </Button>
+
+            {/* link collection */}
+            <Box display='flex' flexGrow={ 1 }>
+                {/* whatever is on the left side */}
+              <Link className={ classes.link } to="/upload">Upload</Link>
+              <Link className={ classes.link } to="/documents">Documents</Link>
+              <Link className={ classes.link } to="/psychologists">Psychologists</Link>
+            </Box>
+          </AuthenticatedTemplate>
+        </Toolbar>       
+
+        <Button 
+          onClick={ this.handleChange }
+          className={ classes.headerButton }
+        >
+          <HelpOutlineIcon 
+            color="secondary"
+            aria-label="add"
+            className={ classes.helpIcon }
+          />
         </Button>
-
-        {/* link collection */}
-        <Box display='flex' flexGrow={ 1 }>
-            {/* whatever is on the left side */}
-          <Link className={ classes.link } to="/upload">Upload</Link>
-          <Link className={ classes.link } to="/documents">Documents</Link>
-
-          <Link className={ classes.link } to="/psychologists">Psychologists</Link>
-        </Box>
-      </Toolbar>
-
-      <Button 
-        onClick={ this.handleChange }
-        className={ classes.headerButton }
-      >
-        <HelpOutlineIcon 
-          color="secondary"
-          aria-label="add"
-          className={ classes.helpIcon }
-        />
-      </Button>
-      <Help handleChange={ this.handleChange } showModal={ this.state.showHelp }/>
-    </AppBar>
+        <Help handleChange={ this.handleChange } showModal={ this.state.showHelp }/>
+      </AppBar>
     )
   }
 }

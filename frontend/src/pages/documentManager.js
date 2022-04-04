@@ -18,12 +18,13 @@ import ShareIcon from '@material-ui/icons/Share';
 import { orderBy, filter } from 'lodash';
 import { compose } from 'recompose';
 
+import { ModelService } from '../service';
+
 import LoadingBar from '../components/loadingBar';
 import InfoSnackbar from '../components/infoSnackbar';
 import ErrorSnackbar from '../components/errorSnackbar';
 
 const MAX_LENGTH_OF_CONTENT_PREVIEW = 100
-const API = process.env.REACT_APP_BACKEND_URL;
 const styles = theme => ({
   documentsView: {
     whiteSpace: "inherit",
@@ -52,6 +53,8 @@ class DocumentManager extends Component {
       query: "",
       documents: "",
 
+      service: ModelService.getInstance(),
+
       loading: true,
       success: null,
       error: null,
@@ -62,43 +65,18 @@ class DocumentManager extends Component {
     this.getDocuments();
   }
 
-  async fetch(method, endpoint, body) {
-    try {
-      this.setState({
-        loading: true
-      })
-
-      let response = await fetch(`${ API }/api${ endpoint }`, {
-        method,
-        body: body,
-      });
-
-      this.setState({
-        loading: false
-      })
-
-      if(response.ok === false) {
-        console.error(response)
-        this.setState({
-          error: { message: "Error when talking with API. Error message: " + response.statusText}
-        })
-
-        return response
-      }
-
-      response = await response.json();
-      return response.documents
-    } catch (error) {
-      console.error(error);
-
-      this.setState({ 
-        error: { message: "Couldn't talk with api. API error: " + error}
-       });
-    }
-  }
-
   async getDocuments() {
-    let documents = await this.fetch('get', '/documents')
+    let documents
+
+    try {
+      documents = await this.state.service.getDocuments();
+      documents = documents.documents
+    }
+    catch {
+      this.setState({
+        error: { message: "Error getting documents" }
+      })
+    }
 
     this.setState({ 
       loading: false, 

@@ -18,6 +18,8 @@ import moment from 'moment';
 import { orderBy, filter } from 'lodash';
 import { compose } from 'recompose';
 
+import { ModelService } from '../service';
+
 import PsychologistEditor from '../components/psychologistEditor';
 import ErrorSnackbar from '../components/errorSnackbar';
 import LoadingBar from '../components/loadingBar'
@@ -55,6 +57,8 @@ class PsychologistManager extends Component {
       query: "",
       psychologists: [],
 
+      service: ModelService.getInstance(),
+
       success: null,
       loading: false,
       error: null,
@@ -65,41 +69,8 @@ class PsychologistManager extends Component {
     this.getPsychologists();
   }
 
-  async fetch(method, endpoint, body) {
-    this.setState({loading: true})
-
-    try {
-      const response = await fetch(`${ API }/api${ endpoint }`, {
-        method,
-        body: body && JSON.stringify(body),
-        headers: {
-          'content-type': 'application/json',
-          accept: 'application/json',
-        },
-      });
-
-      this.setState({ loading: false })
-
-      if(response.ok && (response.status === 201 || response.status === 200)) {
-        return await response.json();
-      } else {
-        console.error(response.status)
-        this.setState({
-          error: { message: "Error when communicating with backend: " + response.statusText }
-        })
-      }
-    } catch (error) {
-      console.error(error);
-
-      this.setState({ 
-        error: error,
-        loading: false 
-      });
-    }
-  }
-
   getPsychologists() {
-    this.fetch('get', '/psychologists')
+    this.state.service.getPsychologists()
       .then(psychologists => {
         this.setState({
             psychologists: psychologists.psychologists || [] 
@@ -116,10 +87,17 @@ class PsychologistManager extends Component {
       translate_keywords: translate_keywords
     }
 
-    if (id) {
-      await this.fetch('put', `/psychologists/${ id }`, postData);
-    } else {
-      await this.fetch('post', '/psychologists', postData);
+    try {
+      if (id) {
+        await this.service.state.updatePsychologist(id, postData);
+      } else {
+        await this.service.state.newPsychologist(postData);
+      }
+    }
+    catch {
+      this.setState({
+        error: { message: "Error saving documents" }
+      })
     }
 
     this.getPsychologists();
@@ -131,7 +109,14 @@ class PsychologistManager extends Component {
 
   async deletePsychologist(psychologist) {
     if (window.confirm(`Are you sure you want to delete "${ psychologist.name }"`)) {
-      await this.fetch('delete', `/psychologists/${ psychologist._id }`);
+      try {
+        await this.state.service.deletePsychologist(psychologist._id)
+      }
+      catch {
+        this.setState({
+          error: { message: "Error deleting psychologist" }
+        })
+      }
 
       if(this.state.error === null) {
         this.setState({
