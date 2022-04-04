@@ -1,6 +1,6 @@
 require('dotenv').config({ path: '.env' });
 
-const dockerSecret = require('../src/utils/dockerSecret');
+const dockerSecret = require('../src/utils/dockersecret');
 
 module.exports = {
   "development": {
