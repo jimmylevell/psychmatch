@@ -4,14 +4,10 @@ import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import App from './components/App';
 import reportWebVitals from './reportWebVitals';
-import { PublicClientApplication } from "@azure/msal-browser";
-import { msalConfig } from "./authConfig";
-
-export const msalInstance = new PublicClientApplication(msalConfig);
 
 ReactDOM.render(
   <BrowserRouter>
-    <App msalInstance={ msalInstance }/>
+    <App/>
   </BrowserRouter>,
   document.getElementById('root')
 );

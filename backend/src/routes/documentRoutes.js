@@ -21,7 +21,7 @@ function processDocument(document) {
       resolve(document)
     })
     .catch(err => {
-      console.log("Issue preprocessing file: " + err);
+      console.error("Issue preprocessing file: " + err);
       reject(err);
     })
   })
@@ -51,14 +51,14 @@ router.post('/', (req, res, next) => {
       })  
     })
     .catch(err => {
-      console.log(err)
+      console.error(err)
       res.status(500).json({
         error: err
       });
     })
   })
   .catch(err => {
-    console.log(err)
+    console.error(err)
     res.status(500).json({
       error: err
     });
@@ -75,7 +75,7 @@ router.get("/", (req, res, next) => {
     });
   })
   .catch(err => {
-    console.log(err)
+    console.error(err)
     res.status(500).json({
       error: err
     });
@@ -94,7 +94,7 @@ router.get("/:id", (req, res, next) => {
     });
   })
   .catch(err => {
-    console.log(err)
+    console.error(err)
     res.status(500).json({
       error: err
     });
@@ -113,7 +113,7 @@ router.put("/:id", (req, res, next) => {
     });
   })
   .catch(err => {
-    console.log(err)
+    console.error(err)
     res.status(500).json({
       error: err
     });
@@ -132,7 +132,7 @@ router.delete("/:id", (req, res, next) => {
     });
   })
   .catch(err => {
-    console.log(err)
+    console.error(err)
     res.status(500).json({
       error: err
     });
@@ -159,14 +159,14 @@ router.get('/:id/reexecute', (req, res, next) => {
       })  
     })
     .catch(err => {
-      console.log(err)
+      console.error(err)
       res.status(500).json({
         error: err
       });
     })
   })
   .catch(err => {
-    console.log(err)
+    console.error(err)
     res.status(500).json({
       error: err
     });

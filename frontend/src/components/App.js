@@ -5,6 +5,9 @@ import {
   withStyles
 } from '@material-ui/core';
 import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import { PublicClientApplication } from "@azure/msal-browser";
+import { msalConfig } from "../authConfig";
+
 
 import AppHeader from './appHeader';
 import Login from '../pages/login';
@@ -12,6 +15,8 @@ import DocumentUpload from '../pages/documentUpload';
 import DocumentManager from '../pages/documentManager';
 import DocumentViewer from '../pages/documentViewer';
 import PsychologistsManager from '../pages/psychologistsManager';
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 const styles = theme => ({
   main: {
@@ -38,7 +43,8 @@ class App extends Component {
   }
 
   render() {
-    const { classes, msalInstance } = this.props;
+    const { classes } = this.props;
+
     return (
       <MsalProvider instance={ msalInstance }>
         <Fragment>

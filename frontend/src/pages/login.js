@@ -58,17 +58,24 @@ class Login extends Component {
               function (response) {
 //                  console.log(response)
               }).catch(function (error) {
-                  console.log(error);
+                  console.error(error);
               });
           } else {
               console.error(error);   
           }
           
-          console.log(error)
+          console.error(error)
         })
       }
     } else {
+      try{
         msalInstance.loginPopup()
+      }
+      catch(error) {
+        if (error.errorCode !== "interaction_in_progress") {
+          console.error(error);
+        }
+      }
     }
   }
 

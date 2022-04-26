@@ -82,8 +82,6 @@ class DocumentManager extends Component {
       })
     }
 
-    console.log(documents)
-
     this.setState({ 
       loading: false, 
       documents: documents || [] 
