@@ -25,8 +25,6 @@ import ErrorSnackbar from '../components/errorSnackbar';
 import LoadingBar from '../components/loadingBar'
 import InfoSnackbar from '../components/infoSnackbar'
 
-const API = process.env.REACT_APP_BACKEND_URL;
-
 const styles = theme => ({
   psychologistsDiv: {
     marginTop: theme.spacing(2),

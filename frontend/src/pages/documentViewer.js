@@ -18,7 +18,6 @@ import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar';
 import PsychologistCard from '../components/psychologistCard';
 
-const API = process.env.REACT_APP_BACKEND_URL;
 const styles = theme => ({
   title: {
     marginBottom: theme.spacing(1)

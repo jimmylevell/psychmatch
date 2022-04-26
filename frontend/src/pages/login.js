@@ -1,14 +1,7 @@
 import React, {Component} from 'react';
-import {
-  withStyles,
-} from '@material-ui/core';
-import { compose } from 'recompose';
 import { withMsal } from "@azure/msal-react";
 
 import { tokenRequest } from "../authConfig";
-
-const styles = theme => ({
-})
 
 function isTokenExpired(token) {
   const base64Url = token.split(".")[1];
@@ -47,7 +40,7 @@ class Login extends Component {
   callLogin() {
     const msalInstance = this.props.msalContext.instance;
     const msalAccounts = this.props.msalContext.accounts;
-    const msalInProgress = this.context.inProgress;
+    const msalInProgress = this.props.msalContext.inProgress;
   
     const request = {
       ...tokenRequest,
@@ -55,7 +48,7 @@ class Login extends Component {
     };
   
     if (msalAccounts.length > 0) {
-      if((!this.state.token || isTokenExpired(this.state.token) && msalInProgress !== true)) {
+      if(((!this.state.token || isTokenExpired(this.state.token)) && msalInProgress !== true)) {
         msalInstance.acquireTokenSilent(request).then((response) => {
           this.setState({ token: response.accessToken }, () => {this.props.tokenUpdated(response.accessToken)})
         }).catch((error) => {

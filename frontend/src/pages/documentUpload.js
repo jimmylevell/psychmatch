@@ -15,8 +15,6 @@ import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar'
 
-const API = process.env.REACT_APP_BACKEND_URL;
-
 const styles = theme => ({
   contentInput: {
     width: "90%",

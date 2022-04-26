@@ -122,7 +122,7 @@ class PsychologistEditor extends Component {
   }
   
   render() {
-    const { classes, history, errorMessage} = this.props;
+    const { classes, history } = this.props;
 
     return (
       <Modal
