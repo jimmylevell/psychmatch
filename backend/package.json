@@ -27,7 +27,7 @@
     "keyword-extractor": "^0.0.21",
     "mongoose": "^6.3.1",
     "morgan": "^1.10.0",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.2.3",
     "nodemon": "^2.0.15",
     "passport": "^0.5.2",
     "passport-azure-ad": "^4.3.1",
