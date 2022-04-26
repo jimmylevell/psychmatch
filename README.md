@@ -20,8 +20,8 @@ For the configuration of the app the following environment variable can be used:
 
     PORT=3000
 
-    # marian DB connection string
-    MARIAN_DB_STRING=mongodb://mongoadmin:password@localhost:27017/psychmatch?authSource=admin
+    # mongo db DB connection string
+    MONGO_DB_STRING=mongodb://mongoadmin:password@localhost:27017/psychmatch?authSource=admin
 
 ## Frontend
 For the configuration of the app the following environment variable can be used:  

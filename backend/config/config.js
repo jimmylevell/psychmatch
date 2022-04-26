@@ -30,7 +30,7 @@ module.exports = {
     }
   },
   "test": {
-    "MONGO_DB_STRING": "mongodb://localhost:27017/marian",
+    "MONGO_DB_STRING": "mongodb://localhost:27017/documents",
     "deepl": {
       "API": "https://api-free.deepl.com/v2/translate",
       "KEY": process.env.DEEPL_API_KEY || "",
