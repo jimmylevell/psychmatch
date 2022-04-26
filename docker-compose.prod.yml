@@ -84,6 +84,7 @@ services:
   psychmatch-spacy:
     image: jgontrum/spacyapi:en_v2
     networks:
+      - traefik-public
       - psychmatch
     deploy:
       replicas: 3
@@ -92,6 +93,24 @@ services:
         delay: 10s
       restart_policy:
         condition: on-failure
+      labels:
+      - traefik.enable=true # enable traefik
+      - traefik.docker.network=traefik-public # put it in the same network as traefik
+      - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
+      - traefik.http.routers.psychmatchspacy.rule=Host(`spacy.psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
+      - traefik.http.routers.psychmatchspacy.entrypoints=http
+      - traefik.http.routers.psychmatchspacy.middlewares=https-redirect
+      - traefik.http.middlewares.psychmatchspacy.redirectscheme.scheme=https # redirect traffic to https
+      - traefik.http.middlewares.psychmatchspacy.redirectscheme.permanent=true # redirect traffic to https
+      - traefik.http.routers.psychmatchspacy-secured.rule=Host(`spacy.psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
+      - traefik.http.routers.psychmatchspacy-secured.entrypoints=https
+      - traefik.http.routers.psychmatchspacy-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
+      - traefik.http.services.psychmatchspacy-secured.loadbalancer.server.port=80 # ask Traefik to search for port service container
+      
+      # redundancy required configuration - allowing load balancer to handle multiple replicas
+      - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky=true
+      - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky.cookie.name=StickyCookie
+      - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky.cookie.secure=true
 
 networks:
   traefik-public:
