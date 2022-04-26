@@ -1,7 +1,5 @@
 require('dotenv').config({ path: '.env' });
 
-const path = require('path');
-const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const express = require('express');
@@ -19,7 +17,6 @@ const port = process.env.BACKEND_PORT || 3000;
 const swaggerDocument = require('./swagger');
 const documentApi = require('./routes/documentRoutes')
 const psychologistApi = require('./routes/psychologistRoutes')
-const dockerSecret = require('./utils/dockersecret');
 
 // Azure AD authentication
 const options = {
