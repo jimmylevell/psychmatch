@@ -26,3 +26,8 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "weekly"
+
+  - package-ecosystem: "docker"
+    directory: "/nlp-model"
+    schedule:
+      interval: "weekly"

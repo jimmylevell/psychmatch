@@ -20,21 +20,37 @@ services:
     networks:
       - psychmatch
       
-  psychmatch-frontend:
+  # psychmatch-frontend:
+  #   build: 
+  #     context: frontend
+  #     target: psychmatch-frontend-dev
+  #     dockerfile: Dockerfile
+  #   ports: 
+  #     - "3100:3100"
+  #   restart: always
+  #   volumes:
+  #     # Mount the root folder that contains .git
+  #     - .:/workspace:cached
+  #     # mount code
+  #     - ./frontend:/srv/app
+  #     # speeds up the compiling
+  #     - /srv/app/node_modules
+  #   networks:
+  #     - psychmatch
+
+  psychmatch-nlp-model:
     build: 
-      context: frontend
-      target: psychmatch-frontend-dev
+      context: nlp-model
+      target: psychmatch-nlp-model-dev
       dockerfile: Dockerfile
     ports: 
-      - "3100:3100"
+      - "5000:5000"
     restart: always
     volumes:
       # Mount the root folder that contains .git
       - .:/workspace:cached
       # mount code
-      - ./frontend:/srv/app
-      # speeds up the compiling
-      - /srv/app/node_modules
+      - ./nlp-model:/usr/src/app
     networks:
       - psychmatch
 

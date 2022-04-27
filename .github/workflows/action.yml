@@ -55,6 +55,15 @@ jobs:
           tags: |
             ghcr.io/jimmylevell/psychmatch/psychmatch_frontend:latest
       -
+        name: Build psychmatch nlp-model docker
+        uses: docker/build-push-action@v2
+        with:
+          context: ./nlp_model
+          target: psychmatch-nlp-model-deploy
+          load: true
+          tags: |
+            ghcr.io/jimmylevell/psychmatch/psychmatch_nlp_model:latest
+      -
         name: Push psychmatch backend docker
         uses: docker/build-push-action@v2
         with:
@@ -72,6 +81,15 @@ jobs:
           target: psychmatch-frontend-deploy
           tags: |
             ghcr.io/jimmylevell/psychmatch/psychmatch_frontend:latest
+      -
+        name: Push psychmatch nlp-model docker
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          context: ./nlp_model
+          target: psychmatch-nlp-model-deploy
+          tags: |
+            ghcr.io/jimmylevell/psychmatch/psychmatch_nlp_model:latest
       -
         name: Deploy to swarm
         uses: wshihadeh/docker-deployment-action@v2
