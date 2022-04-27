@@ -87,7 +87,7 @@ services:
       - traefik-public
       - psychmatch
     deploy:
-      replicas: 3
+      replicas: 1
       update_config:
         parallelism: 1
         delay: 10s
@@ -118,7 +118,7 @@ services:
       - traefik-public
       - psychmatch
     deploy:
-      replicas: 3
+      replicas: 2
       update_config:
         parallelism: 1
         delay: 10s
