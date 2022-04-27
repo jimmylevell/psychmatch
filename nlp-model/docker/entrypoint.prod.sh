@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # publish app
-python src/index.py
+python /usr/src/app/index.py
