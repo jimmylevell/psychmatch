@@ -9,17 +9,23 @@ google_news_vectors = gensim.downloader.load('word2vec-google-news-300')
 # Create FLASK app
 app = Flask(__name__)
 
-# Example Call http://127.0.0.1:5000/similarity?word_x=test&word_y=testing
+# Example Call 
+# curl -i "http://127.0.0.1:5000/similarity?word_x=test&word_y=testing"
 @app.route('/similarity', methods=['GET'])
 def word2vec():
-    word_x = request.args['word_x']
-    word_y = request.args['word_y']
+    similarity = 0
+    word_x = request.args.get('word_x', None)
+    word_y = request.args.get('word_y', None)
+
+    # only return similarity if two words given
+    if word_x and word_y:
+        similarity = str(google_news_vectors.similarity(word_x, word_y))
 
     return jsonify({
         "word_x": word_x,
         "word_y": word_y,
-        "similarity": str(google_news_vectors.similarity(word_x, word_y))
+        "similarity": similarity
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
