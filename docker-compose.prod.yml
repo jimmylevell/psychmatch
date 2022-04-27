@@ -136,7 +136,7 @@ services:
       - traefik.http.routers.psychmatchnlpmodel-secured.rule=Host(`nlp-model.psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
       - traefik.http.routers.psychmatchnlpmodel-secured.entrypoints=https
       - traefik.http.routers.psychmatchnlpmodel-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
-      - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.server.port=80 # ask Traefik to search for port service container
+      - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.server.port=5000 # ask Traefik to search for port service container
       
       # redundancy required configuration - allowing load balancer to handle multiple replicas
       - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.sticky=true
