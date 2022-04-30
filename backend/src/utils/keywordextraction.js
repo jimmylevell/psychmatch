@@ -5,8 +5,8 @@ keywordextraction.extract = function extract(text) {
   keywords =  keyword_extractor.extract(text, {
     language:"english",
     remove_digits: true,
-    return_changed_case:true,
-    remove_duplicates: false
+    return_changed_case: true,
+    remove_duplicates: true
   });
 
   return keywords;

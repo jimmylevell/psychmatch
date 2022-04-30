@@ -17,8 +17,8 @@ def word2vec():
     word_x = request.args.get('word_x', None)
     word_y = request.args.get('word_y', None)
 
-    # only return similarity if two words given
-    if word_x and word_y:
+    # only return similarity if two words given and word is present in model
+    if word_x and word_y and word_x in google_news_vectors and word_y in google_news_vectors:
         similarity = str(google_news_vectors.similarity(word_x, word_y))
 
     return jsonify({

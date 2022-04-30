@@ -3,7 +3,7 @@ require('dotenv').config({ path: '.env' });
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const express = require('express');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose');  
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require("morgan");

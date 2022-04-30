@@ -9,6 +9,9 @@ module.exports = {
       "API": "https://api-free.deepl.com/v2/translate",
       "KEY": process.env.DEEPL_API_KEY || "",
     },
+    "nlpmodel": {
+      "API": "http://psychmatch-nlp-model:5000"
+    },
     "SAML": {
       "credentials": {
           "tenantID": process.env.AZURE_TENANT_ID || "",
@@ -35,6 +38,9 @@ module.exports = {
       "API": "https://api-free.deepl.com/v2/translate",
       "KEY": process.env.DEEPL_API_KEY || "",
     },
+    "nlpmodel": {
+      "API": "http://psychmatch-nlp-model:5000"
+    },
     "SAML": {
       "credentials": {
           "tenantID": process.env.AZURE_TENANT_ID || "",
@@ -60,6 +66,9 @@ module.exports = {
     "deepl": {
       "API": "https://api-free.deepl.com/v2/translate",
       "KEY": dockerSecret.read('DEEPL_API_KEY') || "",
+    },
+    "nlpmodel": {
+      "API": "https://nlp-model.psychmatch.app.levell.ch"
     },
     "SAML": {
       "credentials": {

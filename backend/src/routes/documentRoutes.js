@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const deepl = require('../utils/deepl.js');
 const keywordextraction = require('../utils/keywordextraction.js');
+const matchMaking = require('../utils/matchMaking.js');
 
 let Document = require('../database/models/Document');
+let Psychologist = require('../database/models/Psychologist');
 
 const router = express.Router();
 
@@ -18,6 +20,13 @@ function processDocument(document) {
       document.keywords_cz = keywordextraction.extract(document.content_cz)
     })
     .then(() => {
+      return Psychologist.find()
+    })
+    .then((psychologists) => {
+      return matchMaking.match(psychologists, document)
+    })
+    .then((response) => {
+      console.log(response)
       resolve(document)
     })
     .catch(err => {

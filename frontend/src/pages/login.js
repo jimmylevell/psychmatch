@@ -30,7 +30,9 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    this.callLogin()
+    // initial login
+    const msalInstance = this.props.msalContext.instance;
+    msalInstance.loginPopup()
   }
 
   componentDidUpdate() {
@@ -66,15 +68,6 @@ class Login extends Component {
           
           console.error(error)
         })
-      }
-    } else {
-      try{
-        msalInstance.loginPopup()
-      }
-      catch(error) {
-        if (error.errorCode !== "interaction_in_progress") {
-          console.error(error);
-        }
       }
     }
   }
