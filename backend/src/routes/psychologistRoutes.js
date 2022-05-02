@@ -129,4 +129,20 @@ router.delete("/:id", (req, res, next) => {
   });
 });
 
+router.put('/:id/keywords', (req, res, next) => {
+  let psychologistId = req.params.id
+
+  Psychologist.findOne({ '_id': psychologistId})
+  .then(psychologist => {
+    psychologist.proposed_keywords = psychologist.proposed_keywords.concat(req.body)
+    return psychologist.save()
+  })
+  .then(psychologist => {
+    res.status(200).json({
+      message: "Psychologist keywords updated successfully!",
+      psychologist: psychologist
+    });
+  })
+})
+
 module.exports = router;

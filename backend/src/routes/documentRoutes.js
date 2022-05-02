@@ -26,7 +26,7 @@ function processDocument(document) {
       return matchMaking.match(psychologists, document)
     })
     .then((response) => {
-      console.log(response)
+      document.matched_psychologists = response
       resolve(document)
     })
     .catch(err => {

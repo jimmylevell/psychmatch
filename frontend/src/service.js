@@ -179,6 +179,18 @@ export class ModelService {
     }
   }
 
+  // add keywords to psychologist
+  addKeywordsToPsychologist(psychologistId, keywords) {
+    try {
+      return this.fetch('PUT', `/psychologists/${psychologistId}/keywords`, keywords).then((response) => {
+        return response;
+      })
+    }
+    catch(error) {
+      throw new Error(String(error));
+    }
+  }
+
   // delete psychologist
   async deletePsychologist(psychologistId) {
     try {

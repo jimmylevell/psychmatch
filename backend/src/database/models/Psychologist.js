@@ -17,6 +17,9 @@ const psychologistSchema = new Schema({
   keywords_en: {
     type: Array
   },
+  proposed_keywords: {
+    type: Array
+  }
 }, {
   collection: 'psychologist',
   timestamps: true

@@ -90,6 +90,8 @@ class PsychologistManager extends Component {
     }
 
     try {
+      this.setState({loading: true})
+
       if (id) {
         await this.state.service.updatePsychologist(id, postData);
       } else {
@@ -98,9 +100,12 @@ class PsychologistManager extends Component {
     }
     catch {
       this.setState({
-        error: { message: "Error saving documents" }
+        error: { message: "Error saving documents" },
+        loading: false
       })
     }
+
+    this.setState({loading: false})
 
     this.getPsychologists();
 

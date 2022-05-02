@@ -19,12 +19,12 @@ matchMaking.match = function translate(psychologists, document) {
           document.keywords_en.forEach(document_keyword => {
             // word_x = psychologist keyword
             // word_y = document keyword
-            requests.push({ "psychologist": psychologist.name, "request": fetch(API + "/similarity" + '?word_x=' + keyword + '&word_y=' + document_keyword)})
+            console.log(API + "/similarity" + '?word_x=' + keyword + '&word_y=' + document_keyword)
+            requests.push({ "psychologist": psychologist._id, "request": fetch(API + "/similarity" + '?word_x=' + decodeURI(keyword) + '&word_y=' + decodeURI(document_keyword))})
           })
       })
     })
 
-    let summary = []
     Promise.all(requests.map(e => e.request))
     .then((responses) => {
       return responses.map(e => e.json())
@@ -33,6 +33,8 @@ matchMaking.match = function translate(psychologists, document) {
       return Promise.all(responses)
     })
     .then(responses => {
+      let summary = []
+
       responses.map((element, i) => {
         // create a new element for every psychologist with all matched keywords
         if(summary[requests[i].psychologist]) {
@@ -49,9 +51,24 @@ matchMaking.match = function translate(psychologists, document) {
           }]
         }
       })
+
+      return summary
     })
-    .then(() => {
-      resolve(summary)
+    .then((responses) => {
+      let output = []
+      Object.keys(responses).forEach(element => {
+        console.log(responses[element])
+        output.push({
+          psychologist_id: element,
+          matched_keywords: responses[element],
+          match_score: responses[element].reduce((a, b) => a + parseFloat(b.score), 0)
+        })
+      })
+
+      return output
+    })
+    .then((responses) => {
+      resolve(responses)
     })
   })
 };

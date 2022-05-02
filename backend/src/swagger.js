@@ -76,7 +76,7 @@ const swaggerDocument = {
                     "keywords_en": {
                         type: "array",
                     },
-                    "matched_psychologist": {
+                    "matched_psychologists": {
                         type: "array",
                     }
                 }

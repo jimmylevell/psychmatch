@@ -17,7 +17,7 @@ const documentSchema = new Schema({
   keywords_en: {
     type: Array
   },
-  matched_psychologist: [
+  matched_psychologists: [
     {
       psychologist_id: String,
       matched_keywords: Array,

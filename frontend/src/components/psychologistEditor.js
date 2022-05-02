@@ -67,6 +67,7 @@ class PsychologistEditor extends Component {
         website: psychologist.website,
         keywords_cz: psychologist.keywords_cz,
         keywords_en: psychologist.keywords_en,
+        proposed_keywords: psychologist.proposed_keywords,
       })
     }
   }
@@ -175,6 +176,11 @@ class PsychologistEditor extends Component {
               value={ this.state.keywords_en }
               onAdd={ (chip) => this.handleAddKeyword(chip, "EN") }
               onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "EN") }
+            />
+
+            <ChipInput
+              label="Proposed Keywords"
+              value={ this.state.proposed_keywords }
             />
 
             <FormControlLabel

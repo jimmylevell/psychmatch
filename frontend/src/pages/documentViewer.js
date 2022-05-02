@@ -39,12 +39,7 @@ class DocumentViewer extends Component {
       documentId: null,
       document: null,
 
-      psychologists: [ 
-        { psychologist_id: '1', name: 'test', website: 'https://google.com', matched_keywords: ['test'], matched_score: 10 },
-        { psychologist_id: '2', name: 'test 1', matched_keywords: ['test'], matched_score: 10 },
-        { psychologist_id: '3', name: 'test 2', matched_keywords: ['test'], matched_score: 10 },
-        { psychologist_id: '4', name: 'test 3', matched_keywords: ['test'], matched_score: 10 },
-       ],
+      psychologists: [],
 
       service: null,
       
@@ -54,6 +49,7 @@ class DocumentViewer extends Component {
     };
 
     this.handleReexecution = this.handleReexecution.bind(this);
+    this.addKeywordsToPsychologist = this.addKeywordsToPsychologist.bind(this)
   }
 
   componentDidMount = () => {
@@ -70,11 +66,14 @@ class DocumentViewer extends Component {
     let document = null;
 
     try {
+      this.setState({ loading: true })
       document = await this.state.service.getDocument(this.state.documentId) || []
+      console.log(document)
     }
     catch {
       this.setState({
-        error: { message: "Error getting document" }
+        error: { message: "Error getting document" },
+        loading: false
       })
     }
 
@@ -87,24 +86,38 @@ class DocumentViewer extends Component {
   async handleReexecution() {
     if (window.confirm(`Are you sure you reexecute the match making process for the given document?`)) {
       try {
+        this.setState({ loading: true })
+
         await this.state.service.reexecuteDocument(this.state.documentId);
       }
       catch {
         this.setState({
-          error: { message: "Error getting documents" }
+          error: { message: "Error getting documents" },
+          loading: false
         })
       }
 
       if(!this.state.error) {
         this.setState({
-          success: "Document rexecuted completed successfully"
+          success: "Document rexecuted completed successfully",
+          loading: false
         }, this.getDocument)
       }
     }
   }
 
+  addKeywordsToPsychologist(id, keywords) {    
+    this.state.service.addKeywordsToPsychologist(id, keywords)
+    .then(() => {
+      this.setState({
+        success: "Successfully added the keywords"
+      })
+    })
+  }
+
   render() {
-    const { classes } = this.props
+    const { classes, token } = this.props
+    const addKeywordsToPsychologist = this.addKeywordsToPsychologist
 
     return (
       <Fragment>    
@@ -161,9 +174,16 @@ class DocumentViewer extends Component {
               </Grid>
 
               <Grid container className={ classes.table } spacing={ 3 }>
-                {this.state.psychologists && (
-                  this.state.psychologists.map(function(psychologist) {
-                    return <PsychologistCard key={ psychologist._id } psychologist={ psychologist } />
+                {this.state.document.matched_psychologists && (
+                  this.state.document.matched_psychologists.sort((a, b) => a.match_score - b.match_score).reverse().map(function(match) {
+                    return <PsychologistCard 
+                              key={ match.psychologist_id } 
+                              id={ match.psychologist_id } 
+                              match_score={ match.match_score } 
+                              matched_keywords={ match.matched_keywords} 
+                              token={ token }
+                              addKeywordsToPsychologist={ addKeywordsToPsychologist }
+                            />
                   })
                 )}
               </Grid>

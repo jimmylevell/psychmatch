@@ -63,6 +63,8 @@ class DocumentUploadComponent extends Component {
 
   async onSubmit(evt) {
       evt.preventDefault()
+
+      this.setState({ loading: true })
       
       var postData = {
         document: this.state.document
@@ -79,6 +81,7 @@ class DocumentUploadComponent extends Component {
 
       this.setState({
         document: '',
+        loading: false
       })
 
       if(this.state.error === null) {
