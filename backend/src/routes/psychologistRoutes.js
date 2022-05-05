@@ -11,6 +11,8 @@ function processPsychologist(psychologist, translate_keywords) {
     let keywords = []
     let source_lang = ""
     let target_lang = ""
+    let source_keywords = ""
+    let target_keywords = ""
 
     if(translate_keywords) {
       if(psychologist.keywords_cz.length > 0) {
@@ -65,7 +67,7 @@ router.post('/', (req, res, next) => {
           _id: result._id,
           psychologist: result,
         }
-      })  
+      })
     })
     .catch(err => {
       console.error(err)
@@ -84,7 +86,13 @@ router.get("/", (req, res, next) => {
       message: "Psychologist list retrieved successfully!",
       psychologists: data
     });
-  });
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).json({
+      error: err
+    });
+  })
 });
 
 // get specific psychologist by id
@@ -96,6 +104,12 @@ router.get("/:id", (req, res, next) => {
     res.status(200).json({
       message: "Psychologist retrieved successfully!",
       psychologist: data
+    })
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).json({
+      error: err
     });
   });
 });
@@ -103,7 +117,7 @@ router.get("/:id", (req, res, next) => {
 // update psychologist content based on psychologist id
 router.put("/:id", (req, res, next) => {
   let psychologistId = req.params.id
-  
+
   processPsychologist(req.body, req.body.translate_keywords)
   .then(psychologist => {
     Psychologist.findOneAndUpdate({ '_id': psychologistId}, psychologist)
@@ -113,7 +127,19 @@ router.put("/:id", (req, res, next) => {
         psychologist: psychologist
       });
     })
-  });
+    .catch(err => {
+      console.error(err)
+      res.status(500).json({
+        error: err
+      });
+    })
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).json({
+      error: err
+    });
+  })
 });
 
 // delete psychologist based on id
@@ -126,7 +152,13 @@ router.delete("/:id", (req, res, next) => {
       message: "Psychologist deleted successfully!",
       psychologist: data
     });
-  });
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).json({
+      error: err
+    });
+  })
 });
 
 router.put('/:id/keywords', (req, res, next) => {
@@ -148,6 +180,12 @@ router.put('/:id/keywords', (req, res, next) => {
     res.status(200).json({
       message: "Psychologist keywords updated successfully!",
       psychologist: psychologist
+    });
+  })
+  .catch(err => {
+    console.error(err)
+    res.status(500).json({
+      error: err
     });
   })
 })

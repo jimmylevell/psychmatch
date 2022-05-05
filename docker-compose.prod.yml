@@ -117,6 +117,8 @@ services:
     networks:
       - traefik-public
       - psychmatch
+    environment:
+      NODE_ENV: production
     deploy:
       replicas: 1
       update_config:

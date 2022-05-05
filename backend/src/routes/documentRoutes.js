@@ -25,8 +25,8 @@ function processDocument(document) {
     .then((psychologists) => {
       return matchMaking.match(psychologists, document)
     })
-    .then((response) => {
-      document.matched_psychologists = response
+    .then((result) => {
+      document.matched_psychologists = result
       resolve(document)
     })
     .catch(err => {
@@ -57,7 +57,7 @@ router.post('/', (req, res, next) => {
           _id: result._id,
           document: document,
         }
-      })  
+      })
     })
     .catch(err => {
       console.error(err)
@@ -113,7 +113,7 @@ router.get("/:id", (req, res, next) => {
 // update document content based on document id
 router.put("/:id", (req, res, next) => {
   let documentId = req.params.id
-  
+
   Document.findOneAndUpdate({ '_id': documentId}, req.body)
   .then(data => {
     res.status(200).json({
@@ -165,7 +165,7 @@ router.get('/:id/reexecute', (req, res, next) => {
             document: result,
           }
         })
-      })  
+      })
     })
     .catch(err => {
       console.error(err)

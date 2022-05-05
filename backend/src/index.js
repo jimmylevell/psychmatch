@@ -44,7 +44,7 @@ mongoose.connect(config.MONGO_DB_STRING, {
   console.log('Database sucessfully connected')
 },
   error => {
-    console.log('Database could not be connected: ' + error)
+    console.error('Database could not be connected: ' + error)
   }
 )
 

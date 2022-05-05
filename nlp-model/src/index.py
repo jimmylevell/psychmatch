@@ -1,92 +1,68 @@
 from flask import Flask, jsonify, request
-import gensim
-import gensim.downloader
-import sys
-
-class Logger:
-    def __init__(self, filename, output=False):
-        self.console = sys.stdout
-        self.output = output
-        self.file = None
-        self.set_file(filename)
-
-    def set_file(self, filename):
-        if self.file:
-            self.file.flush()
-            self.file.close()
-        self.file = open(filename, 'w')
-
-    def write(self, message):
-        if self.output:
-            self.console.write(str(message) + '\n')
-        if self.file:
-            self.file.write(str(message) + '\n')
-
-    def flush(self):
-        self.console.flush()
-        if self.file:
-            self.file.flush()
+import os
+from logger import Logger
+from utils import load_nlp_model, get_list_of_existing_words
+from Score import Score
+from Result import Result
 
 logger = Logger("matchmaking.log", output=True)
-
-# Load Model, is already stored locally
-# https://github.com/RaRe-Technologies/gensim-data#models
-google_news_vectors = gensim.downloader.load('glove-twitter-25')
-#google_news_vectors = gensim.downloader.load('word2vec-google-news-300')
+env = os.environ.get('NODE_ENV')
+nlp_model = load_nlp_model()
 
 # Create FLASK app
 app = Flask(__name__)
 
+
 @app.route('/similarities', methods=['POST'])
 def matchMaking():
+    most_important_matches = []
+    result = Result()
+
     # get post data
     jsonData = request.get_json()
     document_keywords = jsonData.get("document_keywords")
     psychologist_keywords = jsonData.get("psychologist_keywords")
 
-    # only return words existing in vector
-    def get_list_of_valid_words(list_of_words):
-        valid_words = []
-
-        for word in list_of_words:
-            if word in google_news_vectors:
-                valid_words.append(word)
-
-        return valid_words
-
     # get existing words in vector
-    overall_score_document_psychologist = 0
-    document_keywords = get_list_of_valid_words(document_keywords)
-    psychologist_keywords = get_list_of_valid_words(psychologist_keywords)
+    document_keywords = get_list_of_existing_words(
+        document_keywords, nlp_model)
+    psychologist_keywords = get_list_of_existing_words(
+        psychologist_keywords, nlp_model)
 
     for document_keyword in document_keywords:
-        max_pair_keyword_score = 0
+        max_pair = Score()
         current_score = 0
 
-        for psychologist_word in psychologist_keywords:
+        for psychologist_keyword in psychologist_keywords:
             # the word2vec model provides a cosine similarity function
-            current_score = google_news_vectors.similarity(
-                document_keyword, psychologist_word)
+            current_score = nlp_model.similarity(
+                document_keyword, psychologist_keyword)
 
             # only add new score if it is bigger than max
-            if max_pair_keyword_score < current_score:
-                max_pair_keyword_score = current_score
-                logger.write("New Best pair, doc_keyword: " + document_keyword + ", psych_keyword: " +
-                             psychologist_word + ", scoring: max_pair_score: " + str(max_pair_keyword_score))
+            if max_pair.score < current_score:
+                max_pair.document_keyword = document_keyword
+                max_pair.psychologist_keyword = psychologist_keyword
+                max_pair.score = current_score
+
+                logger.write("New best pair, doc_keyword: " + max_pair.document_keyword + ", psych_keyword: " +
+                             max_pair.psychologist_keyword + ", scoring: max_pair_score: " + str(max_pair.score))
 
         # add best match of keyword score to the overall document rating, process next keyword
-        overall_score_document_psychologist += max_pair_keyword_score / \
-            (len(psychologist_keywords) + 1)
+        most_important_matches.append(max_pair)
+        result.overall_score += max_pair.score
 
-    logger.write("Matching-Score: " + str(overall_score_document_psychologist))
+    result.most_important_matches = most_important_matches
+    result.overall_score = result.overall_score / \
+        len(result.most_important_matches)
+    logger.write("Matching-Score: " + str(result.overall_score))
 
     # return json
-    return jsonify({
-        "score": str(overall_score_document_psychologist)
-    })
+    return result.toJSON()
 
 # Example Call
 # curl -i "http://127.0.0.1:5000/similarity?word_x=test&word_y=testing"
+
+
 @app.route('/similarity', methods=['GET'])
 def word2vec():
     similarity = 0
@@ -94,14 +70,20 @@ def word2vec():
     word_y = request.args.get('word_y', None)
 
     # only return similarity if two words given and word is present in model
-    if word_x and word_y and word_x in google_news_vectors and word_y in google_news_vectors:
-        similarity = str(google_news_vectors.similarity(word_x, word_y))
+    if word_x and word_y and word_x in nlp_model and word_y in nlp_model:
+        similarity = str(nlp_model.similarity(word_x, word_y))
 
-    return jsonify({
-        "word_x": word_x,
-        "word_y": word_y,
-        "similarity": similarity
-    })
+    return Result(overall_score=similarity,
+                  most_important_matches=Score(document_keyword=word_x, psychologist_keyword=word_y, score=similarity)).toJSON()
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return "<h1>404</h1><p>The resource could not be found.</p>", 404
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    if env == 'production':
+        app.run(host='0.0.0.0', debug=False)
+    else:
+        app.run(host='0.0.0.0', debug=True)

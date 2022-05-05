@@ -1,5 +1,3 @@
-import gensim
-import gensim.downloader
+from utils import load_nlp_model
 
-# https://github.com/RaRe-Technologies/gensim-data#models
-google_news_vectors = gensim.downloader.load('word2vec-google-news-300')
+load_nlp_model()

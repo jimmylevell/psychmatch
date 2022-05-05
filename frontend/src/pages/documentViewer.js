@@ -171,11 +171,12 @@ class DocumentViewer extends Component {
 
               <Grid container className={ classes.table } spacing={ 3 }>
                 {this.state.document.matched_psychologists && (
-                  this.state.document.matched_psychologists.sort((a, b) => a.score - b.score).reverse().map(function(match) {
+                  this.state.document.matched_psychologists.sort((a, b) => b.score - a.score).map(function(match) {
                     return <PsychologistCard 
                               key={ match.psychologist } 
                               id={ match.psychologist } 
                               match_score={ match.score }
+                              most_important_matches={ match.most_important_matches }
                               keywords={ document.keywords_en }
                               token={ token }
                               addKeywordsToPsychologist={ addKeywordsToPsychologist }

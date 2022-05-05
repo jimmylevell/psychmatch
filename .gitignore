@@ -4,6 +4,7 @@
 Icon
 externalFiles/
 *.log
+*.pyc
 
 # Thumbnails
 ._*

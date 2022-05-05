@@ -14,6 +14,9 @@ deepl.translate = function translate(text, sourceLang, targetLang) {
   .then(res => {
     return res.json()
   })
+  .catch(err => {
+    console.error(err)
+  })
 };
 
 module.exports = deepl;

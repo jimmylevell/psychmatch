@@ -5,29 +5,39 @@ const fetch = require('node-fetch');
 
 const matchMaking = {};
 
-matchMaking.match = function translate(psychologists, document) {
+matchMaking.match = function match(psychologists, document) {
   return new Promise(function(resolve, reject) {
 
     const API =  config.nlpmodel.API
 
+    let final_output = []
     let requests = []
-    // iterate through all psychologists and their associated keywords
+    // iterate through all psychologists and queyr the NLP model
     psychologists.forEach(psychologist => {
-      let body = { 
-        document_keywords: document.keywords_en, 
-        psychologist_keywords: psychologist.keywords_en 
-      }
+      // only add if keywords exist on both sites
+      if (document.keywords_en.length > 0 && psychologist.keywords_en.length > 0) {
+        console.log(psychologist.keywords_en)
+        let body = {
+          document_keywords: document.keywords_en,
+          psychologist_keywords: psychologist.keywords_en
+        }
 
-      requests.push({ 
-        "psychologist": psychologist._id.toString(), 
-        "request": fetch(API + "/similarities", {
-            headers : {
-              'Content-Type' : 'application/json'
-            },
-            method: 'POST',
-            body: JSON.stringify(body)
-          })
-      })
+        requests.push({
+          "psychologist": psychologist._id.toString(),
+          "request": fetch(API + "/similarities", {
+              headers : {
+                'Content-Type' : 'application/json'
+              },
+              method: 'POST',
+              body: JSON.stringify(body)
+            })
+        })
+      } else {
+        final_output.push({
+          "psychologist": requests[i].psychologist,
+          "score": 0
+        })
+      }
     })
 
     Promise.all(requests.map(e => e.request))
@@ -35,22 +45,23 @@ matchMaking.match = function translate(psychologists, document) {
       return responses.map(e => e.json())
     })
     .then(responses => {
-      return Promise.all(responses)
+      return Promise.all(responses).catch(error => {throw new Error('Not able to parse JSON')})
     })
     .then(responses => {
-      let summary = []
-
       responses.map((element, i) => {
-        summary.push({
+        final_output.push({
           "psychologist": requests[i].psychologist,
-          "score": element.score
+          "score": element.overall_score,
+          "most_important_matches": element.most_important_matches
         })
       })
-
-      return summary
     })
-    .then((responses) => {
-      resolve(responses)
+    .then(() => {
+      console.log(final_output)
+      resolve(final_output)
+    })
+    .catch(error => {
+      reject(error)
     })
   })
 };
