@@ -17,13 +17,7 @@ const documentSchema = new Schema({
   keywords_en: {
     type: Array
   },
-  matched_psychologists: [
-    {
-      psychologist_id: String,
-      matched_keywords: Array,
-      match_score: Number
-    }
-  ],
+  matched_psychologists: { type: Array},
 }, {
   collection: 'documents',
   timestamps: true

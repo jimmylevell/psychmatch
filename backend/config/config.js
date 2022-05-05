@@ -10,7 +10,7 @@ module.exports = {
       "KEY": process.env.DEEPL_API_KEY || "",
     },
     "nlpmodel": {
-      "API": "https://nlp-model.psychmatch.app.levell.ch"
+      "API": "http://psychmatch-nlp-model:5000"
     },
     "SAML": {
       "credentials": {

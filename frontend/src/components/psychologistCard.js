@@ -29,27 +29,17 @@ class PsychologistCard extends Component {
       id: null,
       psychologist: null,
       match_score: 0.0,
-      matchedmatched_psychologist_keywords_keywords: [],
-      matched_document_keywords: [],
+      document_keywords: [],
 
       service: null,
     }
   }
 
   componentDidMount() {
-    let matched_document_keywords = this.props.matched_keywords.map(keyword => {
-      return keyword.document_keyword
-    })
-
-    let matched_psychologist_keywords = this.props.matched_keywords.map(keyword => {
-      return keyword.psychologist_keyword
-    })
-
     this.setState({
       id: this.props.id,
       match_score: this.props.match_score,
-      matched_psychologist_keywords: [...new Set(matched_psychologist_keywords)],
-      matched_document_keywords: [...new Set(matched_document_keywords)],
+      document_keywords: this.props.keywords,
 
       service: ModelService.getInstance(this.props.token),
     }, () => {
@@ -62,13 +52,12 @@ class PsychologistCard extends Component {
   }
 
   addKeywordsToPsychologist() {
-    if (window.confirm(`Are you sure you want to delete this document`)) {
-      this.props.addKeywordsToPsychologist(this.state.id, this.state.matched_document_keywords)
+    if (window.confirm(`Are you sure you want to recommend the document keywords to this psychologist?`)) {
+      this.props.addKeywordsToPsychologist(this.state.id, this.state.document_keywords)
     }
   }
 
   render() {
-    console.log(this.state)
     const { classes } = this.props;
     
     return (
@@ -78,14 +67,13 @@ class PsychologistCard extends Component {
             <CardHeader
               avatar={
                 <Avatar aria-label="score">
-                  { this.state.match_score.toFixed(2) }
+                  { parseFloat(this.state.match_score).toFixed(2) }
                 </Avatar>
               }
               title={ this.state.psychologist.name }
             />
             <CardContent>
-              <Typography component="p"> Matched Psychologist Keywords: { this.state.matched_psychologist_keywords.join(", ") }</Typography>
-              <Typography component="p"> Matched Document Keywords: { this.state.matched_document_keywords.join(", ") }</Typography>
+              
             </CardContent>
             <CardActions>
               <Button size="small" component={ Link } to={ `/psychologists/${ this.state.id }/edit`} ><EditIcon/>Edit</Button>

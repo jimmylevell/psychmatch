@@ -134,7 +134,14 @@ router.put('/:id/keywords', (req, res, next) => {
 
   Psychologist.findOne({ '_id': psychologistId})
   .then(psychologist => {
-    psychologist.proposed_keywords = psychologist.proposed_keywords.concat(req.body)
+    // proposed keywords, only new ones!
+    let keywords = psychologist.proposed_keywords.concat(psychologist.keywords_en)
+    keywords = keywords.concat(req.body)
+
+    // unique
+    keywords = [ ...new Set(keywords)]
+
+    psychologist.proposed_keywords = keywords
     return psychologist.save()
   })
   .then(psychologist => {

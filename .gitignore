@@ -3,6 +3,7 @@
 .LSOverride
 Icon
 externalFiles/
+*.log
 
 # Thumbnails
 ._*

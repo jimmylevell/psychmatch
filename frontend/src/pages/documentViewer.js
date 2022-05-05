@@ -39,8 +39,6 @@ class DocumentViewer extends Component {
       documentId: null,
       document: null,
 
-      psychologists: [],
-
       service: null,
       
       success: null,          // flag to trigger success info
@@ -68,7 +66,6 @@ class DocumentViewer extends Component {
     try {
       this.setState({ loading: true })
       document = await this.state.service.getDocument(this.state.documentId) || []
-      console.log(document)
     }
     catch {
       this.setState({
@@ -118,15 +115,14 @@ class DocumentViewer extends Component {
   render() {
     const { classes, token } = this.props
     const addKeywordsToPsychologist = this.addKeywordsToPsychologist
+    const document = this.state.document
 
     return (
-      <Fragment>    
-        <Typography className={ classes.title } variant="h4">Document View</Typography>
-        
+      <Fragment>        
         {this.state.document !== null ? (
           // document present
           <div>
-            <Typography variant="h5" className={ classes.title }> { this.state.document._id } 
+            <Typography className={ classes.title } variant="h4">Document View
             
             <Button 
               size="small" 
@@ -175,12 +171,12 @@ class DocumentViewer extends Component {
 
               <Grid container className={ classes.table } spacing={ 3 }>
                 {this.state.document.matched_psychologists && (
-                  this.state.document.matched_psychologists.sort((a, b) => a.match_score - b.match_score).reverse().map(function(match) {
+                  this.state.document.matched_psychologists.sort((a, b) => a.score - b.score).reverse().map(function(match) {
                     return <PsychologistCard 
-                              key={ match.psychologist_id } 
-                              id={ match.psychologist_id } 
-                              match_score={ match.match_score } 
-                              matched_keywords={ match.matched_keywords} 
+                              key={ match.psychologist } 
+                              id={ match.psychologist } 
+                              match_score={ match.score }
+                              keywords={ document.keywords_en }
                               token={ token }
                               addKeywordsToPsychologist={ addKeywordsToPsychologist }
                             />
@@ -192,7 +188,10 @@ class DocumentViewer extends Component {
         ) : (
           // no document could be found
           !this.state.loading && (
-            <Typography variant="subtitle1">No document with given ID could be found</Typography>
+            <Fragment>
+              <Typography className={ classes.title } variant="h4">Document View</Typography>
+              <Typography variant="subtitle1">No document with given ID could be found</Typography>
+            </Fragment>
           )
         )}
 

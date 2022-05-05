@@ -9,7 +9,10 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
+  Chip,
+  Avatar 
 } from '@material-ui/core';
+import { green } from '@material-ui/core/colors'
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import ClearIcon from '@material-ui/icons/Clear';
 import { compose } from 'recompose';
@@ -53,6 +56,7 @@ class PsychologistEditor extends Component {
       keywords_cz: [],
       keywords_en: [],
       translate_keywords: false,
+      proposed_keywords: [],
     };
   }
 
@@ -182,6 +186,39 @@ class PsychologistEditor extends Component {
               label="Proposed Keywords"
               value={ this.state.proposed_keywords }
             />
+
+
+{ /* WIP */}
+<ChipInput
+      defaultValue={['foo', 'bar']}
+      fullWidth
+      chipRenderer={(
+        {
+          value,
+          isFocused,
+          isDisabled,
+          isReadOnly,
+          handleClick,
+          handleDelete,
+          className
+        },
+        key
+      ) => (
+        <Chip
+          key={key}
+          className={className}
+          style={{
+            pointerEvents: isDisabled || isReadOnly ? 'none' : undefined,
+            backgroundColor: isFocused ? green[800] : green[300]
+          }}
+          onClick={handleClick}
+          onDelete={handleDelete}
+          label={value}
+          avatar={<Avatar size={32}>Add</Avatar>}
+        />
+      )}
+    />
+
 
             <FormControlLabel
               className={ classes.input }

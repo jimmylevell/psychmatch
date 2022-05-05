@@ -13,14 +13,19 @@ matchMaking.match = function translate(psychologists, document) {
     let requests = []
     // iterate through all psychologists and their associated keywords
     psychologists.forEach(psychologist => {
-      // iterate through all keywords of the psychologist
-      psychologist.keywords_en.forEach(keyword => {
-          // iterate through all keywords of the document
-          document.keywords_en.forEach(document_keyword => {
-            // word_x = psychologist keyword
-            // word_y = document keyword
-            console.log(API + "/similarity" + '?word_x=' + keyword + '&word_y=' + document_keyword)
-            requests.push({ "psychologist": psychologist._id, "request": fetch(API + "/similarity" + '?word_x=' + decodeURI(keyword) + '&word_y=' + decodeURI(document_keyword))})
+      let body = { 
+        document_keywords: document.keywords_en, 
+        psychologist_keywords: psychologist.keywords_en 
+      }
+
+      requests.push({ 
+        "psychologist": psychologist._id.toString(), 
+        "request": fetch(API + "/similarities", {
+            headers : {
+              'Content-Type' : 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(body)
           })
       })
     })
@@ -36,36 +41,13 @@ matchMaking.match = function translate(psychologists, document) {
       let summary = []
 
       responses.map((element, i) => {
-        // create a new element for every psychologist with all matched keywords
-        if(summary[requests[i].psychologist]) {
-          summary[requests[i].psychologist].push({
-            psychologist_keyword: element.word_x,
-            document_keyword: element.word_y,
-            score: element.similarity
-          })
-        } else {
-          summary[requests[i].psychologist] = [ {
-            psychologist_keyword: element.word_x,
-            document_keyword: element.word_y,
-            score: element.similarity
-          }]
-        }
-      })
-
-      return summary
-    })
-    .then((responses) => {
-      let output = []
-      Object.keys(responses).forEach(element => {
-        console.log(responses[element])
-        output.push({
-          psychologist_id: element,
-          matched_keywords: responses[element],
-          match_score: responses[element].reduce((a, b) => a + parseFloat(b.score), 0)
+        summary.push({
+          "psychologist": requests[i].psychologist,
+          "score": element.score
         })
       })
 
-      return output
+      return summary
     })
     .then((responses) => {
       resolve(responses)
