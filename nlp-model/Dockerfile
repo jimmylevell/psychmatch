@@ -21,6 +21,7 @@ RUN pip install Flask
 RUN pip install nltk
 
 # download the model
+COPY ./src/utils.py /usr/src/app/utils.py
 COPY ./src/download_model.py /usr/src/app/download_model.py
 RUN python /usr/src/app/download_model.py
 
@@ -42,7 +43,7 @@ ENTRYPOINT [ "/docker/entrypoint.sh" ]
 ###############################################################################################
 FROM psychmatch-nlp-model-base as psychmatch-nlp-model-deploy
 
-COPY ./src/index.py /usr/src/app/index.py
+COPY ./src/ /usr/src/app/
 
 COPY ./docker/entrypoint.prod.sh /docker
 RUN chmod +x /docker/entrypoint.prod.sh
