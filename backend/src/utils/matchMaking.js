@@ -16,7 +16,6 @@ matchMaking.match = function match(psychologists, document) {
     psychologists.forEach(psychologist => {
       // only add if keywords exist on both sites
       if (document.keywords_en.length > 0 && psychologist.keywords_en.length > 0) {
-        console.log(psychologist.keywords_en)
         let body = {
           document_keywords: document.keywords_en,
           psychologist_keywords: psychologist.keywords_en
@@ -49,6 +48,8 @@ matchMaking.match = function match(psychologists, document) {
     })
     .then(responses => {
       responses.map((element, i) => {
+        console.log("Info: Response from NLP model: Score:" + element.overall_score + " for psychologist: " + requests[i].psychologist);
+
         final_output.push({
           "psychologist": requests[i].psychologist,
           "score": element.overall_score,
@@ -57,7 +58,6 @@ matchMaking.match = function match(psychologists, document) {
       })
     })
     .then(() => {
-      console.log(final_output)
       resolve(final_output)
     })
     .catch(error => {

@@ -52,8 +52,10 @@ mongoose.connect(config.MONGO_DB_STRING, {
 app.use(cors());
 
 if(process.env.NODE_ENV === 'development') {
+  console.log("Running in DEV mode")
   app.use(morgan('dev'));
 } else {
+  console.log("Running in PROD mode")
   app.use(morgan('combined'));
 }
 app.use(passport.initialize());

@@ -61,6 +61,8 @@ router.post('/', (req, res, next) => {
   .then(() => {
     psychologist.save()
     .then(result => {
+      console.log("Info: Psychologist created: " + psychologist._id);
+      
       res.status(200).json({
         message: "Psychologist uploaded successfully!",
         psychologist: {
@@ -82,6 +84,8 @@ router.post('/', (req, res, next) => {
 router.get("/", (req, res, next) => {
   Psychologist.find()
   .then(data => {
+    console.log("Info: Psychologists found: " + data.length);
+
     res.status(200).json({
       message: "Psychologist list retrieved successfully!",
       psychologists: data
@@ -101,6 +105,8 @@ router.get("/:id", (req, res, next) => {
 
   Psychologist.findOne({ '_id': psychologistId})
   .then(data => {
+    console.log("Info: Psychologist found: " + data._id);
+
     res.status(200).json({
       message: "Psychologist retrieved successfully!",
       psychologist: data
@@ -122,6 +128,8 @@ router.put("/:id", (req, res, next) => {
   .then(psychologist => {
     Psychologist.findOneAndUpdate({ '_id': psychologistId}, psychologist)
     .then(psychologist => {
+      console.log("Info: Psychologist updated: " + psychologist._id);
+
       res.status(200).json({
         message: "Psychologist updated successfully!",
         psychologist: psychologist
@@ -148,6 +156,8 @@ router.delete("/:id", (req, res, next) => {
 
   Psychologist.deleteOne({ '_id': psychologistId})
   .then(data => {
+    console.log("Info: Psychologist deleted: " + psychologistId);
+
     res.status(200).json({
       message: "Psychologist deleted successfully!",
       psychologist: data
@@ -177,6 +187,8 @@ router.put('/:id/keywords', (req, res, next) => {
     return psychologist.save()
   })
   .then(psychologist => {
+    console.log("Info: Psychologist updated: " + psychologist._id);
+    
     res.status(200).json({
       message: "Psychologist keywords updated successfully!",
       psychologist: psychologist

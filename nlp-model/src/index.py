@@ -1,11 +1,9 @@
 from flask import Flask, jsonify, request
 import os
-from logger import Logger
 from utils import load_nlp_model, get_list_of_existing_words
 from Score import Score
 from Result import Result
 
-logger = Logger("matchmaking.log", output=True)
 env = os.environ.get('NODE_ENV')
 nlp_model = load_nlp_model()
 
@@ -44,8 +42,8 @@ def matchMaking():
                 max_pair.psychologist_keyword = psychologist_keyword
                 max_pair.score = current_score
 
-                logger.write("New best pair, doc_keyword: " + max_pair.document_keyword + ", psych_keyword: " +
-                             max_pair.psychologist_keyword + ", scoring: max_pair_score: " + str(max_pair.score))
+                print("Info: New best pair, doc_keyword: " + max_pair.document_keyword + ", psych_keyword: " +
+                      max_pair.psychologist_keyword + ", scoring: max_pair_score: " + str(max_pair.score), flush=True)
 
         # add best match of keyword score to the overall document rating, process next keyword
         most_important_matches.append(max_pair)
@@ -54,7 +52,7 @@ def matchMaking():
     result.most_important_matches = most_important_matches
     result.overall_score = result.overall_score / \
         len(result.most_important_matches)
-    logger.write("Matching-Score: " + str(result.overall_score))
+    print("Info: Matching-Score: " + str(result.overall_score), flush=True)
 
     # return json
     return result.toJSON()
@@ -73,6 +71,9 @@ def word2vec():
     if word_x and word_y and word_x in nlp_model and word_y in nlp_model:
         similarity = str(nlp_model.similarity(word_x, word_y))
 
+    print("Info: Similarity Score: " + similarity +
+          ", Word_X: " + word_x + ", Word_Y: " + word_y, flush=True)
+
     return Result(overall_score=similarity,
                   most_important_matches=Score(document_keyword=word_x, psychologist_keyword=word_y, score=similarity)).toJSON()
 
@@ -84,6 +85,8 @@ def page_not_found(e):
 
 if __name__ == '__main__':
     if env == 'production':
+        print("Running Flusk App in Production mode", flush=True)
         app.run(host='0.0.0.0', debug=False)
     else:
+        print("Running Flusk App in Dev mode", flush=True)
         app.run(host='0.0.0.0', debug=True)

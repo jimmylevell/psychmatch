@@ -51,6 +51,8 @@ router.post('/', (req, res, next) => {
   .then(document => {
     document.save()
     .then(result => {
+      console.log("Info: Document created: " + document._id);
+
       res.status(200).json({
         message: "Document uploaded successfully!",
         document: {
@@ -78,6 +80,8 @@ router.post('/', (req, res, next) => {
 router.get("/", (req, res, next) => {
   Document.find()
   .then(data => {
+    console.log("Info: Documents found: " + data.length);
+
     res.status(200).json({
       message: "Document list retrieved successfully!",
       documents: data
@@ -97,6 +101,8 @@ router.get("/:id", (req, res, next) => {
 
   Document.findOne({ '_id': documentId})
   .then(data => {
+    console.log("Info: Document found: " + data._id);
+
     res.status(200).json({
       message: "Document retrieved successfully!",
       document: data
@@ -116,6 +122,8 @@ router.put("/:id", (req, res, next) => {
 
   Document.findOneAndUpdate({ '_id': documentId}, req.body)
   .then(data => {
+    console.log("Info: Document updated: " + data._id);
+
     res.status(200).json({
       message: "Document updated successfully!",
       document: data
@@ -135,6 +143,8 @@ router.delete("/:id", (req, res, next) => {
 
   Document.deleteOne({ '_id': documentId})
   .then(data => {
+    console.log("Info: Document deleted: " + data._id);
+
     res.status(200).json({
       message: "Document deleted successfully!",
       document: data
@@ -158,6 +168,8 @@ router.get('/:id/reexecute', (req, res, next) => {
     processDocument(data)
     .then(document => {
       document.save().then(result => {
+        console.log("Info: Document reexecuted: " + document._id);
+
         res.status(200).json({
           message: "Document reexecuted updated successfully!",
           documentCreated: {

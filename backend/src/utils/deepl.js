@@ -10,6 +10,8 @@ deepl.translate = function translate(text, sourceLang, targetLang) {
   const API =  config.deepl.API
   const auth_key = config.deepl.KEY
 
+  console.log("Info: Translating text from " + sourceLang + " to " + targetLang);
+
   return fetch(API + '?auth_key=' + auth_key + '&text=' + text + '&target_lang=' + targetLang + '&source_lang=' + sourceLang)
   .then(res => {
     return res.json()
