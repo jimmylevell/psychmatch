@@ -2,23 +2,7 @@ import React, {Component} from 'react';
 import { withMsal } from "@azure/msal-react";
 
 import { tokenRequest } from "../authConfig";
-
-function isTokenExpired(token) {
-  const base64Url = token.split(".")[1];
-  const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
-  );
-
-  const { exp } = JSON.parse(jsonPayload);
-  const expired = Date.now() >= exp * 1000
-  return expired
-}
+import { isTokenExpired } from "../utilities";
 
 class Login extends Component {
   constructor() {
@@ -49,19 +33,28 @@ class Login extends Component {
       account: msalAccounts[0]
     };
   
+    // if account is available
     if (msalAccounts.length > 0) {
+      // if token is present, and expired
       if(((!this.state.token || isTokenExpired(this.state.token)) && msalInProgress !== true)) {
-        msalInstance.acquireTokenSilent(request).then((response) => {
-          this.setState({ token: response.accessToken }, () => {this.props.tokenUpdated(response.accessToken)})
-        }).catch((error) => {
+        msalInstance.acquireTokenSilent(request)
+        .then((response) => {
+          this.setState({ 
+            token: response.accessToken 
+          }, () => {
+            this.props.tokenUpdated(response.accessToken)
+          })
+        })
+        .catch((error) => {
           if (error.errorCode === "invalid_grant") {
             // fallback to interaction when silent call fails
-            msalInstance.acquireTokenPopup(request).then(
-              function (response) {
-//                  console.log(response)
-              }).catch(function (error) {
-                  console.error(error);
-              });
+            msalInstance.acquireTokenPopup(request)
+            .then((response) => {
+              //console.log(response)
+            })
+            .catch((error) => {
+              console.error(error);
+            });
           } else {
               console.error(error);   
           }

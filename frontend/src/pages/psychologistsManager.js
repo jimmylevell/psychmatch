@@ -12,8 +12,11 @@ import {
   ListItemSecondaryAction,
   TextField
 } from '@material-ui/core';
-import { Delete as DeleteIcon, Create as CreateIcon, Add as AddIcon } from '@material-ui/icons';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
+import { 
+  Delete as DeleteIcon, 
+  Create as CreateIcon, 
+  Add as AddIcon, 
+  FileCopy as FileCopyIcon } from '@material-ui/icons';
 import moment from 'moment';
 import { orderBy, filter } from 'lodash';
 import { compose } from 'recompose';
@@ -26,10 +29,6 @@ import LoadingBar from '../components/loadingBar'
 import InfoSnackbar from '../components/infoSnackbar'
 
 const styles = theme => ({
-  psychologistsDiv: {
-    marginTop: theme.spacing(2),
-    outline: 0,
-  },
   fab: {
     position: 'absolute',
     bottom: theme.spacing(3),
@@ -39,7 +38,7 @@ const styles = theme => ({
       right: theme.spacing(2),
     }
   },
-  serachDiv: {
+  searchDiv: {
     marginBottom: theme.spacing(1)
   },
   searchInput: {
@@ -80,13 +79,14 @@ class PsychologistManager extends Component {
     })   
   }
 
-  onSavePsychologist  = async (id, name, website, keywords_cz, keywords_en, translate_keywords) => {
+  onSavePsychologist  = async (id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords) => {
     var postData = {
       name: name,
       website: website,
       keywords_cz: keywords_cz,
       keywords_en: keywords_en,
-      translate_keywords: translate_keywords
+      translate_keywords: translate_keywords,
+      proposed_keywords: proposed_keywords
     }
 
     try {
@@ -98,9 +98,9 @@ class PsychologistManager extends Component {
         await this.state.service.newPsychologist(postData);
       }
     }
-    catch {
+    catch(error) {
       this.setState({
-        error: { message: "Error saving documents" },
+        error: { message: "Error saving documents. Response from backend: " + error },
         loading: false
       })
     }
@@ -119,9 +119,9 @@ class PsychologistManager extends Component {
       try {
         await this.state.service.deletePsychologist(psychologist._id)
       }
-      catch {
+      catch(error) {
         this.setState({
-          error: { message: "Error deleting psychologist" }
+          error: { message: "Error deleting psychologist. Response from backend: " + error },
         })
       }
 
@@ -179,28 +179,25 @@ class PsychologistManager extends Component {
 
     return (
       <Fragment>
+        <TextField
+          type="text"
+          key="inputQuery"
+          placeholder="Search"
+          label="Search"
+          className={ classes.searchInput }
+          value={ this.state.query }
+          onChange={ this.handleSearchChange }
+          variant="outlined"
+          size="small"
+          autoFocus 
+        />
+
         <Typography variant="h4">Psychologists</Typography>
 
         { /* psychologists area */ }
         { this.state.psychologists.length > 0 ? (
           // psychologist available
-          <Paper elevation={ 1 } className={ classes.psychologistsDiv }>
-            <div className={ classes.serachDiv }>
-              <TextField
-                required 
-                type="text"
-                key="inputQuery"
-                placeholder="Search"
-                label="Search"
-                className={ classes.searchInput }
-                value={ this.state.query }
-                onChange={ this.handleSearchChange }
-                variant="outlined"
-                size="small"
-                autoFocus 
-              />
-            </div>
-
+          <Paper elevation={ 1 }>
             <List>
               {orderBy(psychologists, ['updatedAt', 'name'], ['desc', 'asc']).map(psychologist => (
                 <ListItem key={ psychologist._id }>
@@ -208,17 +205,18 @@ class PsychologistManager extends Component {
                     primary={ psychologist.name }
                     secondary={ psychologist.updatedAt && `Updated ${ moment(psychologist.updatedAt).fromNow() }` }
                   />
-                    <ListItemSecondaryAction>
-                      <IconButton component={ Link } to={ `/psychologists/${ psychologist._id }/copy` } color="inherit">
-                        <FileCopyIcon />
-                      </IconButton>
-                      <IconButton component={ Link } to={ `/psychologists/${ psychologist._id }/edit` } color="inherit">
-                        <CreateIcon />
-                      </IconButton>
-                      <IconButton onClick={ () => this.deletePsychologist(psychologist) } color="inherit">
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
+
+                  <ListItemSecondaryAction>
+                    <IconButton component={ Link } to={ `/psychologists/${ psychologist._id }/copy` } color="inherit">
+                      <FileCopyIcon />
+                    </IconButton>
+                    <IconButton component={ Link } to={ `/psychologists/${ psychologist._id }/edit` } color="inherit">
+                      <CreateIcon />
+                    </IconButton>
+                    <IconButton onClick={ () => this.deletePsychologist(psychologist) } color="inherit">
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
                 </ListItem>
               ))}
 
@@ -232,22 +230,22 @@ class PsychologistManager extends Component {
         ) : (
           // no psychologists available
           !this.state.loading && (
-            <Typography variant="subtitle1">So far no psychologists have been created</Typography>
+            <Typography variant="subtitle1">So far no psychologists have been created, start adding your first psychologist now!</Typography>
           )
         )}
         
         <Fragment>
-            <Fab
-                color="secondary"
-                aria-label="add"
-                className={ classes.fab }
-                component={ Link }
-                to="/psychologists/new"
-            >
-                <AddIcon />
-            </Fab>
+          <Fab
+            color="secondary"
+            aria-label="add"
+            className={ classes.fab }
+            component={ Link }
+            to="/psychologists/new"
+          >
+            <AddIcon />
+          </Fab>
             
-            <Route exact path="/psychologists/:id" render={ this.renderPsychologistEditor } />
+          <Route exact path="/psychologists/:id" render={ this.renderPsychologistEditor } />
         </Fragment>
         
         { /* Flag based display of loadingbar */ }

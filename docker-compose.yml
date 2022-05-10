@@ -19,6 +19,8 @@ services:
       - /srv/app/node_modules
     networks:
       - psychmatch
+    environment:
+      - NODE_ENV=development
       
   # psychmatch-frontend:
   #   build: 
@@ -37,6 +39,8 @@ services:
   #     - /srv/app/node_modules
   #   networks:
   #     - psychmatch
+  #   environment:
+  #     - NODE_ENV=development
 
   psychmatch-nlp-model:
     build: 
@@ -56,10 +60,11 @@ services:
 
   psychmatch-database: 
     image: mongo:latest
-    networks:
-      - psychmatch
     ports: 
       - "27017:27017"
+    restart: always
+    networks:
+      - psychmatch
     environment: 
       MONGO_INITDB_ROOT_USERNAME: mongoadmin
       MONGO_INITDB_ROOT_PASSWORD: password

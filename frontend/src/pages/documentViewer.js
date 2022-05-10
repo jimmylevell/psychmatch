@@ -22,8 +22,11 @@ const styles = theme => ({
   title: {
     marginBottom: theme.spacing(1)
   },
+  subtitle: {
+    marginLeft: theme.spacing(1.5),
+  },
   table: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(0.5),
     marginLeft: theme.spacing(0.2),
   },
   buttons: {
@@ -67,9 +70,9 @@ class DocumentViewer extends Component {
       this.setState({ loading: true })
       document = await this.state.service.getDocument(this.state.documentId) || []
     }
-    catch {
+    catch(error) {
       this.setState({
-        error: { message: "Error getting document" },
+        error: { message: "Error getting document. Response from backend: " + error },
         loading: false
       })
     }
@@ -81,35 +84,42 @@ class DocumentViewer extends Component {
   }
 
   async handleReexecution() {
-    if (window.confirm(`Are you sure you reexecute the match making process for the given document?`)) {
+    if (window.confirm(`Are you sure you would like to reprocess the following document? All previous matches will be lost.`)) {
       try {
         this.setState({ loading: true })
 
         await this.state.service.reexecuteDocument(this.state.documentId);
       }
-      catch {
+      catch(error) {
         this.setState({
-          error: { message: "Error getting documents" },
+          error: { message: "Error reprocessing the document. Response from backend: " + error },
           loading: false
         })
       }
 
       if(!this.state.error) {
         this.setState({
-          success: "Document rexecuted completed successfully",
+          success: "Reprocessing of the document completed successfully",
           loading: false
         }, this.getDocument)
       }
     }
   }
 
-  addKeywordsToPsychologist(id, keywords) {    
-    this.state.service.addKeywordsToPsychologist(id, keywords)
-    .then(() => {
-      this.setState({
-        success: "Successfully added the keywords"
+  addKeywordsToPsychologist(id, keywords) {
+    try {
+      this.state.service.addKeywordsToPsychologist(id, keywords)
+      .then(() => {
+        this.setState({
+          success: "Successfully added the keywords to the psychologist"
+        })
       })
-    })
+    }
+    catch(error) {
+      this.setState({
+        error: { message: "Error adding keywords to the psychologist. Response from backend: " + error },
+      })
+    }
   }
 
   render() {
@@ -119,22 +129,21 @@ class DocumentViewer extends Component {
 
     return (
       <Fragment>        
-        {this.state.document !== null ? (
+        {document !== null ? (
           // document present
           <div>
             <Typography className={ classes.title } variant="h4">Document View
-            
-            <Button 
-              size="small" 
-              color="primary" 
-              onClick={ this.handleReexecution }
-              className={ classes.buttons }
-            >
-              <RefreshIcon/>Update annotations
-            </Button>
+              <Button 
+                size="small" 
+                color="primary" 
+                onClick={ this.handleReexecution }
+                className={ classes.buttons }
+              >
+                <RefreshIcon/>Update Annotations
+              </Button>
             </Typography>
 
-            <Grid container spacing={ 3 }>
+            <Grid container spacing={ 2 }>
               <Grid item xs={ 6 }>
                 <Card>
                   <CardContent>
@@ -169,7 +178,8 @@ class DocumentViewer extends Component {
                 </Card>
               </Grid>
 
-              <Grid container className={ classes.table } spacing={ 3 }>
+              <Typography className={ classes.subtitle } variant="h5">Document View</Typography>
+              <Grid container className={ classes.table } spacing={ 2 }>                
                 {this.state.document.matched_psychologists && (
                   this.state.document.matched_psychologists.sort((a, b) => b.score - a.score).map(function(match) {
                     return <PsychologistCard 

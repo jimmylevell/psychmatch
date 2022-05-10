@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-  Typography,
   withStyles,
   Card,
   CardContent,
@@ -20,7 +19,6 @@ import {
 import FeedbackIcon from '@material-ui/icons/Feedback';
 import LanguageIcon from '@material-ui/icons/Language';
 import EditIcon from '@material-ui/icons/Edit';
-import { orderBy, take } from 'lodash';
 import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
 
@@ -37,7 +35,11 @@ const styles = theme => ({
     "&:hover": {
       background: "#d6effb"
     },
-  }
+  }, 
+  largeAvatar: {
+    width: theme.spacing(7),
+    height: theme.spacing(5),
+  },
 })
 
 class PsychologistCard extends Component {
@@ -49,13 +51,24 @@ class PsychologistCard extends Component {
       psychologist: null,
       match_score: 0.0,
       document_keywords: [],
-      most_important_matches: [],
+      most_important_matches: [],     // keywords that are most important for this psychologist and are being displayed
 
       service: null,
     }
   }
 
   componentDidMount() {
+    this.loadData()
+  }
+
+  componentDidUpdate() {
+    // check if score has changed
+    if(this.state.match_score !== this.props.match_score) {
+      this.loadData()
+    }
+  }
+
+  loadData() {
     this.setState({
       id: this.props.id,
       match_score: this.props.match_score,
@@ -72,16 +85,6 @@ class PsychologistCard extends Component {
     })
   }
 
-  componentDidUpdate() {
-    if(this.state.match_score !== this.props.match_score) {
-      this.setState({
-        match_score: this.props.match_score,
-        document_keywords: this.props.keywords,
-        most_important_matches: this.props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES),
-      })
-    }
-  }
-
   addKeywordsToPsychologist() {
     if (window.confirm(`Are you sure you want to recommend the document keywords to this psychologist?`)) {
       this.props.addKeywordsToPsychologist(this.state.id, this.state.document_keywords)
@@ -93,20 +96,20 @@ class PsychologistCard extends Component {
     
     return (
       <Grid item xs={ 3 }>
-        { this.state.psychologist && (
+        { this.state.psychologist && (          
           <Card>
             <CardHeader
               avatar={
-                <Avatar aria-label="score">
+                <Avatar className={ classes.largeAvatar } variant="rounded" aria-label="score">
                   { parseFloat(this.state.match_score).toFixed(2) }
                 </Avatar>
               }
               title={ this.state.psychologist.name }
             />
+
             <CardContent>
-              <Typography variant="body2" color="textSecondary" component="p">Best Matches </Typography>
               <TableContainer component={ Paper }>
-                <Table className={ classes.table } aria-label="data table">
+                <Table aria-label="data table">
                   <TableHead>
                     <TableRow>
                       <TableCell className={ classes.tableHeader }>Document</TableCell>
@@ -126,10 +129,11 @@ class PsychologistCard extends Component {
                 </Table>
               </TableContainer>              
             </CardContent>
+
             <CardActions>
               <Button size="small" component={ Link } to={ `/psychologists/${ this.state.id }/edit`} ><EditIcon/>Edit</Button>
-              <Button size="small" href={ `${ this.state.psychologist.website }`} ><LanguageIcon/>External Website</Button>
-              <Button onClick={ () => this.addKeywordsToPsychologist() } size="small" color="primary" ><FeedbackIcon/>Add Keywords</Button>
+              <Button size="small" href={ `${ this.state.psychologist.website }`} ><LanguageIcon/>Website</Button>
+              <Button size="small" onClick={ () => this.addKeywordsToPsychologist() } color="primary" ><FeedbackIcon/>Recommend Keywords</Button>
             </CardActions>
           </Card>
         )}

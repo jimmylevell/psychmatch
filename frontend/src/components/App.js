@@ -8,7 +8,6 @@ import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@a
 import { PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "../authConfig";
 
-
 import AppHeader from './appHeader';
 import Login from '../pages/login';
 import DocumentUpload from '../pages/documentUpload';
@@ -52,43 +51,46 @@ class App extends Component {
             <CssBaseline />
             <AppHeader />
             <main className={ classes.main }>
+              { /* Don't load components if token not present */}
               { this.state.token && (
-              <AuthenticatedTemplate>
-                <Route exact path="/">
-                  <DocumentManager token={ this.state.token } />
-                </Route>
+                <AuthenticatedTemplate>
+                  { /* Authenticated */ }
+                  <Route exact path="/">
+                    <DocumentManager token={ this.state.token } />
+                  </Route>
 
-                <Route exact path="/upload">
-                  <DocumentUpload token={ this.state.token } />
-                </Route>
+                  <Route exact path="/upload">
+                    <DocumentUpload token={ this.state.token } />
+                  </Route>
 
-                <Route exact path="/documents">
-                  <DocumentManager token={ this.state.token } />
-                </Route>
+                  <Route exact path="/documents">
+                    <DocumentManager token={ this.state.token } />
+                  </Route>
 
-                <Route exact path="/documents/:id">
-                  <DocumentViewer token={ this.state.token } />
-                </Route>
+                  <Route exact path="/documents/:id">
+                    <DocumentViewer token={ this.state.token } />
+                  </Route>
 
-                <Route exact path="/psychologists">
-                  <PsychologistsManager token={ this.state.token } />
-                </Route>
+                  <Route exact path="/psychologists">
+                    <PsychologistsManager token={ this.state.token } />
+                  </Route>
 
-                <Route exact path="/psychologists/:id">
-                  <PsychologistsManager token={ this.state.token } />
-                </Route>
+                  <Route exact path="/psychologists/:id">
+                    <PsychologistsManager token={ this.state.token } />
+                  </Route>
 
-                <Route exact path="/psychologists/:id/edit">
-                  <PsychologistsManager token={ this.state.token } />
-                </Route>
+                  <Route exact path="/psychologists/:id/edit">
+                    <PsychologistsManager token={ this.state.token } />
+                  </Route>
 
-                <Route exact path="/psychologists/:id/copy">
-                  <PsychologistsManager token={ this.state.token } />
-                </Route>
-                
-              </AuthenticatedTemplate>
+                  <Route exact path="/psychologists/:id/copy">
+                    <PsychologistsManager token={ this.state.token } />
+                  </Route>
+                  
+                </AuthenticatedTemplate>
               )}
 
+              { /* Unauthenticated */ }
               <UnauthenticatedTemplate>
                 <h5 className="card-title">Please sign-in to see use the application.</h5>
               </UnauthenticatedTemplate>        
@@ -98,5 +100,5 @@ class App extends Component {
      );
   }
 }
-  
+
 export default withStyles(styles)(App);

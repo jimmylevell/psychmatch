@@ -109,7 +109,7 @@ export class ModelService {
   // delete document
   async deleteDocument(documentId) {
     try {
-      return this.fetch('DELETE', `/documents/${documentId}`, '').then((response) => {
+      return this.fetch('DELETE', `/documentsa/${documentId}`, '').then((response) => {
         return response;
       })
     }

@@ -3,6 +3,7 @@ import {
   TextField,
   withStyles,
   Card,
+  CardHeader,
   CardContent,
   CardActions,
   Modal,
@@ -41,7 +42,7 @@ const styles = theme => ({
     marginTop: theme.spacing(2),
   },
   input: {
-    marginTop: theme.spacing(1)
+    marginTop: theme.spacing(2)
   }
 });
 
@@ -80,10 +81,10 @@ class PsychologistEditor extends Component {
     evt.preventDefault();
 
     const { onSave } = this.props
-    const { id, name, website, keywords_cz, keywords_en, translate_keywords } = this.state;
+    const { id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords } = this.state;
 
     // execute parent function in psychologistManager
-    onSave(id, name, website, keywords_cz, keywords_en, translate_keywords)
+    onSave(id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords)
   };
 
   handleChange = (evt) => {
@@ -101,11 +102,13 @@ class PsychologistEditor extends Component {
       this.setState({
         keywords_cz: [...this.state.keywords_cz, keyword]
       })
-    } else {
+    } else if (language === "EN") {
       this.setState({
         keywords_en: [...this.state.keywords_en, keyword]
       })
-    } 
+    } else {
+      console.error("Unknown language: " + language)
+    }
   }
 
   handleDeleteKeyword(keyword, index, language) {
@@ -116,18 +119,21 @@ class PsychologistEditor extends Component {
       this.setState({
         keywords_cz: keywords
       })
-    } else {
+    } else if (language === "EN") {
       let keywords = this.state.keywords_en
       keywords.splice(index, 1)
 
       this.setState({
         keywords_en: keywords
       })
+    } else {
+      console.error("Unknown language: " + language)
     }
   }
   
   render() {
     const { classes, history } = this.props;
+    const TITLE = this.state.id ? "Editing " + this.state.name : "Add a new Psychologist";
 
     return (
       <Modal
@@ -136,13 +142,14 @@ class PsychologistEditor extends Component {
         open
       >
         <Card className={ classes.modalCard }>
+          <CardHeader title={ TITLE } />
+
           <form onSubmit={ this.handleSubmit }>
             <CardContent className={ classes.modalCardContent }>
               <TextField
                 required 
                 type="text"
                 name="name"
-                className={ classes.input }
                 key="inputPsychologistName"
                 placeholder="Psychologist Name"
                 label="Psychologist Name"
@@ -153,43 +160,46 @@ class PsychologistEditor extends Component {
                 autoFocus 
               />
 
-            <TextField
-                required 
-                type="text"
-                name="website"
+              <TextField
+                  required 
+                  type="url"
+                  name="website"
+                  className={ classes.input }
+                  key="inputPsychologistWebsite"
+                  placeholder="Psychologist Website"
+                  label="Psychologist Website"
+                  value={ this.state.website }
+                  onChange={ this.handleChange }
+                  variant="outlined"
+                  size="small"
+                />
+
+              <ChipInput
                 className={ classes.input }
-                key="inputPsychologistWebsite"
-                placeholder="Psychologist Website"
-                label="Psychologist Website"
-                value={ this.state.website }
-                onChange={ this.handleChange }
-                variant="outlined"
-                size="small"
-                autoFocus 
+                label="Keywords CZ"
+                value={ this.state.keywords_cz}
+                onAdd={ (chip) => this.handleAddKeyword(chip, "CZ") }
+                onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "CZ") }
               />
 
-            <ChipInput
-              label="Keywords CZ"
-              value={ this.state.keywords_cz}
-              onAdd={ (chip) => this.handleAddKeyword(chip, "CZ") }
-              onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "CZ") }
-            />
+              <ChipInput
+                className={ classes.input }
+                label="Keywords EN"
+                value={ this.state.keywords_en }
+                onAdd={ (chip) => this.handleAddKeyword(chip, "EN") }
+                onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "EN") }
+              />
 
-            <ChipInput
-              label="Keywords EN"
-              value={ this.state.keywords_en }
-              onAdd={ (chip) => this.handleAddKeyword(chip, "EN") }
-              onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "EN") }
-            />
-
-            <ChipInput
-              label="Proposed Keywords"
-              value={ this.state.proposed_keywords }
-            />
+              <ChipInput
+                className={ classes.input }
+                label="Proposed Keywords"
+                value={ this.state.proposed_keywords }
+              />
 
 
 { /* WIP */}
 <ChipInput
+      className={ classes.input }
       defaultValue={['foo', 'bar']}
       fullWidth
       chipRenderer={(
@@ -220,22 +230,22 @@ class PsychologistEditor extends Component {
     />
 
 
-            <FormControlLabel
-              className={ classes.input }
-              control={
-                <Checkbox
-                  id="translate_keywords"
-                  name="translate_keywords"
-                  value={ this.state.translate_keywords }
-                  onChange={ this.handleChange }
-                  color="primary"
-                  inputProps={{ 'aria-label': 'secondary checkbox' }}
-                />
-              }
-              label="Translate Keywords into other Language"
-            />
-
+              <FormControlLabel
+                className={ classes.input }
+                control={
+                  <Checkbox
+                    id="translate_keywords"
+                    name="translate_keywords"
+                    value={ this.state.translate_keywords }
+                    onChange={ this.handleChange }
+                    color="primary"
+                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                  />
+                }
+                label="Translate Keywords into other Language"
+              />
             </CardContent>
+            
             <CardActions>
               <Button size="small" color="primary" type="submit"><SaveAltIcon/>Save</Button>
               <Button size="small" onClick={ () => history.goBack() }><ClearIcon/>Cancel</Button>

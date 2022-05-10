@@ -73,11 +73,11 @@ class DocumentUploadComponent extends Component {
       try {
         await this.state.service.newDocument(postData)
       }
-      catch {
+      catch(error) {
         this.setState({
-          error: { message: "Error getting uploading document" }
+          error: { message: "Error uploading document. Response from backend: " + error }
         })
-      }  
+      }
 
       this.setState({
         document: '',
@@ -89,7 +89,7 @@ class DocumentUploadComponent extends Component {
           success: "Document uploaded successfully"
         })
       }
-  }  
+  }
 
   render() {
     const { classes } = this.props;
@@ -97,8 +97,7 @@ class DocumentUploadComponent extends Component {
     return (
       <Fragment>
         <Typography variant="h4">Document Upload</Typography>
-        <form encType="multipart/form-data" onSubmit={ this.onSubmit }>
-          
+        <form encType="multipart/form-data" onSubmit={ this.onSubmit }>  
           <TextField
             type="text"
             name="document"
@@ -109,7 +108,7 @@ class DocumentUploadComponent extends Component {
             fullWidth={ true }
             className={ classes.contentInput }
             multiline
-            rows={ 20 }
+            minRows={ 20 }
           />
 
           <Button
@@ -125,10 +124,10 @@ class DocumentUploadComponent extends Component {
 
         { /* Flag based display of error snackbar */ }
         {this.state.error && (
-        <ErrorSnackbar
-          onClose={ () => this.setState({ error: null }) }
-          message={ this.state.error.message }
-        />
+          <ErrorSnackbar
+            onClose={ () => this.setState({ error: null }) }
+            message={ this.state.error.message }
+          />
         )}
 
         { /* Flag based display of loadingbar */ }

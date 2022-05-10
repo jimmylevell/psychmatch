@@ -24,7 +24,8 @@ import LoadingBar from '../components/loadingBar';
 import InfoSnackbar from '../components/infoSnackbar';
 import ErrorSnackbar from '../components/errorSnackbar';
 
-const MAX_LENGTH_OF_CONTENT_PREVIEW = 100
+const MAX_LENGTH_OF_CONTENT_PREVIEW = 500
+const MAX_NUMBER_OF_KEYWORDS = 50
 const styles = theme => ({
   documentsView: {
     whiteSpace: "inherit",
@@ -51,7 +52,7 @@ class DocumentManager extends Component {
 
     this.state = {
       query: "",
-      documents: "",
+      documents: [],
 
       service: null,
 
@@ -70,15 +71,15 @@ class DocumentManager extends Component {
   }
 
   async getDocuments() {
-    let documents
+    let documents = []
 
     try {
       documents = await this.state.service.getDocuments();
       documents = documents.documents
     }
-    catch {
+    catch(error) {
       this.setState({
-        error: { message: "Error getting documents" }
+        error: { message: "Error getting documents. Response from backend" + error }
       })
     }
 
@@ -94,9 +95,9 @@ class DocumentManager extends Component {
       try {
         await this.state.service.deleteDocument(document._id)
       }
-      catch {
+      catch(error) {
         this.setState({
-          error: { message: "Error deleting document" }
+          error: { message: "Error deleting document. Response from backend: " + error }
         })
       }
 
@@ -112,11 +113,12 @@ class DocumentManager extends Component {
 
   shareDocumentLink(evt, document, navigator) {
     evt.preventDefault()
+
     let url = window.location.origin + "/documents/" + document._id
     navigator.clipboard.writeText(url)
 
     this.setState({
-      success: "Copied document link to clipboard: " + url
+      success: "Copied document link " + url + " to clipboard successfully"
     })
   }
 
@@ -130,10 +132,10 @@ class DocumentManager extends Component {
     const { classes } = this.props;
 
     // providing filtering of documents using query
-    let that = this
+    let query = this.state.query
     let documents = filter(this.state.documents, function(obj) {
-      return (obj.content_cz.toUpperCase().includes(that.state.query.toUpperCase())) || 
-              (obj.content_en.toUpperCase().includes(that.state.query.toUpperCase()));
+      return (obj.content_cz.toUpperCase().includes(query.toUpperCase())) || 
+              (obj.content_en.toUpperCase().includes(query.toUpperCase()));
     })
 
     return (
@@ -143,7 +145,7 @@ class DocumentManager extends Component {
           type="text"
           key="inputQuery"
           placeholder="Search"
-          label="Search"
+          label="Search Content"
           className={ classes.searchInput }
           value={ this.state.query }
           onChange={ this.handleSearchChange }
@@ -175,18 +177,28 @@ class DocumentManager extends Component {
                       { /* Only show substring of content if it is to large */ }
                       <TableCell>
                         { document.content_cz.length > MAX_LENGTH_OF_CONTENT_PREVIEW ? (
-                          <div>
-                              {`${ document.content_cz.substring(0, MAX_LENGTH_OF_CONTENT_PREVIEW) }...` }
-                          </div>
+                            document.content_cz.substring(0, MAX_LENGTH_OF_CONTENT_PREVIEW) + "..."
                           ) : (
-                          <div>
-                              { document.content_cz }
-                          </div>
+                            document.content_cz
                           ) 
                         }
                       </TableCell>
-                      <TableCell component="th" scope="row">{ document.keywords_cz.join(", ") }</TableCell>
-                      <TableCell component="th" scope="row">{ document.keywords_en.join(", ") }</TableCell>
+                      <TableCell component="th" scope="row">
+                        { document.keywords_cz.length > MAX_NUMBER_OF_KEYWORDS ? (
+                            document.keywords_cz.slice(0, MAX_NUMBER_OF_KEYWORDS).join(", ") + ", ..."
+                          ) : (
+                            document.keywords_cz.join(", ")
+                          )
+                        }
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        { document.keywords_en.length > MAX_NUMBER_OF_KEYWORDS ? (
+                            document.keywords_en.slice(0, MAX_NUMBER_OF_KEYWORDS).join(", ") + ", ..."
+                          ) : (
+                            document.keywords_en.join(", ")
+                          )
+                        }
+                      </TableCell>
                       <TableCell>{ document.updatedAt }</TableCell>
                       <TableCell onClick={ (evt) => this.shareDocumentLink(evt, document, navigator) } color="inherit">
                         <IconButton >
