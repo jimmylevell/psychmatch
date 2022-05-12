@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Typography,
   TextField,
   withStyles,
   Card,
@@ -10,15 +11,17 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  Chip,
-  Avatar 
+  Chip
 } from '@material-ui/core';
-import { green } from '@material-ui/core/colors'
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import SpellcheckIcon from '@material-ui/icons/Spellcheck';
+import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
 import { compose } from 'recompose';
 import { withRouter } from 'react-router-dom';
 import ChipInput from 'material-ui-chip-input'
+
+import InfoSnackbar from './infoSnackbar';
 
 const styles = theme => ({
   modal: {
@@ -43,6 +46,13 @@ const styles = theme => ({
   },
   input: {
     marginTop: theme.spacing(2)
+  },
+  proposed_keywords: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    '& > *': {
+      margin: theme.spacing(0.5),
+    },
   }
 });
 
@@ -58,6 +68,8 @@ class PsychologistEditor extends Component {
       keywords_en: [],
       translate_keywords: false,
       proposed_keywords: [],
+
+      success: null,
     };
   }
 
@@ -130,6 +142,21 @@ class PsychologistEditor extends Component {
       console.error("Unknown language: " + language)
     }
   }
+
+  handleProposedKeywords = (index, keyword) => () => {
+    let proposed_keywords = this.state.proposed_keywords
+    proposed_keywords = proposed_keywords.filter(key => key !== keyword)
+
+    let keywords_en = this.state.keywords_en
+    keywords_en = [...keywords_en, keyword]
+
+    this.setState({
+      proposed_keywords: proposed_keywords,
+      keywords_en: keywords_en,
+      success: "Keyword '" + keyword +"' added to Keywords EN"
+    })
+  }
+
   
   render() {
     const { classes, history } = this.props;
@@ -190,45 +217,21 @@ class PsychologistEditor extends Component {
                 onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "EN") }
               />
 
-              <ChipInput
-                className={ classes.input }
-                label="Proposed Keywords"
-                value={ this.state.proposed_keywords }
-              />
-
-
-{ /* WIP */}
-<ChipInput
-      className={ classes.input }
-      defaultValue={['foo', 'bar']}
-      fullWidth
-      chipRenderer={(
-        {
-          value,
-          isFocused,
-          isDisabled,
-          isReadOnly,
-          handleClick,
-          handleDelete,
-          className
-        },
-        key
-      ) => (
-        <Chip
-          key={key}
-          className={className}
-          style={{
-            pointerEvents: isDisabled || isReadOnly ? 'none' : undefined,
-            backgroundColor: isFocused ? green[800] : green[300]
-          }}
-          onClick={handleClick}
-          onDelete={handleDelete}
-          label={value}
-          avatar={<Avatar size={32}>Add</Avatar>}
-        />
-      )}
-    />
-
+              <Typography variant="body2" color="textSecondary" className={ classes.input }>Proposed Keywords</Typography>
+              <div className={ classes.proposed_keywords }>
+                { this.state.proposed_keywords.sort().map((element) => {
+                  let index = this.state.proposed_keywords.indexOf(element)
+                  return ( 
+                    <Chip 
+                      key={ index }
+                      deleteIcon={ <AddIcon /> }
+                      onDelete={ this.handleProposedKeywords(index, element) }
+                      icon={ <SpellcheckIcon /> }
+                      label={ element }
+                    />
+                  )
+                })}
+              </div>
 
               <FormControlLabel
                 className={ classes.input }
@@ -251,9 +254,16 @@ class PsychologistEditor extends Component {
               <Button size="small" onClick={ () => history.goBack() }><ClearIcon/>Cancel</Button>
             </CardActions>
           </form>
+          { /* Flag based display of info snackbar */ }
+          {this.state.success && (
+            <InfoSnackbar
+              onClose={ () => this.setState({ success: null }) }
+              message={ this.state.success }
+            />
+          )}
         </Card>
     </Modal>
-    );
+    )
   }
 }
 
