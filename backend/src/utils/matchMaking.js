@@ -33,7 +33,7 @@ matchMaking.match = function match(psychologists, document) {
         })
       } else {
         final_output.push({
-          "psychologist": requests[i].psychologist,
+          "psychologist": psychologist._id.toString(),
           "score": 0
         })
       }
