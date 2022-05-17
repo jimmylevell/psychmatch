@@ -1,7 +1,7 @@
 ###############################################################################################
 # Psychmatch backend - BASE
 ###############################################################################################
-FROM node:lts-alpine3.15 as psychmatch-backend-base
+FROM node:lts as psychmatch-backend-base
 
 RUN mkdir -p /srv/app
 WORKDIR /srv/app
