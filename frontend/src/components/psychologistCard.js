@@ -24,7 +24,7 @@ import { compose } from 'recompose';
 
 import { ModelService } from '../service';
 
-const NUMBER_OF_MATCHES = 5; // number of matches to show
+const NUMBER_OF_MATCHES = 8; // number of matches to show
 
 const styles = theme => ({
   tableHeader: {
@@ -69,11 +69,17 @@ class PsychologistCard extends Component {
   }
 
   loadData() {
+    let most_important_matches = []
+
+    if (this.props.most_important_matches) {
+      most_important_matches = this.props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES)
+    }
+
     this.setState({
       id: this.props.id,
       match_score: this.props.match_score,
       document_keywords: this.props.keywords,
-      most_important_matches: this.props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES),
+      most_important_matches: most_important_matches,
 
       service: ModelService.getInstance(this.props.token),
     }, () => {
@@ -118,13 +124,15 @@ class PsychologistCard extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {this.state.most_important_matches.map(match => (
+                  {this.state.most_important_matches && (
+                    this.state.most_important_matches.map(match => (
                       <TableRow className={ classes.tableRow }>
                         <TableCell> { match.document_keyword } </TableCell>
                         <TableCell> { match.psychologist_keyword } </TableCell>
                         <TableCell> { match.score } </TableCell>
                       </TableRow>
-                    ))}
+                    ))
+                  )}
                   </TableBody>
                 </Table>
               </TableContainer>              

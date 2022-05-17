@@ -11,15 +11,15 @@ const psychologistSchema = new Schema({
   website: {
     type: String
   },
-  keywords_cz: {
-    type: Array
-  },
-  keywords_en: {
-    type: Array
-  },
-  proposed_keywords: {
-    type: Array
-  }
+  keywords_cz: [{
+    type: String
+  }],
+  keywords_en: [{
+    type: String
+  }],
+  proposed_keywords: [{
+    type: String
+  }]
 }, {
   collection: 'psychologist',
   timestamps: true

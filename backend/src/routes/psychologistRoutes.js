@@ -26,11 +26,11 @@ function processPsychologist(psychologist, translate_keywords) {
         source_keywords = "keywords_en"
         target_keywords = "keywords_cz"
       }
-  
+
       psychologist[source_keywords].forEach(keyword => {
         keywords.push(deepl.translate(keyword, source_lang, target_lang))
       })
-  
+
       // wait for all translations to complete
       Promise.all(keywords)
       .then(results => {
@@ -62,7 +62,7 @@ router.post('/', (req, res, next) => {
     psychologist.save()
     .then(result => {
       console.log("Info: Psychologist created: " + psychologist._id);
-      
+
       res.status(200).json({
         message: "Psychologist uploaded successfully!",
         psychologist: {
@@ -189,7 +189,7 @@ router.put('/:id/keywords', (req, res, next) => {
   })
   .then(psychologist => {
     console.log("Info: Psychologist updated: " + psychologist._id);
-    
+
     res.status(200).json({
       message: "Psychologist keywords updated successfully!",
       psychologist: psychologist

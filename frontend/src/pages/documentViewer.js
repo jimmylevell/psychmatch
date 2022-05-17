@@ -139,7 +139,7 @@ class DocumentViewer extends Component {
                 onClick={ this.handleReexecution }
                 className={ classes.buttons }
               >
-                <RefreshIcon/>Update Annotations
+                <RefreshIcon/>Reexecute Match Making
               </Button>
             </Typography>
 

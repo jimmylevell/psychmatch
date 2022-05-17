@@ -20,6 +20,10 @@ RUN pip install gensim
 RUN pip install Flask
 RUN pip install nltk
 
+# install spacy
+RUN pip install spacy
+RUN python -m spacy download en_core_web_lg
+
 # download the model
 COPY ./src/utils.py /usr/src/app/utils.py
 COPY ./src/download_model.py /usr/src/app/download_model.py

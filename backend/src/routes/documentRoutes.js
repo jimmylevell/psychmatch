@@ -16,8 +16,14 @@ function processDocument(document) {
       document.content_en = result.translations[0].text;
     })
     .then(() => {
-      document.keywords_en = keywordextraction.extract(document.content_en)
-      document.keywords_cz = keywordextraction.extract(document.content_cz)
+      // czech language is only supported with RAKE
+      document.keywords_cz = keywordextraction.extractRake(document.content_cz)
+
+      // english can be extracted with the language model
+      return keywordextraction.extractLanguageModel(document.content_en)
+    })
+    .then((result) => {
+      document.keywords_en = result
     })
     .then(() => {
       return Psychologist.find()
