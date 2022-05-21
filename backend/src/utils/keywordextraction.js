@@ -27,9 +27,9 @@ keywordextraction.extractLanguageModel = function extract(text) {
 };
 
 // using rake as keyword extraction
-keywordextraction.extractRake = function extract(text) {
+keywordextraction.extractRake = function extract(text, language) {
   keywords = keyword_extractor.extract(text, {
-    language: "english",
+    language: language || "english",
     remove_digits: true,
     return_changed_case: true,
     remove_duplicates: true

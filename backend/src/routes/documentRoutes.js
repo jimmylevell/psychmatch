@@ -17,7 +17,7 @@ function processDocument(document) {
     })
     .then(() => {
       // czech language is only supported with RAKE
-      document.keywords_cz = keywordextraction.extractRake(document.content_cz)
+      document.keywords_cz = keywordextraction.extractRake(document.content_cz, "czech")
 
       // english can be extracted with the language model
       return keywordextraction.extractLanguageModel(document.content_en)
