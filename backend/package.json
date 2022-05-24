@@ -25,7 +25,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "keyword-extractor": "^0.0.22",
-    "mongoose": "^6.3.3",
+    "mongoose": "^6.3.4",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.16",
