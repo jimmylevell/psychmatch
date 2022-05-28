@@ -19,7 +19,11 @@ keywordextraction.extractLanguageModel = function extract(text) {
     body: JSON.stringify(body)
   })
   .then(res => {
-    return res.json()
+    return res.json();
+  })
+  .then(result => {
+    // unique keywords
+    return [...new Set(result)]
   })
   .catch(err => {
     console.error(err)
