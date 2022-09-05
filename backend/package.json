@@ -22,7 +22,7 @@
     "cheerio": "^1.0.0-rc.12",
     "config": "^3.3.7",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.1",
+    "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "keyword-extractor": "^0.0.23",
     "mongoose": "^6.5.3",
