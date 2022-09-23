@@ -28,7 +28,7 @@
     "react-scripts": "5.0.1",
     "recompose": "^0.30.0",
     "serve": "^14.0.1",
-    "web-vitals": "^3.0.1"
+    "web-vitals": "^3.0.2"
   },
   "scripts": {
     "start": "npx serve -s build -l 3100",
