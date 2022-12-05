@@ -5,7 +5,7 @@ services:
     networks:
       - traefik-public
       - psychmatch
-    environment: 
+    environment:
       NODE_ENV: production
       MONGO_DB_STRING: /run/secrets/MONGO_DB_STRING
       DEEPL_API_KEY: /run/secrets/DEEPL_API_KEY
@@ -36,7 +36,7 @@ services:
         - traefik.http.routers.psychmatchbackend-secured.entrypoints=https
         - traefik.http.routers.psychmatchbackend-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
         - traefik.http.services.psychmatchbackend-secured.loadbalancer.server.port=3000 # ask Traefik to search for port of the service container
-        
+
         # redundancy required configuration - allowing load balancer to handle multiple replicas
         - traefik.http.services.psychmatchbackend-secured.loadbalancer.sticky=true
         - traefik.http.services.psychmatchbackend-secured.loadbalancer.sticky.cookie.name=StickyCookie
@@ -62,23 +62,23 @@ services:
       restart_policy:
         condition: on-failure
       labels:
-      - traefik.enable=true # enable traefik
-      - traefik.docker.network=traefik-public # put it in the same network as traefik
-      - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
-      - traefik.http.routers.psychmatchfrontend.rule=Host(`psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
-      - traefik.http.routers.psychmatchfrontend.entrypoints=http
-      - traefik.http.routers.psychmatchfrontend.middlewares=https-redirect
-      - traefik.http.middlewares.psychmatchfrontend.redirectscheme.scheme=https # redirect traffic to https
-      - traefik.http.middlewares.psychmatchfrontend.redirectscheme.permanent=true # redirect traffic to https
-      - traefik.http.routers.psychmatchfrontend-secured.rule=Host(`psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
-      - traefik.http.routers.psychmatchfrontend-secured.entrypoints=https
-      - traefik.http.routers.psychmatchfrontend-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
-      - traefik.http.services.psychmatchfrontend-secured.loadbalancer.server.port=3100 # ask Traefik to search for port service container
-      
-      # redundancy required configuration - allowing load balancer to handle multiple replicas
-      - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky=true
-      - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.name=StickyCookie
-      - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.secure=true
+        - traefik.enable=true # enable traefik
+        - traefik.docker.network=traefik-public # put it in the same network as traefik
+        - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
+        - traefik.http.routers.psychmatchfrontend.rule=Host(`psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.psychmatchfrontend.entrypoints=http
+        - traefik.http.routers.psychmatchfrontend.middlewares=https-redirect
+        - traefik.http.middlewares.psychmatchfrontend.redirectscheme.scheme=https # redirect traffic to https
+        - traefik.http.middlewares.psychmatchfrontend.redirectscheme.permanent=true # redirect traffic to https
+        - traefik.http.routers.psychmatchfrontend-secured.rule=Host(`psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.psychmatchfrontend-secured.entrypoints=https
+        - traefik.http.routers.psychmatchfrontend-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
+        - traefik.http.services.psychmatchfrontend-secured.loadbalancer.server.port=3100 # ask Traefik to search for port service container
+
+        # redundancy required configuration - allowing load balancer to handle multiple replicas
+        - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky=true
+        - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.name=StickyCookie
+        - traefik.http.services.psychmatchfrontend-secured.loadbalancer.sticky.cookie.secure=true
 
   psychmatch-spacy:
     image: jgontrum/spacyapi:en_v2
@@ -93,23 +93,23 @@ services:
       restart_policy:
         condition: on-failure
       labels:
-      - traefik.enable=true # enable traefik
-      - traefik.docker.network=traefik-public # put it in the same network as traefik
-      - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
-      - traefik.http.routers.psychmatchspacy.rule=Host(`spacy.psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
-      - traefik.http.routers.psychmatchspacy.entrypoints=http
-      - traefik.http.routers.psychmatchspacy.middlewares=https-redirect
-      - traefik.http.middlewares.psychmatchspacy.redirectscheme.scheme=https # redirect traffic to https
-      - traefik.http.middlewares.psychmatchspacy.redirectscheme.permanent=true # redirect traffic to https
-      - traefik.http.routers.psychmatchspacy-secured.rule=Host(`spacy.psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
-      - traefik.http.routers.psychmatchspacy-secured.entrypoints=https
-      - traefik.http.routers.psychmatchspacy-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
-      - traefik.http.services.psychmatchspacy-secured.loadbalancer.server.port=80 # ask Traefik to search for port service container
-      
-      # redundancy required configuration - allowing load balancer to handle multiple replicas
-      - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky=true
-      - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky.cookie.name=StickyCookie
-      - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky.cookie.secure=true
+        - traefik.enable=true # enable traefik
+        - traefik.docker.network=traefik-public # put it in the same network as traefik
+        - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
+        - traefik.http.routers.psychmatchspacy.rule=Host(`spacy.psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.psychmatchspacy.entrypoints=http
+        - traefik.http.routers.psychmatchspacy.middlewares=https-redirect
+        - traefik.http.middlewares.psychmatchspacy.redirectscheme.scheme=https # redirect traffic to https
+        - traefik.http.middlewares.psychmatchspacy.redirectscheme.permanent=true # redirect traffic to https
+        - traefik.http.routers.psychmatchspacy-secured.rule=Host(`spacy.psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.psychmatchspacy-secured.entrypoints=https
+        - traefik.http.routers.psychmatchspacy-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
+        - traefik.http.services.psychmatchspacy-secured.loadbalancer.server.port=80 # ask Traefik to search for port service container
+
+        # redundancy required configuration - allowing load balancer to handle multiple replicas
+        - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky=true
+        - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky.cookie.name=StickyCookie
+        - traefik.http.services.psychmatchspacy-secured.loadbalancer.sticky.cookie.secure=true
 
   psychmatch-nlp-model:
     image: ghcr.io/jimmylevell/psychmatch/psychmatch_nlp_model:latest
@@ -126,28 +126,28 @@ services:
       restart_policy:
         condition: on-failure
       labels:
-      - traefik.enable=true # enable traefik
-      - traefik.docker.network=traefik-public # put it in the same network as traefik
-      - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
-      - traefik.http.routers.psychmatchnlpmodel.rule=Host(`nlp-model.psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
-      - traefik.http.routers.psychmatchnlpmodel.entrypoints=http
-      - traefik.http.routers.psychmatchnlpmodel.middlewares=https-redirect
-      - traefik.http.middlewares.psychmatchnlpmodel.redirectscheme.scheme=https # redirect traffic to https
-      - traefik.http.middlewares.psychmatchnlpmodel.redirectscheme.permanent=true # redirect traffic to https
-      - traefik.http.routers.psychmatchnlpmodel-secured.rule=Host(`nlp-model.psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
-      - traefik.http.routers.psychmatchnlpmodel-secured.entrypoints=https
-      - traefik.http.routers.psychmatchnlpmodel-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
-      - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.server.port=5000 # ask Traefik to search for port service container
-      
-      # redundancy required configuration - allowing load balancer to handle multiple replicas
-      - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.sticky=true
-      - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.sticky.cookie.name=StickyCookie
-      - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.sticky.cookie.secure=true
+        - traefik.enable=true # enable traefik
+        - traefik.docker.network=traefik-public # put it in the same network as traefik
+        - traefik.constraint-label=traefik-public # assign the same label as traefik so it can be discovered
+        - traefik.http.routers.psychmatchnlpmodel.rule=Host(`nlp-model.psychmatch.app.levell.ch`) # listen to port 80 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.psychmatchnlpmodel.entrypoints=http
+        - traefik.http.routers.psychmatchnlpmodel.middlewares=https-redirect
+        - traefik.http.middlewares.psychmatchnlpmodel.redirectscheme.scheme=https # redirect traffic to https
+        - traefik.http.middlewares.psychmatchnlpmodel.redirectscheme.permanent=true # redirect traffic to https
+        - traefik.http.routers.psychmatchnlpmodel-secured.rule=Host(`nlp-model.psychmatch.app.levell.ch`) # listen to port 443 for request to APP_DOMAIN (use together with the line below)
+        - traefik.http.routers.psychmatchnlpmodel-secured.entrypoints=https
+        - traefik.http.routers.psychmatchnlpmodel-secured.tls.certresolver=le # use the Let's Encrypt certificate we set up earlier
+        - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.server.port=5000 # ask Traefik to search for port service container
+
+        # redundancy required configuration - allowing load balancer to handle multiple replicas
+        - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.sticky=true
+        - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.sticky.cookie.name=StickyCookie
+        - traefik.http.services.psychmatchnlpmodel-secured.loadbalancer.sticky.cookie.secure=true
 
 networks:
   traefik-public:
     external: true
-  psychmatch: 
+  psychmatch:
     external: true
 
 secrets:

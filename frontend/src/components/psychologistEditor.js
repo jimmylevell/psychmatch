@@ -76,11 +76,11 @@ class PsychologistEditor extends Component {
   componentDidMount() {
     const { psychologist } = this.props
 
-    if(psychologist) {
+    if (psychologist) {
       // only change state of psychologist passed
       this.setState({
-        id: psychologist._id, 
-        name: psychologist.name, 
+        id: psychologist._id,
+        name: psychologist.name,
         website: psychologist.website,
         keywords_cz: psychologist.keywords_cz,
         keywords_en: psychologist.keywords_en,
@@ -109,7 +109,7 @@ class PsychologistEditor extends Component {
     })
   }
 
-  handleAddKeyword(keyword, language) {   
+  handleAddKeyword(keyword, language) {
     if (language === "CZ") {
       this.setState({
         keywords_cz: [...this.state.keywords_cz, keyword]
@@ -153,94 +153,94 @@ class PsychologistEditor extends Component {
     this.setState({
       proposed_keywords: proposed_keywords,
       keywords_en: keywords_en,
-      success: "Keyword '" + keyword +"' added to Keywords EN"
+      success: "Keyword '" + keyword + "' added to Keywords EN"
     })
   }
 
-  
+
   render() {
     const { classes, history } = this.props;
     const TITLE = this.state.id ? "Editing " + this.state.name : "Add a new Psychologist";
 
     return (
       <Modal
-        className={ classes.modal }
-        onClose={ () => history.goBack() }
+        className={classes.modal}
+        onClose={() => history.goBack()}
         open
       >
-        <Card className={ classes.modalCard }>
-          <CardHeader title={ TITLE } />
+        <Card className={classes.modalCard}>
+          <CardHeader title={TITLE} />
 
-          <form onSubmit={ this.handleSubmit }>
-            <CardContent className={ classes.modalCardContent }>
+          <form onSubmit={this.handleSubmit}>
+            <CardContent className={classes.modalCardContent}>
               <TextField
-                required 
+                required
                 type="text"
                 name="name"
                 key="inputPsychologistName"
                 placeholder="Psychologist Name"
                 label="Psychologist Name"
-                value={ this.state.name }
-                onChange={ this.handleChange }
+                value={this.state.name}
+                onChange={this.handleChange}
                 variant="outlined"
                 size="small"
-                autoFocus 
+                autoFocus
               />
 
               <TextField
-                  required 
-                  type="url"
-                  name="website"
-                  className={ classes.input }
-                  key="inputPsychologistWebsite"
-                  placeholder="Psychologist Website"
-                  label="Psychologist Website"
-                  value={ this.state.website }
-                  onChange={ this.handleChange }
-                  variant="outlined"
-                  size="small"
-                />
+                required
+                type="url"
+                name="website"
+                className={classes.input}
+                key="inputPsychologistWebsite"
+                placeholder="Psychologist Website"
+                label="Psychologist Website"
+                value={this.state.website}
+                onChange={this.handleChange}
+                variant="outlined"
+                size="small"
+              />
 
               <ChipInput
-                className={ classes.input }
+                className={classes.input}
                 label="Keywords CZ"
-                value={ this.state.keywords_cz}
-                onAdd={ (chip) => this.handleAddKeyword(chip, "CZ") }
-                onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "CZ") }
+                value={this.state.keywords_cz}
+                onAdd={(chip) => this.handleAddKeyword(chip, "CZ")}
+                onDelete={(chip, index) => this.handleDeleteKeyword(chip, index, "CZ")}
               />
 
               <ChipInput
-                className={ classes.input }
+                className={classes.input}
                 label="Keywords EN"
-                value={ this.state.keywords_en }
-                onAdd={ (chip) => this.handleAddKeyword(chip, "EN") }
-                onDelete={ (chip, index) => this.handleDeleteKeyword(chip, index, "EN") }
+                value={this.state.keywords_en}
+                onAdd={(chip) => this.handleAddKeyword(chip, "EN")}
+                onDelete={(chip, index) => this.handleDeleteKeyword(chip, index, "EN")}
               />
 
-              <Typography variant="body2" color="textSecondary" className={ classes.input }>Proposed Keywords</Typography>
-              <div className={ classes.proposed_keywords }>
-                { this.state.proposed_keywords.sort().map((element) => {
+              <Typography variant="body2" color="textSecondary" className={classes.input}>Proposed Keywords</Typography>
+              <div className={classes.proposed_keywords}>
+                {this.state.proposed_keywords.sort().map((element) => {
                   let index = this.state.proposed_keywords.indexOf(element)
-                  return ( 
-                    <Chip 
-                      key={ index }
-                      deleteIcon={ <AddIcon /> }
-                      onDelete={ this.handleProposedKeywords(index, element) }
-                      icon={ <SpellcheckIcon /> }
-                      label={ element }
+                  return (
+                    <Chip
+                      key={index}
+                      deleteIcon={<AddIcon />}
+                      onDelete={this.handleProposedKeywords(index, element)}
+                      icon={<SpellcheckIcon />}
+                      label={element}
                     />
                   )
                 })}
               </div>
 
               <FormControlLabel
-                className={ classes.input }
+                className={classes.input}
                 control={
                   <Checkbox
                     id="translate_keywords"
                     name="translate_keywords"
-                    value={ this.state.translate_keywords }
-                    onChange={ this.handleChange }
+                    value={this.state.translate_keywords}
+                    onChange={this.handleChange}
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                   />
@@ -248,21 +248,21 @@ class PsychologistEditor extends Component {
                 label="Translate Keywords into other Language"
               />
             </CardContent>
-            
+
             <CardActions>
-              <Button size="small" color="primary" type="submit"><SaveAltIcon/>Save</Button>
-              <Button size="small" onClick={ () => history.goBack() }><ClearIcon/>Cancel</Button>
+              <Button size="small" color="primary" type="submit"><SaveAltIcon />Save</Button>
+              <Button size="small" onClick={() => history.goBack()}><ClearIcon />Cancel</Button>
             </CardActions>
           </form>
-          { /* Flag based display of info snackbar */ }
+          { /* Flag based display of info snackbar */}
           {this.state.success && (
             <InfoSnackbar
-              onClose={ () => this.setState({ success: null }) }
-              message={ this.state.success }
+              onClose={() => this.setState({ success: null })}
+              message={this.state.success}
             />
           )}
         </Card>
-    </Modal>
+      </Modal>
     )
   }
 }

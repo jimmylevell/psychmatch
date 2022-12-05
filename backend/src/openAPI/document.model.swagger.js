@@ -1,4 +1,4 @@
-let document = {} 
+let document = {}
 
 document.getDocuments = {
     tags: ['Documents'],

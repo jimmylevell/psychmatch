@@ -33,7 +33,7 @@ ENTRYPOINT [ "/docker/entrypoint.sh" ]
 FROM psychmatch-frontend-base as psychmatch-frontend-deploy
 
 # Install app dependencies
-COPY . . 
+COPY . .
 RUN npm install
 
 COPY ./docker/entrypoint.prod.sh /docker

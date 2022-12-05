@@ -7,27 +7,27 @@ const keywordextraction = {};
 
 // using language model for keyword extraction
 keywordextraction.extractLanguageModel = function extract(text) {
-  const API =  config.nlpmodel.API
+  const API = config.nlpmodel.API
   const body = {
     content: text,
   }
   return fetch(API + "/keywords", {
-    headers : {
-      'Content-Type' : 'application/json'
+    headers: {
+      'Content-Type': 'application/json'
     },
     method: 'POST',
     body: JSON.stringify(body)
   })
-  .then(res => {
-    return res.json();
-  })
-  .then(result => {
-    // unique keywords
-    return [...new Set(result)]
-  })
-  .catch(err => {
-    console.error(err)
-  })
+    .then(res => {
+      return res.json();
+    })
+    .then(result => {
+      // unique keywords
+      return [...new Set(result)]
+    })
+    .catch(err => {
+      console.error(err)
+    })
 };
 
 // using rake as keyword extraction

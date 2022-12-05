@@ -43,7 +43,7 @@ class DocumentViewer extends Component {
       document: null,
 
       service: null,
-      
+
       success: null,          // flag to trigger success info
       loading: true,          // flag to trigger loading
       error: null,            // flag to trigger error messages
@@ -70,7 +70,7 @@ class DocumentViewer extends Component {
       this.setState({ loading: true })
       document = await this.state.service.getDocument(this.state.documentId) || []
     }
-    catch(error) {
+    catch (error) {
       this.setState({
         error: { message: "Error getting document. Response from backend: " + error },
         loading: false
@@ -90,14 +90,14 @@ class DocumentViewer extends Component {
 
         await this.state.service.reexecuteDocument(this.state.documentId);
       }
-      catch(error) {
+      catch (error) {
         this.setState({
           error: { message: "Error reprocessing the document. Response from backend: " + error },
           loading: false
         })
       }
 
-      if(!this.state.error) {
+      if (!this.state.error) {
         this.setState({
           success: "Reprocessing of the document completed successfully",
           loading: false
@@ -109,13 +109,13 @@ class DocumentViewer extends Component {
   addKeywordsToPsychologist(id, keywords) {
     try {
       this.state.service.addKeywordsToPsychologist(id, keywords)
-      .then(() => {
-        this.setState({
-          success: "Successfully added the keywords to the psychologist"
+        .then(() => {
+          this.setState({
+            success: "Successfully added the keywords to the psychologist"
+          })
         })
-      })
     }
-    catch(error) {
+    catch (error) {
       this.setState({
         error: { message: "Error adding keywords to the psychologist. Response from backend: " + error },
       })
@@ -128,102 +128,102 @@ class DocumentViewer extends Component {
     const document = this.state.document
 
     return (
-      <Fragment>        
+      <Fragment>
         {document !== null ? (
           // document present
           <div>
-            <Typography className={ classes.title } variant="h4">Document View
-              <Button 
-                size="small" 
-                color="primary" 
-                onClick={ this.handleReexecution }
-                className={ classes.buttons }
+            <Typography className={classes.title} variant="h4">Document View
+              <Button
+                size="small"
+                color="primary"
+                onClick={this.handleReexecution}
+                className={classes.buttons}
               >
-                <RefreshIcon/>Re-Execute Match Making
+                <RefreshIcon />Re-Execute Match Making
               </Button>
             </Typography>
 
-            <Grid container spacing={ 2 }>
-              <Grid item xs={ 6 }>
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
                 <Card>
                   <CardContent>
                     <Typography color="textSecondary">Czech Content</Typography>
-                    <Typography component="p"> { this.state.document.content_cz }</Typography>
+                    <Typography component="p"> {this.state.document.content_cz}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={ 6 }>
+              <Grid item xs={6}>
                 <Card>
                   <CardContent>
                     <Typography color="textSecondary">English Content</Typography>
-                    <Typography component="p"> { this.state.document.content_en }</Typography>
+                    <Typography component="p"> {this.state.document.content_en}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
 
-              <Grid item xs={ 6 }>
+              <Grid item xs={6}>
                 <Card>
                   <CardContent>
                     <Typography color="textSecondary">Czech Keywords</Typography>
-                    <Typography component="p"> { this.state.document.keywords_cz.join(", ") }</Typography>
+                    <Typography component="p"> {this.state.document.keywords_cz.join(", ")}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
-              <Grid item xs={ 6 }>
+              <Grid item xs={6}>
                 <Card>
                   <CardContent>
                     <Typography color="textSecondary">English Keywords</Typography>
-                    <Typography component="p"> { this.state.document.keywords_en.join(", ") }</Typography>
+                    <Typography component="p"> {this.state.document.keywords_en.join(", ")}</Typography>
                   </CardContent>
                 </Card>
               </Grid>
 
-              <Typography className={ classes.subtitle } variant="h5">Document View</Typography>
-              <Grid container className={ classes.table } spacing={ 2 }>                
+              <Typography className={classes.subtitle} variant="h5">Document View</Typography>
+              <Grid container className={classes.table} spacing={2}>
                 {this.state.document.matched_psychologists && (
-                  this.state.document.matched_psychologists.sort((a, b) => b.score - a.score).map(function(match) {
-                    return <PsychologistCard 
-                              key={ match.psychologist } 
-                              id={ match.psychologist } 
-                              match_score={ match.score }
-                              most_important_matches={ match.most_important_matches }
-                              keywords={ document.keywords_en }
-                              token={ token }
-                              addKeywordsToPsychologist={ addKeywordsToPsychologist }
-                            />
+                  this.state.document.matched_psychologists.sort((a, b) => b.score - a.score).map(function (match) {
+                    return <PsychologistCard
+                      key={match.psychologist}
+                      id={match.psychologist}
+                      match_score={match.score}
+                      most_important_matches={match.most_important_matches}
+                      keywords={document.keywords_en}
+                      token={token}
+                      addKeywordsToPsychologist={addKeywordsToPsychologist}
+                    />
                   })
                 )}
               </Grid>
             </Grid>
-          </div>  
+          </div>
         ) : (
           // no document could be found
           !this.state.loading && (
             <Fragment>
-              <Typography className={ classes.title } variant="h4">Document View</Typography>
+              <Typography className={classes.title} variant="h4">Document View</Typography>
               <Typography variant="subtitle1">No document with given ID could be found</Typography>
             </Fragment>
           )
         )}
 
-        { /* Flag based display of error snackbar */ }
+        { /* Flag based display of error snackbar */}
         {this.state.error && (
           <ErrorSnackbar
-            onClose={ () => this.setState({ error: null }) }
-            message={ this.state.error.message }
+            onClose={() => this.setState({ error: null })}
+            message={this.state.error.message}
           />
         )}
 
-        { /* Flag based display of loadingbar */ }
+        { /* Flag based display of loadingbar */}
         {this.state.loading && (
-          <LoadingBar/>
+          <LoadingBar />
         )}
 
-        { /* Flag based display of info snackbar */ }
+        { /* Flag based display of info snackbar */}
         {this.state.success && (
           <InfoSnackbar
-            onClose={ () => this.setState({ success: null }) }
-            message={ this.state.success }
+            onClose={() => this.setState({ success: null })}
+            message={this.state.success}
           />
         )}
       </Fragment>

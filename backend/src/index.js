@@ -3,7 +3,7 @@ require('dotenv').config({ path: '.env' });
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const express = require('express');
-const mongoose = require('mongoose');  
+const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require("morgan");
@@ -33,7 +33,7 @@ const options = {
 const bearerStrategy = new BearerStrategy(options, (token, done) => {
   // Send user info using the second argument
   done(null, {}, token);
-  }
+}
 );
 
 // load environmental dependent MongoDB configuration
@@ -51,7 +51,7 @@ mongoose.connect(config.MONGO_DB_STRING, {
 // enable cors
 app.use(cors());
 
-if(process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development') {
   console.log("Running in DEV mode")
   app.use(morgan('dev'));
 } else {
@@ -64,8 +64,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // publish API
-app.use('/api/documents', passport.authenticate('oauth-bearer', {session: false}), documentApi)
-app.use('/api/psychologists', passport.authenticate('oauth-bearer', {session: false}), psychologistApi)
+app.use('/api/documents', passport.authenticate('oauth-bearer', { session: false }), documentApi)
+app.use('/api/psychologists', passport.authenticate('oauth-bearer', { session: false }), psychologistApi)
 
 // publish Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))

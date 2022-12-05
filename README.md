@@ -1,22 +1,22 @@
 # Psychmatch app
 ## Scope
-Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.  
+Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.
 
 ## Productive Infrastructure
-The application consists of a frontend written in react and a backend written in NodeJS. For the storage of the data mongodb is used.  
+The application consists of a frontend written in react and a backend written in NodeJS. For the storage of the data mongodb is used.
 
 ## Design
 ### Frontend
-Using react in combination with the material design to create a intuitive UI.  
+Using react in combination with the material design to create a intuitive UI.
 
 ### Backend
-Backend API is using nodeJS and mongodb as datastore.  
+Backend API is using nodeJS and mongodb as datastore.
 
 # Development
-Backend and frontend are combined in this project but each with an individual package.json. and .env file.  
+Backend and frontend are combined in this project but each with an individual package.json. and .env file.
 
 ## Backend
-For the configuration of the app the following environment variable can be used:  
+For the configuration of the app the following environment variable can be used:
 
     PORT=3000
 
@@ -24,7 +24,7 @@ For the configuration of the app the following environment variable can be used:
     MONGO_DB_STRING=mongodb://mongoadmin:password@localhost:27017/psychmatch?authSource=admin
 
 ## Frontend
-For the configuration of the app the following environment variable can be used:  
+For the configuration of the app the following environment variable can be used:
 
     # react port
     PORT=3100
@@ -34,9 +34,14 @@ For the configuration of the app the following environment variable can be used:
     REACT_APP_NAME=$npm_package_name
 
 ## Local DB
-Using the following docker command a local mongo DB instance can be instantiated.  
+Using the following docker command a local mongo DB instance can be instantiated.
 
     docker run -e MONGO_INITDB_ROOT_USERNAME=mongoadmin -e MONGO_INITDB_ROOT_PASSWORD=password -p 27017:27017 --name psychmatch-mongo -d --restart always mongo
+
+## Local NLP Model
+Using the following docker command a local NLP model can be instantiated.
+
+    docker run -p 5000:5000 --name psychmatch-nlp -d --restart always ghcr.io/jimmylevell/psychmatch/psychmatch_nlp_model:latest
 
 # Available Scripts
 In the project directory, you can run:

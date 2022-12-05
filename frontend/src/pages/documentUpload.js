@@ -30,18 +30,18 @@ class DocumentUploadComponent extends Component {
   constructor() {
     super();
 
-    this.state = {      
-        document: '',
+    this.state = {
+      document: '',
 
-        service: null,
+      service: null,
 
-        loading: true,                   // flag for displaying loading bar
-        success: null,                   // flag for displaying success messages
-        error: null,                     // flag for displaying error messages
-      };
+      loading: true,                   // flag for displaying loading bar
+      success: null,                   // flag for displaying success messages
+      error: null,                     // flag for displaying error messages
+    };
 
-      this.handleChange = this.handleChange.bind(this)
-      this.onSubmit = this.onSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this)
+    this.onSubmit = this.onSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -62,84 +62,84 @@ class DocumentUploadComponent extends Component {
   }
 
   async onSubmit(evt) {
-      evt.preventDefault()
+    evt.preventDefault()
 
-      this.setState({ loading: true })
-      
-      var postData = {
-        document: this.state.document
-      }
+    this.setState({ loading: true })
 
-      try {
-        await this.state.service.newDocument(postData)
-      }
-      catch(error) {
-        this.setState({
-          error: { message: "Error uploading document. Response from backend: " + error }
-        })
-      }
+    var postData = {
+      document: this.state.document
+    }
 
+    try {
+      await this.state.service.newDocument(postData)
+    }
+    catch (error) {
       this.setState({
-        document: '',
-        loading: false
+        error: { message: "Error uploading document. Response from backend: " + error }
       })
+    }
 
-      if(this.state.error === null) {
-        this.setState({
-          success: "Document uploaded successfully"
-        })
-      }
+    this.setState({
+      document: '',
+      loading: false
+    })
+
+    if (this.state.error === null) {
+      this.setState({
+        success: "Document uploaded successfully"
+      })
+    }
   }
 
   render() {
     const { classes } = this.props;
-    
+
     return (
       <Fragment>
         <Typography variant="h4">Document Upload</Typography>
-        <form encType="multipart/form-data" onSubmit={ this.onSubmit }>  
+        <form encType="multipart/form-data" onSubmit={this.onSubmit}>
           <TextField
             type="text"
             name="document"
             label="Document Content"
-            value={ this.state.document }
-            onChange={ this.handleChange }
+            value={this.state.document}
+            onChange={this.handleChange}
             variant="outlined"
-            fullWidth={ true }
-            className={ classes.contentInput }
+            fullWidth={true}
+            className={classes.contentInput}
             multiline
-            minRows={ 20 }
+            minRows={20}
           />
 
           <Button
-            color="primary" 
+            color="primary"
             variant="outlined"
-            className={ classes.button }
-            disabled={ !this.state.document } 
+            className={classes.button}
+            disabled={!this.state.document}
             type="submit"
           >
-            <AddIcon/>Upload
+            <AddIcon />Upload
           </Button>
         </form>
 
-        { /* Flag based display of error snackbar */ }
+        { /* Flag based display of error snackbar */}
         {this.state.error && (
           <ErrorSnackbar
-            onClose={ () => this.setState({ error: null }) }
-            message={ this.state.error.message }
+            onClose={() => this.setState({ error: null })}
+            message={this.state.error.message}
           />
         )}
 
-        { /* Flag based display of loadingbar */ }
+        { /* Flag based display of loadingbar */}
         {this.state.loading && (
-          <LoadingBar/>
+          <LoadingBar />
         )}
 
-        { /* Flag based display of info snackbar */ }
+        { /* Flag based display of info snackbar */}
         {this.state.success && (
           <InfoSnackbar
-            onClose={ () => this.setState({ success: null }) }
-            message={ this.state.success }
+            onClose={() => this.setState({ success: null })}
+            message={this.state.success}
           />
         )}
       </Fragment>
@@ -148,6 +148,6 @@ class DocumentUploadComponent extends Component {
 }
 
 export default compose(
-    withRouter,
-    withStyles(styles),
+  withRouter,
+  withStyles(styles),
 )(DocumentUploadComponent);

@@ -6,10 +6,10 @@ import {
   Paper,
   TextField,
   IconButton,
-  TableContainer, 
-  Table, 
-  TableHead, 
-  TableBody, 
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
   TableCell,
   TableRow
 } from '@material-ui/core';
@@ -77,15 +77,15 @@ class DocumentManager extends Component {
       documents = await this.state.service.getDocuments();
       documents = documents.documents
     }
-    catch(error) {
+    catch (error) {
       this.setState({
         error: { message: "Error getting documents. Response from backend" + error }
       })
     }
 
-    this.setState({ 
-      loading: false, 
-      documents: documents || [] 
+    this.setState({
+      loading: false,
+      documents: documents || []
     });
   }
 
@@ -95,13 +95,13 @@ class DocumentManager extends Component {
       try {
         await this.state.service.deleteDocument(document._id)
       }
-      catch(error) {
+      catch (error) {
         this.setState({
           error: { message: "Error deleting document. Response from backend: " + error }
         })
       }
 
-      if(!this.state.error) {
+      if (!this.state.error) {
         this.setState({
           success: "Document deleted successfully"
         })
@@ -123,8 +123,8 @@ class DocumentManager extends Component {
   }
 
   handleSearchChange = evt => {
-    this.setState({ 
-      query: evt.target.value 
+    this.setState({
+      query: evt.target.value
     });
   };
 
@@ -133,79 +133,79 @@ class DocumentManager extends Component {
 
     // providing filtering of documents using query
     let query = this.state.query
-    let documents = filter(this.state.documents, function(obj) {
-      return (obj.content_cz.toUpperCase().includes(query.toUpperCase())) || 
-              (obj.content_en.toUpperCase().includes(query.toUpperCase()));
+    let documents = filter(this.state.documents, function (obj) {
+      return (obj.content_cz.toUpperCase().includes(query.toUpperCase())) ||
+        (obj.content_en.toUpperCase().includes(query.toUpperCase()));
     })
 
     return (
       <Fragment>
-        { /* query input */ }
+        { /* query input */}
         <TextField
           type="text"
           key="inputQuery"
           placeholder="Search"
           label="Search Content"
-          className={ classes.searchInput }
-          value={ this.state.query }
-          onChange={ this.handleSearchChange }
+          className={classes.searchInput}
+          value={this.state.query}
+          onChange={this.handleSearchChange}
           variant="outlined"
           size="small"
-          autoFocus 
+          autoFocus
         />
 
         <Typography variant="h4">Documents</Typography>
-        
+
         {documents.length > 0 ? (
           // documents available
-          <Paper elevation={ 1 } className={ classes.documentsView }>
-            <TableContainer component={ Paper }>
-              <Table className={ classes.table } aria-label="data table">
+          <Paper elevation={1} className={classes.documentsView}>
+            <TableContainer component={Paper}>
+              <Table className={classes.table} aria-label="data table">
                 <TableHead>
                   <TableRow>
-                    <TableCell className={ classes.tableHeader }>Content CZ</TableCell>
-                    <TableCell className={ classes.tableHeader }>Keywords CZ</TableCell>
-                    <TableCell className={ classes.tableHeader }>Keywords EN</TableCell>
-                    <TableCell className={ classes.tableHeader }>Updated At</TableCell>
-                    <TableCell className={ classes.tableHeader }>Share</TableCell>
-                    <TableCell className={ classes.tableHeader }>Remove</TableCell>
+                    <TableCell className={classes.tableHeader}>Content CZ</TableCell>
+                    <TableCell className={classes.tableHeader}>Keywords CZ</TableCell>
+                    <TableCell className={classes.tableHeader}>Keywords EN</TableCell>
+                    <TableCell className={classes.tableHeader}>Updated At</TableCell>
+                    <TableCell className={classes.tableHeader}>Share</TableCell>
+                    <TableCell className={classes.tableHeader}>Remove</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {orderBy(documents, ['updatedAt'], ['desc']).map(document => (
-                    <TableRow key={ document._id } className={ classes.tableRow } component={ Link } to={ `/documents/${ document._id }/` }>
-                      { /* Only show substring of content if it is to large */ }
+                    <TableRow key={document._id} className={classes.tableRow} component={Link} to={`/documents/${document._id}/`}>
+                      { /* Only show substring of content if it is to large */}
                       <TableCell>
-                        { document.content_cz.length > MAX_LENGTH_OF_CONTENT_PREVIEW ? (
-                            document.content_cz.substring(0, MAX_LENGTH_OF_CONTENT_PREVIEW) + "..."
-                          ) : (
-                            document.content_cz
-                          ) 
+                        {document.content_cz.length > MAX_LENGTH_OF_CONTENT_PREVIEW ? (
+                          document.content_cz.substring(0, MAX_LENGTH_OF_CONTENT_PREVIEW) + "..."
+                        ) : (
+                          document.content_cz
+                        )
                         }
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        { document.keywords_cz.length > MAX_NUMBER_OF_KEYWORDS ? (
-                            document.keywords_cz.slice(0, MAX_NUMBER_OF_KEYWORDS).join(", ") + ", ..."
-                          ) : (
-                            document.keywords_cz.join(", ")
-                          )
+                        {document.keywords_cz.length > MAX_NUMBER_OF_KEYWORDS ? (
+                          document.keywords_cz.slice(0, MAX_NUMBER_OF_KEYWORDS).join(", ") + ", ..."
+                        ) : (
+                          document.keywords_cz.join(", ")
+                        )
                         }
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        { document.keywords_en.length > MAX_NUMBER_OF_KEYWORDS ? (
-                            document.keywords_en.slice(0, MAX_NUMBER_OF_KEYWORDS).join(", ") + ", ..."
-                          ) : (
-                            document.keywords_en.join(", ")
-                          )
+                        {document.keywords_en.length > MAX_NUMBER_OF_KEYWORDS ? (
+                          document.keywords_en.slice(0, MAX_NUMBER_OF_KEYWORDS).join(", ") + ", ..."
+                        ) : (
+                          document.keywords_en.join(", ")
+                        )
                         }
                       </TableCell>
-                      <TableCell>{ document.updatedAt }</TableCell>
-                      <TableCell onClick={ (evt) => this.shareDocumentLink(evt, document, navigator) } color="inherit">
+                      <TableCell>{document.updatedAt}</TableCell>
+                      <TableCell onClick={(evt) => this.shareDocumentLink(evt, document, navigator)} color="inherit">
                         <IconButton >
                           <ShareIcon />
                         </IconButton>
                       </TableCell>
-                      <TableCell onClick={ (evt) => this.deleteDocument(evt, document) } color="inherit">
+                      <TableCell onClick={(evt) => this.deleteDocument(evt, document)} color="inherit">
                         <IconButton >
                           <DeleteIcon />
                         </IconButton>
@@ -215,32 +215,32 @@ class DocumentManager extends Component {
                 </TableBody>
               </Table>
             </TableContainer>
-            </Paper>
+          </Paper>
         ) : (
           // no documents available
           !this.state.loading && (
             <Typography variant="subtitle1">So far no documents have been uploaded, start uploading your first document now!</Typography>
           )
         )}
-  
-        { /* Flag based display of error snackbar */ }
+
+        { /* Flag based display of error snackbar */}
         {this.state.error && (
           <ErrorSnackbar
-            onClose={ () => this.setState({ error: null }) }
-            message={ this.state.error.message }
+            onClose={() => this.setState({ error: null })}
+            message={this.state.error.message}
           />
         )}
 
-        { /* Flag based display of loadingbar */ }
+        { /* Flag based display of loadingbar */}
         {this.state.loading && (
-          <LoadingBar/>
+          <LoadingBar />
         )}
 
-        { /* Flag based display of info snackbar */ }
+        { /* Flag based display of info snackbar */}
         {this.state.success && (
           <InfoSnackbar
-            onClose={ () => this.setState({ success: null }) }
-            message={ this.state.success }
+            onClose={() => this.setState({ success: null })}
+            message={this.state.success}
           />
         )}
       </Fragment>

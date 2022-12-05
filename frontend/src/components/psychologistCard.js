@@ -9,10 +9,10 @@ import {
   CardActions,
   Button,
   Paper,
-  TableContainer, 
-  Table, 
-  TableHead, 
-  TableBody, 
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
   TableCell,
   TableRow
 } from '@material-ui/core';
@@ -35,7 +35,7 @@ const styles = theme => ({
     "&:hover": {
       background: "#d6effb"
     },
-  }, 
+  },
   largeAvatar: {
     width: theme.spacing(7),
     height: theme.spacing(5),
@@ -63,7 +63,7 @@ class PsychologistCard extends Component {
 
   componentDidUpdate() {
     // check if score has changed
-    if(this.state.match_score !== this.props.match_score) {
+    if (this.state.match_score !== this.props.match_score) {
       this.loadData()
     }
   }
@@ -99,49 +99,49 @@ class PsychologistCard extends Component {
 
   render() {
     const { classes } = this.props;
-    
+
     return (
-      <Grid item xs={ 3 }>
-        { this.state.psychologist && (          
+      <Grid item xs={3}>
+        {this.state.psychologist && (
           <Card>
             <CardHeader
               avatar={
-                <Avatar className={ classes.largeAvatar } variant="rounded" aria-label="score">
-                  { parseFloat(this.state.match_score).toFixed(2) }
+                <Avatar className={classes.largeAvatar} variant="rounded" aria-label="score">
+                  {parseFloat(this.state.match_score).toFixed(2)}
                 </Avatar>
               }
-              title={ this.state.psychologist.name }
+              title={this.state.psychologist.name}
             />
 
             <CardContent>
-              <TableContainer component={ Paper }>
+              <TableContainer component={Paper}>
                 <Table aria-label="data table">
                   <TableHead>
                     <TableRow>
-                      <TableCell className={ classes.tableHeader }>Document</TableCell>
-                      <TableCell className={ classes.tableHeader }>Psychologist</TableCell>
-                      <TableCell className={ classes.tableHeader }>Score</TableCell>
+                      <TableCell className={classes.tableHeader}>Document</TableCell>
+                      <TableCell className={classes.tableHeader}>Psychologist</TableCell>
+                      <TableCell className={classes.tableHeader}>Score</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                  {this.state.most_important_matches && (
-                    this.state.most_important_matches.map(match => (
-                      <TableRow className={ classes.tableRow }>
-                        <TableCell> { match.document_keyword } </TableCell>
-                        <TableCell> { match.psychologist_keyword } </TableCell>
-                        <TableCell> { match.score } </TableCell>
-                      </TableRow>
-                    ))
-                  )}
+                    {this.state.most_important_matches && (
+                      this.state.most_important_matches.map(match => (
+                        <TableRow className={classes.tableRow}>
+                          <TableCell> {match.document_keyword} </TableCell>
+                          <TableCell> {match.psychologist_keyword} </TableCell>
+                          <TableCell> {match.score} </TableCell>
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
                 </Table>
-              </TableContainer>              
+              </TableContainer>
             </CardContent>
 
             <CardActions>
-              <Button size="small" component={ Link } to={ `/psychologists/${ this.state.id }/edit`} ><EditIcon/>Edit</Button>
-              <Button size="small" href={ `${ this.state.psychologist.website }`} ><LanguageIcon/>Website</Button>
-              <Button size="small" onClick={ () => this.addKeywordsToPsychologist() } color="primary" ><FeedbackIcon/>Recommend Keywords</Button>
+              <Button size="small" component={Link} to={`/psychologists/${this.state.id}/edit`} ><EditIcon />Edit</Button>
+              <Button size="small" href={`${this.state.psychologist.website}`} ><LanguageIcon />Website</Button>
+              <Button size="small" onClick={() => this.addKeywordsToPsychologist()} color="primary" ><FeedbackIcon />Recommend Keywords</Button>
             </CardActions>
           </Card>
         )}

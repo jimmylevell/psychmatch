@@ -45,59 +45,59 @@ class App extends Component {
     const { classes } = this.props;
 
     return (
-      <MsalProvider instance={ msalInstance }>
+      <MsalProvider instance={msalInstance}>
         <Fragment>
-            <Login tokenUpdated={ this.tokenUpdated } />
-            <CssBaseline />
-            <AppHeader />
-            <main className={ classes.main }>
-              { /* Don't load components if token not present */}
-              { this.state.token && (
-                <AuthenticatedTemplate>
-                  { /* Authenticated */ }
-                  <Route exact path="/">
-                    <DocumentManager token={ this.state.token } />
-                  </Route>
+          <Login tokenUpdated={this.tokenUpdated} />
+          <CssBaseline />
+          <AppHeader />
+          <main className={classes.main}>
+            { /* Don't load components if token not present */}
+            {this.state.token && (
+              <AuthenticatedTemplate>
+                { /* Authenticated */}
+                <Route exact path="/">
+                  <DocumentManager token={this.state.token} />
+                </Route>
 
-                  <Route exact path="/upload">
-                    <DocumentUpload token={ this.state.token } />
-                  </Route>
+                <Route exact path="/upload">
+                  <DocumentUpload token={this.state.token} />
+                </Route>
 
-                  <Route exact path="/documents">
-                    <DocumentManager token={ this.state.token } />
-                  </Route>
+                <Route exact path="/documents">
+                  <DocumentManager token={this.state.token} />
+                </Route>
 
-                  <Route exact path="/documents/:id">
-                    <DocumentViewer token={ this.state.token } />
-                  </Route>
+                <Route exact path="/documents/:id">
+                  <DocumentViewer token={this.state.token} />
+                </Route>
 
-                  <Route exact path="/psychologists">
-                    <PsychologistsManager token={ this.state.token } />
-                  </Route>
+                <Route exact path="/psychologists">
+                  <PsychologistsManager token={this.state.token} />
+                </Route>
 
-                  <Route exact path="/psychologists/:id">
-                    <PsychologistsManager token={ this.state.token } />
-                  </Route>
+                <Route exact path="/psychologists/:id">
+                  <PsychologistsManager token={this.state.token} />
+                </Route>
 
-                  <Route exact path="/psychologists/:id/edit">
-                    <PsychologistsManager token={ this.state.token } />
-                  </Route>
+                <Route exact path="/psychologists/:id/edit">
+                  <PsychologistsManager token={this.state.token} />
+                </Route>
 
-                  <Route exact path="/psychologists/:id/copy">
-                    <PsychologistsManager token={ this.state.token } />
-                  </Route>
-                  
-                </AuthenticatedTemplate>
-              )}
+                <Route exact path="/psychologists/:id/copy">
+                  <PsychologistsManager token={this.state.token} />
+                </Route>
 
-              { /* Unauthenticated */ }
-              <UnauthenticatedTemplate>
-                <h5 className="card-title">Please sign-in to see use the application.</h5>
-              </UnauthenticatedTemplate>        
-            </main>
-          </Fragment>
-        </MsalProvider>
-     );
+              </AuthenticatedTemplate>
+            )}
+
+            { /* Unauthenticated */}
+            <UnauthenticatedTemplate>
+              <h5 className="card-title">Please sign-in to see use the application.</h5>
+            </UnauthenticatedTemplate>
+          </main>
+        </Fragment>
+      </MsalProvider>
+    );
   }
 }
 

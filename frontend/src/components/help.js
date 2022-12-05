@@ -46,13 +46,13 @@ class Help extends Component {
   }
 
   componentDidUpdate() {
-    if(this.state.showModal !== this.props.showModal) {
-      this.setState({ showModal: this.props.showModal})
+    if (this.state.showModal !== this.props.showModal) {
+      this.setState({ showModal: this.props.showModal })
     }
   }
-  
+
   handleChange() {
-    let parentHandler= this.props.handleChange
+    let parentHandler = this.props.handleChange
     this.setState({
       showModal: !this.state.showModal
     }, parentHandler)
@@ -64,24 +64,24 @@ class Help extends Component {
 
     return (
       <Fragment>
-      {this.state.showModal && (
-        <Modal
-          className={ classes.modal }
-          onClose={ this.handleChange }
-          open
-        >
-          <Card className={`${ classes.modalCard } ${ classes.marginTop }`}>
-              <CardContent className={ classes.modalCardContent }>
+        {this.state.showModal && (
+          <Modal
+            className={classes.modal}
+            onClose={this.handleChange}
+            open
+          >
+            <Card className={`${classes.modalCard} ${classes.marginTop}`}>
+              <CardContent className={classes.modalCardContent}>
                 <Typography variant="h6">About the app</Typography>
-                <Typography className={ classes.text }>Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.</Typography>
-                <Typography className={ classes.text }>App version: { APP_VERSION }</Typography>
-              </CardContent>          
+                <Typography className={classes.text}>Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.</Typography>
+                <Typography className={classes.text}>App version: {APP_VERSION}</Typography>
+              </CardContent>
               <CardActions>
-                <Button size="small" onClick={ this.handleChange }><ClearIcon/>Close</Button>
+                <Button size="small" onClick={this.handleChange}><ClearIcon />Close</Button>
               </CardActions>
-          </Card>
-        </Modal>
-      )}
+            </Card>
+          </Modal>
+        )}
 
       </Fragment>
     )

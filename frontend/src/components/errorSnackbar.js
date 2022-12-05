@@ -30,21 +30,21 @@ const AUTO_HIDE_DURATION = 6000
 const ErrorSnackbar = ({ id, message, onClose, classes }) => (
   <Snackbar
     open
-    autoHideDuration={ AUTO_HIDE_DURATION }
-    onClose={ onClose }
+    autoHideDuration={AUTO_HIDE_DURATION}
+    onClose={onClose}
   >
     <SnackbarContent
-      className={`${ classes.margin } ${ classes.snackbarContent }`}
-      aria-describedby={ id }
+      className={`${classes.margin} ${classes.snackbarContent}`}
+      aria-describedby={id}
       message={
-        <span id={ id } className={ classes.message }>
-          <ErrorIcon className={`${ classes.icon } ${ classes.iconVariant }`} />
-          { message }
+        <span id={id} className={classes.message}>
+          <ErrorIcon className={`${classes.icon} ${classes.iconVariant}`} />
+          {message}
         </span>
       }
       action={[
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={ onClose }>
-          <CloseIcon className={ classes.icon } />
+        <IconButton key="close" aria-label="Close" color="inherit" onClick={onClose}>
+          <CloseIcon className={classes.icon} />
         </IconButton>
       ]}
     />

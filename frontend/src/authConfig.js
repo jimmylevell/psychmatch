@@ -41,13 +41,13 @@ export const msalConfig = {
 };
 
 export const tokenRequest = {
-  scopes: [ "api://35aef02e-4185-4203-ba60-a16bb4152c55/access_as_user" ],
+  scopes: ["api://35aef02e-4185-4203-ba60-a16bb4152c55/access_as_user"],
 }
 export const loginRequest = {
-    scopes: [ ""]
+  scopes: [""]
 };
 
 export const silentRequest = {
-    scopes: [ "access_as_user" ],
-    loginHint: "user@levell.ch"
+  scopes: ["access_as_user"],
+  loginHint: "user@levell.ch"
 };

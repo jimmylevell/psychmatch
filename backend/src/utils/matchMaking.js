@@ -6,9 +6,9 @@ const fetch = require('node-fetch');
 const matchMaking = {};
 
 matchMaking.match = function match(psychologists, document) {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
 
-    const API =  config.nlpmodel.API
+    const API = config.nlpmodel.API
 
     let final_output = []
     let requests = []
@@ -24,12 +24,12 @@ matchMaking.match = function match(psychologists, document) {
         requests.push({
           "psychologist": psychologist._id.toString(),
           "request": fetch(API + "/similarities", {
-              headers : {
-                'Content-Type' : 'application/json'
-              },
-              method: 'POST',
-              body: JSON.stringify(body)
-            })
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(body)
+          })
         })
       } else {
         final_output.push({
@@ -40,29 +40,29 @@ matchMaking.match = function match(psychologists, document) {
     })
 
     Promise.all(requests.map(e => e.request))
-    .then((responses) => {
-      return responses.map(e => e.json())
-    })
-    .then(responses => {
-      return Promise.all(responses).catch(error => {throw new Error('Not able to parse JSON')})
-    })
-    .then(responses => {
-      responses.map((element, i) => {
-        console.log("Info: Response from NLP model: Score:" + element.overall_score + " for psychologist: " + requests[i].psychologist);
+      .then((responses) => {
+        return responses.map(e => e.json())
+      })
+      .then(responses => {
+        return Promise.all(responses).catch(error => { throw new Error('Not able to parse JSON') })
+      })
+      .then(responses => {
+        responses.map((element, i) => {
+          console.log("Info: Response from NLP model: Score:" + element.overall_score + " for psychologist: " + requests[i].psychologist);
 
-        final_output.push({
-          "psychologist": requests[i].psychologist,
-          "score": element.overall_score,
-          "most_important_matches": element.most_important_matches
+          final_output.push({
+            "psychologist": requests[i].psychologist,
+            "score": element.overall_score,
+            "most_important_matches": element.most_important_matches
+          })
         })
       })
-    })
-    .then(() => {
-      resolve(final_output)
-    })
-    .catch(error => {
-      reject(error)
-    })
+      .then(() => {
+        resolve(final_output)
+      })
+      .catch(error => {
+        reject(error)
+      })
   })
 };
 
