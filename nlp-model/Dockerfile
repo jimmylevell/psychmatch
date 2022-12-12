@@ -1,7 +1,7 @@
 ###############################################################################################
 # Psychmatch nlp-model - BASE
 ###############################################################################################
-FROM python:3.9.15 as psychmatch-nlp-model-base
+FROM python:3.11.1 as psychmatch-nlp-model-base
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
