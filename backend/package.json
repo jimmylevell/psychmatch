@@ -25,7 +25,11 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "keyword-extractor": "^0.0.23",
+<<<<<<< HEAD
     "mongoose": "^6.7.5",
+=======
+    "mongoose": "^6.8.0",
+>>>>>>> 52737eea56cd8d877af122dfbf187ea3a3c9649b
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.20",
