@@ -1,13 +1,12 @@
-import React, { Component, Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { useState, useEffect, Fragment } from 'react';
 import {
-  withStyles,
   Typography,
   Button,
-  TextField
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import { compose } from 'recompose';
+  TextField,
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import AddIcon from '@mui/icons-material/Add';
 
 import { ModelService } from '../service';
 
@@ -15,7 +14,9 @@ import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar'
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   contentInput: {
     width: "90%",
     margin: theme.spacing(1),
@@ -26,128 +27,98 @@ const styles = theme => ({
   }
 });
 
-class DocumentUploadComponent extends Component {
-  constructor() {
-    super();
+function DocumentUploadComponent(props) {
+  const { classes } = props;
 
-    this.state = {
-      document: '',
+  const [document, setDocument] = useState('');
 
-      service: null,
+  const [service, setService] = useState(ModelService.getInstance());
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-      loading: true,                   // flag for displaying loading bar
-      success: null,                   // flag for displaying success messages
-      error: null,                     // flag for displaying error messages
-    };
+  useEffect(() => {
+    setService(ModelService.getInstance(props.token))
+  }, [props.token]);
 
-    this.handleChange = this.handleChange.bind(this)
-    this.onSubmit = this.onSubmit.bind(this);
+  const handleChange = (evt) => {
+    setDocument(evt.target.value);
   }
 
-  componentDidMount() {
-    this.setState({
-      service: ModelService.getInstance(this.props.token),
-      loading: false
-    })
-  }
-
-  handleChange = (evt) => {
-    const target = evt.target
-    const name = target.name
-    let value = target.value
-
-    this.setState({
-      [name]: value
-    })
-  }
-
-  async onSubmit(evt) {
+  const onSubmit = async (evt) => {
     evt.preventDefault()
 
-    this.setState({ loading: true })
+    setLoading(true)
 
     var postData = {
-      document: this.state.document
+      document: document
     }
 
     try {
-      await this.state.service.newDocument(postData)
+      await service.newDocument(postData)
     }
     catch (error) {
-      this.setState({
-        error: { message: "Error uploading document. Response from backend: " + error }
-      })
+      setError({ message: "Error uploading document. Response from backend: " + error })
     }
 
-    this.setState({
-      document: '',
-      loading: false
-    })
+    setLoading(false)
+    setDocument('')
 
-    if (this.state.error === null) {
-      this.setState({
-        success: "Document uploaded successfully"
-      })
+    if (error === null) {
+      setSuccess("Document uploaded successfully")
     }
   }
 
-  render() {
-    const { classes } = this.props;
+  return (
+    <Fragment>
+      <Typography variant="h4">Document Upload</Typography>
+      <form encType="multipart/form-data" onSubmit={onSubmit}>
+        <TextField
+          type="text"
+          name="document"
+          label="Document Content"
+          value={document}
+          onChange={handleChange}
+          variant="outlined"
+          fullWidth={true}
+          className={classes.contentInput}
+          multiline
+          minRows={20}
+        />
 
-    return (
-      <Fragment>
-        <Typography variant="h4">Document Upload</Typography>
-        <form encType="multipart/form-data" onSubmit={this.onSubmit}>
-          <TextField
-            type="text"
-            name="document"
-            label="Document Content"
-            value={this.state.document}
-            onChange={this.handleChange}
-            variant="outlined"
-            fullWidth={true}
-            className={classes.contentInput}
-            multiline
-            minRows={20}
-          />
+        <Button
+          color="primary"
+          variant="outlined"
+          className={classes.button}
+          disabled={!document}
+          type="submit"
+        >
+          <AddIcon />Upload
+        </Button>
+      </form>
 
-          <Button
-            color="primary"
-            variant="outlined"
-            className={classes.button}
-            disabled={!this.state.document}
-            type="submit"
-          >
-            <AddIcon />Upload
-          </Button>
-        </form>
+      { /* Flag based display of error snackbar */}
+      {error && (
+        <ErrorSnackbar
+          onClose={() => setError(null)}
+          message={error.message}
+        />
+      )}
 
-        { /* Flag based display of error snackbar */}
-        {this.state.error && (
-          <ErrorSnackbar
-            onClose={() => this.setState({ error: null })}
-            message={this.state.error.message}
-          />
-        )}
+      { /* Flag based display of loadingbar */}
+      {loading && (
+        <LoadingBar />
+      )}
 
-        { /* Flag based display of loadingbar */}
-        {this.state.loading && (
-          <LoadingBar />
-        )}
-
-        { /* Flag based display of info snackbar */}
-        {this.state.success && (
-          <InfoSnackbar
-            onClose={() => this.setState({ success: null })}
-            message={this.state.success}
-          />
-        )}
-      </Fragment>
-    )
-  }
+      { /* Flag based display of info snackbar */}
+      {success && (
+        <InfoSnackbar
+          onClose={() => setSuccess(null)}
+          message={success}
+        />
+      )}
+    </Fragment>
+  )
 }
 
-export default compose(
-  withRouter,
-  withStyles(styles),
-)(DocumentUploadComponent);
+export default withStyles(styles)(DocumentUploadComponent);

@@ -1,7 +1,6 @@
-import React, { Component, Fragment } from 'react';
-import { withRouter, Route, Redirect, Link } from 'react-router-dom';
+import React, { Fragment, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  withStyles,
   Typography,
   Fab,
   IconButton,
@@ -10,16 +9,18 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  TextField
-} from '@material-ui/core';
-import { 
-  Delete as DeleteIcon, 
-  Create as CreateIcon, 
-  Add as AddIcon, 
-  FileCopy as FileCopyIcon } from '@material-ui/icons';
+  TextField,
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import {
+  Delete as DeleteIcon,
+  Create as CreateIcon,
+  Add as AddIcon,
+  FileCopy as FileCopyIcon
+} from '@mui/icons-material';
 import moment from 'moment';
 import { orderBy, filter } from 'lodash';
-import { compose } from 'recompose';
 
 import { ModelService } from '../service';
 
@@ -28,7 +29,9 @@ import ErrorSnackbar from '../components/errorSnackbar';
 import LoadingBar from '../components/loadingBar'
 import InfoSnackbar from '../components/infoSnackbar'
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   fab: {
     position: 'absolute',
     bottom: theme.spacing(3),
@@ -46,40 +49,46 @@ const styles = theme => ({
   }
 });
 
-class PsychologistManager extends Component {
-  constructor() {
-    super();
+function PsychologistManager(props) {
+  const { classes } = props;
 
-    this.state = {
-      query: "",
-      psychologists: [],
+  const [query, setQuery] = useState("");
+  const [psychologists, setPsychologists] = useState([]);
+  const [filteredPsychologists, setFilteredPsychologists] = useState([]);
 
-      service: ModelService.getInstance(),
+  const [psychologist, setPsychologist] = useState(null);
+  const [editorMode, setEditorMode] = useState(null);
+  const [editorOpen, setEditorOpen] = useState(false);
 
-      success: null,
-      loading: false,
-      error: null,
-    };
-  }
+  const [service, setService] = useState(ModelService.getInstance());
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-  componentDidMount() {
-    this.setState({
-      service: ModelService.getInstance(this.props.token)
-    }, () => {
-      this.getPsychologists();
-    })
-  }
+  useEffect(() => {
+    if (ModelService.token) {
+      getPsychologists();
+    }
+  }, [service, query]);
 
-  getPsychologists() {
-    this.state.service.getPsychologists()
+  useEffect(() => {
+    setFilteredPsychologists(filter(psychologists, function (obj) {
+      if (obj.name) {
+        return obj.name.toUpperCase().includes(query.toUpperCase());
+      } else {
+        return false;
+      }
+    }))
+  }, [psychologists, query]);
+
+  const getPsychologists = () => {
+    service.getPsychologists()
       .then(psychologists => {
-        this.setState({
-            psychologists: psychologists || [] 
-        })
-    })   
+        setPsychologists(psychologists || [])
+      })
   }
 
-  onSavePsychologist  = async (id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords) => {
+  const onSavePsychologist = async (id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords) => {
     var postData = {
       name: name,
       website: website,
@@ -90,190 +99,153 @@ class PsychologistManager extends Component {
     }
 
     try {
-      this.setState({loading: true})
+      setLoading(true)
 
       if (id) {
-        await this.state.service.updatePsychologist(id, postData);
+        await service.updatePsychologist(id, postData);
       } else {
-        await this.state.service.newPsychologist(postData);
+        await service.newPsychologist(postData);
       }
     }
-    catch(error) {
-      this.setState({
-        error: { message: "Error saving documents. Response from backend: " + error },
-        loading: false
-      })
+    catch (error) {
+      setError({ message: "Error saving documents. Response from backend: " + error })
+      setLoading(false)
     }
 
-    this.setState({loading: false})
+    setLoading(false)
+    getPsychologists();
+    setEditorOpen(false);
 
-    this.getPsychologists();
-
-    if(this.state.error === null) {
-      this.props.history.goBack();      
+    if (error === null) {
+      props.history.goBack();
     }
   }
 
-  async deletePsychologist(psychologist) {
-    if (window.confirm(`Are you sure you want to delete "${ psychologist.name }"`)) {
+  const deletePsychologist = async (psychologist) => {
+    if (window.confirm(`Are you sure you want to delete "${psychologist.name}"`)) {
       try {
-        await this.state.service.deletePsychologist(psychologist._id)
+        await service.deletePsychologist(psychologist._id)
       }
-      catch(error) {
-        this.setState({
-          error: { message: "Error deleting psychologist. Response from backend: " + error },
-        })
+      catch (error) {
+        setError({ message: "Error deleting psychologist. Response from backend: " + error })
       }
-
-      if(this.state.error === null) {
-        this.setState({
-          success: "Psychologist successfully deleted"
-        })
-      }
-
-      this.getPsychologists();
     }
+
+    if (error === null) {
+      setSuccess("Psychologist successfully deleted")
+    }
+
+    getPsychologists();
   }
 
-  handleSearchChange = evt => {
-    this.setState({ 
-      query: evt.target.value 
-    });
+  const handleSearchChange = evt => {
+    setQuery(evt.target.value);
   };
 
-  renderPsychologistEditor = ({ match }) => {
-    let id = match.params.id
-    let psychologist = this.state.psychologists.find( ({ _id}) => _id === id )
+  const handleEditorOpen = (psychologist, mode) => {
+    setPsychologist(psychologist);
+    setEditorMode(mode);
+    setEditorOpen(true);
+  };
 
-    if ((!psychologist && match.path.includes("copy")) || (!psychologist && id !== 'new')) {
-      return <Redirect to="/psychologists" />
-    }
-
-    // reset psychologist id if copying psychologist
-    // create new object
-    if(match.path.includes("copy")) {
-      psychologist = Object.create(psychologist)
-      psychologist._id = null
-      psychologist.name = psychologist.name + " (Copy)"
-    }
-
-    return (
-      <PsychologistEditor 
-        psychologist={ psychologist } 
-        errorMessage={ this.state.error } 
-        onSave={ this.onSavePsychologist } 
+  return (
+    <Fragment>
+      <TextField
+        type="text"
+        key="inputQuery"
+        placeholder="Search"
+        label="Search"
+        className={classes.searchInput}
+        value={query}
+        onChange={handleSearchChange}
+        variant="outlined"
+        size="small"
+        autoFocus
       />
-    )
-  };
 
-  render() {
-    const { classes } = this.props;
-    const that = this
-    let psychologists = filter(this.state.psychologists, function(obj) {
-      if(obj.name) {
-        return obj.name.toUpperCase().includes(that.state.query.toUpperCase());
-      } else {
-        return false;
-      }
-    })
+      <Typography variant="h4">Psychologists</Typography>
 
-    return (
+      { /* psychologists area */}
+      {psychologists.length > 0 ? (
+        // psychologist available
+        <Paper elevation={1}>
+          <List>
+            {orderBy(psychologists, ['updatedAt', 'name'], ['desc', 'asc']).map(psychologist => (
+              <ListItem key={psychologist._id}>
+                <ListItemText
+                  primary={psychologist.name}
+                  secondary={psychologist.updatedAt && `Updated ${moment(psychologist.updatedAt).fromNow()}`}
+                />
+
+                <ListItemSecondaryAction>
+                  <IconButton component={Link} onClick={() => handleEditorOpen(psychologist, "copy")} color="inherit">
+                    <FileCopyIcon />
+                  </IconButton>
+                  <IconButton component={Link} onClick={() => handleEditorOpen(psychologist, "edit")} color="inherit">
+                    <CreateIcon />
+                  </IconButton>
+                  <IconButton onClick={() => deletePsychologist(psychologist)} color="inherit">
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+
+
+      ) : (
+        // no psychologists available
+        !loading && (
+          <Typography variant="subtitle1">So far no psychologists have been created, start adding your first psychologist now!</Typography>
+        )
+      )}
+
       <Fragment>
-        <TextField
-          type="text"
-          key="inputQuery"
-          placeholder="Search"
-          label="Search"
-          className={ classes.searchInput }
-          value={ this.state.query }
-          onChange={ this.handleSearchChange }
-          variant="outlined"
-          size="small"
-          autoFocus 
-        />
-
-        <Typography variant="h4">Psychologists</Typography>
-
-        { /* psychologists area */ }
-        { this.state.psychologists.length > 0 ? (
-          // psychologist available
-          <Paper elevation={ 1 }>
-            <List>
-              {orderBy(psychologists, ['updatedAt', 'name'], ['desc', 'asc']).map(psychologist => (
-                <ListItem key={ psychologist._id }>
-                  <ListItemText
-                    primary={ psychologist.name }
-                    secondary={ psychologist.updatedAt && `Updated ${ moment(psychologist.updatedAt).fromNow() }` }
-                  />
-
-                  <ListItemSecondaryAction>
-                    <IconButton component={ Link } to={ `/psychologists/${ psychologist._id }/copy` } color="inherit">
-                      <FileCopyIcon />
-                    </IconButton>
-                    <IconButton component={ Link } to={ `/psychologists/${ psychologist._id }/edit` } color="inherit">
-                      <CreateIcon />
-                    </IconButton>
-                    <IconButton onClick={ () => this.deletePsychologist(psychologist) } color="inherit">
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-
-              { /* must be placed here so that the state is correctly loaded */}
-              <Route exact path="/psychologists/:id/edit" render={ this.renderPsychologistEditor } />
-              <Route exact path="/psychologists/:id/copy" render={ this.renderPsychologistEditor } />
-            </List>
-          </Paper>
-
-          
-        ) : (
-          // no psychologists available
-          !this.state.loading && (
-            <Typography variant="subtitle1">So far no psychologists have been created, start adding your first psychologist now!</Typography>
-          )
-        )}
-        
-        <Fragment>
-          <Fab
-            color="secondary"
-            aria-label="add"
-            className={ classes.fab }
-            component={ Link }
-            to="/psychologists/new"
-          >
-            <AddIcon />
-          </Fab>
-            
-          <Route exact path="/psychologists/:id" render={ this.renderPsychologistEditor } />
-        </Fragment>
-        
-        { /* Flag based display of loadingbar */ }
-        { this.state.loading && (
-          <LoadingBar/>
-        )}    
-        
-        { /* Flag based display of error snackbar */ }
-        { this.state.error && (
-          <ErrorSnackbar
-            onClose={ () => this.setState({ error: null }) }
-            message={ this.state.error.message }
-          />
-        )}
-
-        { /* Flag based display of info snackbar */ }
-        { this.state.success && (
-          <InfoSnackbar
-            onClose={ () => this.setState({ success: null }) }
-            message={ this.state.success }
-          />
-        )}
+        <Fab
+          color="secondary"
+          aria-label="add"
+          className={classes.fab}
+          component={Link}
+          onClick={() => { handleEditorOpen(null, 'create') }}
+        >
+          <AddIcon />
+        </Fab>
       </Fragment>
-    );
-  }
+
+      { /* Use Case Editor */}
+      {editorOpen && (
+        <PsychologistEditor
+          psychologist={psychologist}
+          editorMode={editorMode}
+          errorMessage={error}
+          onSave={onSavePsychologist}
+          onClose={() => { setEditorOpen(false) }}
+        />
+      )}
+
+      { /* Flag based display of loadingbar */}
+      {loading && (
+        <LoadingBar />
+      )}
+
+      { /* Flag based display of error snackbar */}
+      {error && (
+        <ErrorSnackbar
+          onClose={() => setError(null)}
+          message={error.message}
+        />
+      )}
+
+      { /* Flag based display of info snackbar */}
+      {success && (
+        <InfoSnackbar
+          onClose={() => setSuccess(null)}
+          message={success}
+        />
+      )}
+    </Fragment>
+  );
 }
 
-export default compose(
-  withRouter,
-  withStyles(styles),
-)(PsychologistManager);
+export default withStyles(styles)(PsychologistManager);

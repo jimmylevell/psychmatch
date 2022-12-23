@@ -10,25 +10,25 @@ module.exports = {
       "KEY": process.env.DEEPL_API_KEY || "",
     },
     "nlpmodel": {
-      "API": "http://psychmatch-nlp-model:5000"
+      "API": "https://nlp-model.psychmatch.app.levell.ch/"
     },
     "SAML": {
       "credentials": {
-          "tenantID": process.env.AZURE_TENANT_ID || "",
-          "clientID": process.env.AZURE_CLIENT_ID || "",
-          "audience": process.env.AZURE_CLIENT_ID || ""
+        "tenantID": process.env.AZURE_TENANT_ID || "",
+        "clientID": process.env.AZURE_CLIENT_ID || "",
+        "audience": process.env.AZURE_CLIENT_ID || ""
       },
       "resource": {
-          "scope": ["access_as_user"]
+        "scope": ["access_as_user"]
       },
       "metadata": {
-          "authority": "login.microsoftonline.com",
-          "discovery": ".well-known/openid-configuration",
-          "version": "v2.0"
+        "authority": "login.microsoftonline.com",
+        "discovery": ".well-known/openid-configuration",
+        "version": "v2.0"
       },
       "settings": {
-          "passReqToCallback": false,
-          "loggingLevel": "info"
+        "passReqToCallback": false,
+        "loggingLevel": "info"
       }
     }
   },
@@ -43,21 +43,21 @@ module.exports = {
     },
     "SAML": {
       "credentials": {
-          "tenantID": process.env.AZURE_TENANT_ID || "",
-          "clientID": process.env.AZURE_CLIENT_ID || "",
-          "audience": process.env.AZURE_CLIENT_ID || ""
+        "tenantID": process.env.AZURE_TENANT_ID || "",
+        "clientID": process.env.AZURE_CLIENT_ID || "",
+        "audience": process.env.AZURE_CLIENT_ID || ""
       },
       "resource": {
-          "scope": ["access_as_user"]
+        "scope": ["access_as_user"]
       },
       "metadata": {
-          "authority": "login.microsoftonline.com",
-          "discovery": ".well-known/openid-configuration",
-          "version": "v2.0"
+        "authority": "login.microsoftonline.com",
+        "discovery": ".well-known/openid-configuration",
+        "version": "v2.0"
       },
       "settings": {
-          "passReqToCallback": false,
-          "loggingLevel": "info"
+        "passReqToCallback": false,
+        "loggingLevel": "info"
       }
     }
   },
@@ -72,21 +72,21 @@ module.exports = {
     },
     "SAML": {
       "credentials": {
-          "tenantID": dockerSecret.read('AZURE_TENANT_ID') || "",
-          "clientID": dockerSecret.read('AZURE_CLIENT_ID') || "",
-          "audience": dockerSecret.read('AZURE_CLIENT_ID') || ""
+        "tenantID": dockerSecret.read('AZURE_TENANT_ID') || "",
+        "clientID": dockerSecret.read('AZURE_CLIENT_ID') || "",
+        "audience": dockerSecret.read('AZURE_CLIENT_ID') || ""
       },
       "resource": {
-          "scope": ["access_as_user"]
+        "scope": ["access_as_user"]
       },
       "metadata": {
-          "authority": "login.microsoftonline.com",
-          "discovery": ".well-known/openid-configuration",
-          "version": "v2.0"
+        "authority": "login.microsoftonline.com",
+        "discovery": ".well-known/openid-configuration",
+        "version": "v2.0"
       },
       "settings": {
-          "passReqToCallback": false,
-          "loggingLevel": "info"
+        "passReqToCallback": false,
+        "loggingLevel": "info"
       }
     }
   }

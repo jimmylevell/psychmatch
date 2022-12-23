@@ -1,15 +1,15 @@
-import React, { Component, Fragment } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { Fragment, useState, useEffect } from 'react';
 import {
-  withStyles,
   Typography,
   Grid,
   CardContent,
   Card,
-  Button
-} from '@material-ui/core';
-import { compose } from 'recompose';
-import RefreshIcon from '@material-ui/icons/Refresh';
+  Button,
+  createTheme
+} from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { withStyles } from '@mui/styles';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { ModelService } from '../service';
 
@@ -18,7 +18,9 @@ import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar';
 import PsychologistCard from '../components/psychologistCard';
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   title: {
     marginBottom: theme.spacing(1)
   },
@@ -34,204 +36,175 @@ const styles = theme => ({
   }
 });
 
-class DocumentViewer extends Component {
-  constructor() {
-    super();
+function DocumentViewer(props) {
+  const { classes } = props;
+  const params = useParams();
 
-    this.state = {
-      documentId: null,
-      document: null,
+  const [documentId, setDocumentId] = useState(null);
+  const [document, setDocument] = useState(null);
 
-      service: null,
+  const [service, setService] = useState(ModelService.getInstance());
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-      success: null,          // flag to trigger success info
-      loading: true,          // flag to trigger loading
-      error: null,            // flag to trigger error messages
-    };
+  useEffect(() => {
+    if (ModelService.token) {
+      setDocumentId(params.id)
+      getDocument(params.id)
+    }
+  }, [service]);
 
-    this.handleReexecution = this.handleReexecution.bind(this);
-    this.addKeywordsToPsychologist = this.addKeywordsToPsychologist.bind(this)
-  }
-
-  componentDidMount = () => {
-    const documentId = this.props.match.params.id;
-
-    // wait till state is fully set, then load document
-    this.setState({
-      service: ModelService.getInstance(this.props.token),
-      documentId: documentId,
-    }, this.getDocument)
-  }
-
-  async getDocument() {
+  const getDocument = async (id) => {
     let document = null;
 
     try {
-      this.setState({ loading: true })
-      document = await this.state.service.getDocument(this.state.documentId) || []
+      setLoading(true)
+      document = await service.getDocument(id) || []
     }
     catch (error) {
-      this.setState({
-        error: { message: "Error getting document. Response from backend: " + error },
-        loading: false
-      })
+      setError({ message: "Error getting document. Response from backend: " + error })
+      setLoading(false)
     }
 
-    this.setState({
-      document: document,
-      loading: false
-    })
+    setDocument(document)
+    setLoading(false)
   }
 
-  async handleReexecution() {
+  const handleReexecution = async () => {
     if (window.confirm(`Are you sure you would like to reprocess the following document? All previous matches will be lost.`)) {
       try {
-        this.setState({ loading: true })
+        setLoading(true)
 
-        await this.state.service.reexecuteDocument(this.state.documentId);
+        await service.reexecuteDocument(documentId);
       }
       catch (error) {
-        this.setState({
-          error: { message: "Error reprocessing the document. Response from backend: " + error },
-          loading: false
-        })
+        setError({ message: "Error reprocessing document. Response from backend: " + error })
+        setLoading(false)
       }
 
-      if (!this.state.error) {
-        this.setState({
-          success: "Reprocessing of the document completed successfully",
-          loading: false
-        }, this.getDocument)
+      if (!error) {
+        setSuccess({ message: "Document reprocessed successfully." })
+        setLoading(false)
+        getDocument()
       }
     }
   }
 
-  addKeywordsToPsychologist(id, keywords) {
+  const addKeywordsToPsychologist = (id, keywords) => {
     try {
-      this.state.service.addKeywordsToPsychologist(id, keywords)
+      service.addKeywordsToPsychologist(id, keywords)
         .then(() => {
-          this.setState({
-            success: "Successfully added the keywords to the psychologist"
-          })
+
+          setSuccess("Successfully added the keywords to the psychologist")
         })
     }
     catch (error) {
-      this.setState({
-        error: { message: "Error adding keywords to the psychologist. Response from backend: " + error },
-      })
+      setError({ message: "Error adding keywords to the psychologist. Response from backend: " + error })
     }
   }
 
-  render() {
-    const { classes, token } = this.props
-    const addKeywordsToPsychologist = this.addKeywordsToPsychologist
-    const document = this.state.document
+  return (
+    <Fragment>
+      {document !== null ? (
+        // document present
+        <div>
+          <Typography className={classes.title} variant="h4">Document View
+            <Button
+              size="small"
+              color="primary"
+              onClick={handleReexecution}
+              className={classes.buttons}
+            >
+              <RefreshIcon />Re-Execute Match Making
+            </Button>
+          </Typography>
 
-    return (
-      <Fragment>
-        {document !== null ? (
-          // document present
-          <div>
-            <Typography className={classes.title} variant="h4">Document View
-              <Button
-                size="small"
-                color="primary"
-                onClick={this.handleReexecution}
-                className={classes.buttons}
-              >
-                <RefreshIcon />Re-Execute Match Making
-              </Button>
-            </Typography>
-
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Card>
-                  <CardContent>
-                    <Typography color="textSecondary">Czech Content</Typography>
-                    <Typography component="p"> {this.state.document.content_cz}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card>
-                  <CardContent>
-                    <Typography color="textSecondary">English Content</Typography>
-                    <Typography component="p"> {this.state.document.content_en}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Card>
-                  <CardContent>
-                    <Typography color="textSecondary">Czech Keywords</Typography>
-                    <Typography component="p"> {this.state.document.keywords_cz.join(", ")}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card>
-                  <CardContent>
-                    <Typography color="textSecondary">English Keywords</Typography>
-                    <Typography component="p"> {this.state.document.keywords_en.join(", ")}</Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-
-              <Typography className={classes.subtitle} variant="h5">Document View</Typography>
-              <Grid container className={classes.table} spacing={2}>
-                {this.state.document.matched_psychologists && (
-                  this.state.document.matched_psychologists.sort((a, b) => b.score - a.score).map(function (match) {
-                    return <PsychologistCard
-                      key={match.psychologist}
-                      id={match.psychologist}
-                      match_score={match.score}
-                      most_important_matches={match.most_important_matches}
-                      keywords={document.keywords_en}
-                      token={token}
-                      addKeywordsToPsychologist={addKeywordsToPsychologist}
-                    />
-                  })
-                )}
-              </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary">Czech Content</Typography>
+                  <Typography component="p"> {document.content_cz}</Typography>
+                </CardContent>
+              </Card>
             </Grid>
-          </div>
-        ) : (
-          // no document could be found
-          !this.state.loading && (
-            <Fragment>
-              <Typography className={classes.title} variant="h4">Document View</Typography>
-              <Typography variant="subtitle1">No document with given ID could be found</Typography>
-            </Fragment>
-          )
-        )}
+            <Grid item xs={6}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary">English Content</Typography>
+                  <Typography component="p"> {document.content_en}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-        { /* Flag based display of error snackbar */}
-        {this.state.error && (
-          <ErrorSnackbar
-            onClose={() => this.setState({ error: null })}
-            message={this.state.error.message}
-          />
-        )}
+            <Grid item xs={6}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary">Czech Keywords</Typography>
+                  <Typography component="p"> {document.keywords_cz.join(", ")}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={6}>
+              <Card>
+                <CardContent>
+                  <Typography color="textSecondary">English Keywords</Typography>
+                  <Typography component="p"> {document.keywords_en.join(", ")}</Typography>
+                </CardContent>
+              </Card>
+            </Grid>
 
-        { /* Flag based display of loadingbar */}
-        {this.state.loading && (
-          <LoadingBar />
-        )}
+            <Typography className={classes.subtitle} variant="h5">Document View</Typography>
+            <Grid container className={classes.table} spacing={2}>
+              {document.matched_psychologists && (
+                document.matched_psychologists.sort((a, b) => b.score - a.score).map(function (match) {
+                  return <PsychologistCard
+                    key={match.psychologist}
+                    id={match.psychologist}
+                    match_score={match.score}
+                    most_important_matches={match.most_important_matches}
+                    keywords={document.keywords_en}
+                    token={props.token}
+                    addKeywordsToPsychologist={addKeywordsToPsychologist}
+                  />
+                })
+              )}
+            </Grid>
+          </Grid>
+        </div>
+      ) : (
+        // no document could be found
+        !loading && (
+          <Fragment>
+            <Typography className={classes.title} variant="h4">Document View</Typography>
+            <Typography variant="subtitle1">No document with given ID could be found</Typography>
+          </Fragment>
+        )
+      )}
 
-        { /* Flag based display of info snackbar */}
-        {this.state.success && (
-          <InfoSnackbar
-            onClose={() => this.setState({ success: null })}
-            message={this.state.success}
-          />
-        )}
-      </Fragment>
-    );
-  }
+      { /* Flag based display of error snackbar */}
+      {error && (
+        <ErrorSnackbar
+          onClose={() => setError(null)}
+          message={error.message}
+        />
+      )}
+
+      { /* Flag based display of loadingbar */}
+      {loading && (
+        <LoadingBar />
+      )}
+
+      { /* Flag based display of info snackbar */}
+      {success && (
+        <InfoSnackbar
+          onClose={() => setSuccess(null)}
+          message={success}
+        />
+      )}
+    </Fragment>
+  );
 }
 
-export default compose(
-  withRouter,
-  withStyles(styles),
-)(DocumentViewer);
+export default withStyles(styles)(DocumentViewer);

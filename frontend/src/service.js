@@ -11,8 +11,14 @@ export class ModelService {
 
   // singleton static method to get instance of service
   static getInstance(token) {
+    if (!ModelService.instance) {
+      console.log("creating new instance")
+    }
     ModelService.instance = ModelService.instance || new ModelService();
-    ModelService.token = token;
+
+    if (token && ModelService.instance.token !== token) {
+      ModelService.token = token;
+    }
     return ModelService.instance;
   }
 
@@ -25,7 +31,7 @@ export class ModelService {
           method,
           headers: {
             'content-type': 'application/json',
-            Authorization: `Bearer ${ ModelService.token }`,
+            Authorization: `Bearer ${ModelService.token}`,
             'accept': 'application/json',
           },
         };
@@ -36,9 +42,9 @@ export class ModelService {
           body: body && JSON.stringify(body),
           headers: {
             'content-type': 'application/json',
-            Authorization: `Bearer ${ ModelService.token }`,
+            Authorization: `Bearer ${ModelService.token}`,
             'accept': 'application/json',
-            },
+          },
         };
       }
 
@@ -50,12 +56,12 @@ export class ModelService {
         throw new Error('Error communicating with backend');
       }
     }
-    
+
     catch (error) {
       throw new Error(String(error));
     }
   }
-   
+
   // returns all documents
   async getDocuments() {
     try {
@@ -80,7 +86,7 @@ export class ModelService {
       throw new Error(String(error));
     }
   }
-  
+
   // new document
   async newDocument(document) {
     try {
@@ -121,7 +127,7 @@ export class ModelService {
   // reexecute document
   async reexecuteDocument(documentId) {
     try {
-      return this.fetch('GET', '/documents/' + documentId + "/reexecute", ).then((response) => {
+      return this.fetch('GET', '/documents/' + documentId + "/reexecute",).then((response) => {
         return response.document;
       })
     }
@@ -186,7 +192,7 @@ export class ModelService {
         return response;
       })
     }
-    catch(error) {
+    catch (error) {
       throw new Error(String(error));
     }
   }

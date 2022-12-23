@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Typography,
   TextField,
-  withStyles,
   Card,
   CardHeader,
   CardContent,
@@ -11,19 +10,21 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  Chip
-} from '@material-ui/core';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import SpellcheckIcon from '@material-ui/icons/Spellcheck';
-import AddIcon from '@material-ui/icons/Add';
-import ClearIcon from '@material-ui/icons/Clear';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
-import ChipInput from 'material-ui-chip-input'
+  Chip,
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import SaveAltIcon from '@mui/icons-material/SaveAlt';
+import SpellcheckIcon from '@mui/icons-material/Spellcheck';
+import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
+import { MuiChipsInput } from 'mui-chips-input'
 
 import InfoSnackbar from './infoSnackbar';
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   modal: {
     display: 'flex',
     outline: 0,
@@ -56,218 +57,211 @@ const styles = theme => ({
   }
 });
 
-class PsychologistEditor extends Component {
-  constructor() {
-    super();
+function PsychologistEditor(props) {
+  const { classes, psychologist, editorMode, onClose } = props;
 
-    this.state = {
-      id: "",
-      name: "",
-      website: "",
-      keywords_cz: [],
-      keywords_en: [],
-      translate_keywords: false,
-      proposed_keywords: [],
+  const [id, setId] = useState(null);
+  const [name, setName] = useState("");
+  const [website, setWebsite] = useState("");
+  const [keywords_cz, setKeywordsCz] = useState([]);
+  const [keywords_en, setKeywordsEn] = useState([]);
+  const [translate_keywords, setTranslateKeywords] = useState(false);
+  const [proposed_keywords, setProposedKeywords] = useState([]);
 
-      success: null,
-    };
-  }
+  const TITLE = id ? "Editing " + name : "Add a new Psychologist";
 
-  componentDidMount() {
-    const { psychologist } = this.props
+  const [success, setSuccess] = useState(null);
 
+  useEffect(() => {
     if (psychologist) {
-      // only change state of psychologist passed
-      this.setState({
-        id: psychologist._id,
-        name: psychologist.name,
-        website: psychologist.website,
-        keywords_cz: psychologist.keywords_cz,
-        keywords_en: psychologist.keywords_en,
-        proposed_keywords: psychologist.proposed_keywords,
-      })
-    }
-  }
+      if (editorMode === "copy") {
+        setId(null);
+        setName(psychologist.name + " (copy)");
+      }
+      else {
+        setId(psychologist.id);
+        setName(psychologist.name);
+      }
 
-  handleSubmit = evt => {
+      setWebsite(psychologist.website);
+      setKeywordsCz(psychologist.keywords_cz);
+      setKeywordsEn(psychologist.keywords_en);
+      setProposedKeywords(psychologist.proposed_keywords);
+    }
+  }, [psychologist]);
+
+  const handleSubmit = evt => {
     evt.preventDefault();
 
-    const { onSave } = this.props
-    const { id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords } = this.state;
+    const { onSave } = props
 
     // execute parent function in psychologistManager
     onSave(id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords)
   };
 
-  handleChange = (evt) => {
+  const handleChange = (evt) => {
     const target = evt.target
     const name = target.name
     const value = evt.target.type === 'checkbox' ? evt.target.checked : evt.target.value
 
-    this.setState({
-      [name]: value
-    })
+    switch (name) {
+      case 'name':
+        setName(value)
+        break
+      case 'website':
+        setWebsite(value)
+        break
+      case 'keywords_cz':
+        setKeywordsCz(value)
+        break
+      case 'keywords_en':
+        setKeywordsEn(value)
+        break
+      default:
+        break
+    }
   }
 
-  handleAddKeyword(keyword, language) {
+  const handleAddKeyword = (keyword, language) => {
     if (language === "CZ") {
-      this.setState({
-        keywords_cz: [...this.state.keywords_cz, keyword]
-      })
+      setKeywordsCz([...keywords_cz, keyword])
     } else if (language === "EN") {
-      this.setState({
-        keywords_en: [...this.state.keywords_en, keyword]
-      })
+      setKeywordsEn([...keywords_en, keyword])
     } else {
       console.error("Unknown language: " + language)
     }
   }
 
-  handleDeleteKeyword(keyword, index, language) {
+  const handleDeleteKeyword = (keyword, index, language) => {
     if (language === "CZ") {
-      let keywords = this.state.keywords_cz
+      let keywords = keywords_cz
       keywords.splice(index, 1)
 
-      this.setState({
-        keywords_cz: keywords
-      })
+      setKeywordsCz(keywords)
     } else if (language === "EN") {
-      let keywords = this.state.keywords_en
+      let keywords = keywords_en
       keywords.splice(index, 1)
 
-      this.setState({
-        keywords_en: keywords
-      })
+      setKeywordsEn(keywords)
     } else {
       console.error("Unknown language: " + language)
     }
   }
 
-  handleProposedKeywords = (index, keyword) => () => {
-    let proposed_keywords = this.state.proposed_keywords
+  const handleProposedKeywords = (index, keyword) => () => {
+    let proposed_keywords = proposed_keywords
     proposed_keywords = proposed_keywords.filter(key => key !== keyword)
 
-    let keywords_en = this.state.keywords_en
+    let keywords_en = keywords_en
     keywords_en = [...keywords_en, keyword]
 
-    this.setState({
-      proposed_keywords: proposed_keywords,
-      keywords_en: keywords_en,
-      success: "Keyword '" + keyword + "' added to Keywords EN"
-    })
+    setProposedKeywords(proposed_keywords)
+    setKeywordsEn(keywords_en)
+    setSuccess({ success: "Keyword '" + keyword + "' added to Keywords EN" })
   }
 
+  return (
+    <Modal
+      className={classes.modal}
+      onClose={() => onClose()}
+      open
+    >
+      <Card className={classes.modalCard}>
+        <CardHeader title={TITLE} />
 
-  render() {
-    const { classes, history } = this.props;
-    const TITLE = this.state.id ? "Editing " + this.state.name : "Add a new Psychologist";
-
-    return (
-      <Modal
-        className={classes.modal}
-        onClose={() => history.goBack()}
-        open
-      >
-        <Card className={classes.modalCard}>
-          <CardHeader title={TITLE} />
-
-          <form onSubmit={this.handleSubmit}>
-            <CardContent className={classes.modalCardContent}>
-              <TextField
-                required
-                type="text"
-                name="name"
-                key="inputPsychologistName"
-                placeholder="Psychologist Name"
-                label="Psychologist Name"
-                value={this.state.name}
-                onChange={this.handleChange}
-                variant="outlined"
-                size="small"
-                autoFocus
-              />
-
-              <TextField
-                required
-                type="url"
-                name="website"
-                className={classes.input}
-                key="inputPsychologistWebsite"
-                placeholder="Psychologist Website"
-                label="Psychologist Website"
-                value={this.state.website}
-                onChange={this.handleChange}
-                variant="outlined"
-                size="small"
-              />
-
-              <ChipInput
-                className={classes.input}
-                label="Keywords CZ"
-                value={this.state.keywords_cz}
-                onAdd={(chip) => this.handleAddKeyword(chip, "CZ")}
-                onDelete={(chip, index) => this.handleDeleteKeyword(chip, index, "CZ")}
-              />
-
-              <ChipInput
-                className={classes.input}
-                label="Keywords EN"
-                value={this.state.keywords_en}
-                onAdd={(chip) => this.handleAddKeyword(chip, "EN")}
-                onDelete={(chip, index) => this.handleDeleteKeyword(chip, index, "EN")}
-              />
-
-              <Typography variant="body2" color="textSecondary" className={classes.input}>Proposed Keywords</Typography>
-              <div className={classes.proposed_keywords}>
-                {this.state.proposed_keywords.sort().map((element) => {
-                  let index = this.state.proposed_keywords.indexOf(element)
-                  return (
-                    <Chip
-                      key={index}
-                      deleteIcon={<AddIcon />}
-                      onDelete={this.handleProposedKeywords(index, element)}
-                      icon={<SpellcheckIcon />}
-                      label={element}
-                    />
-                  )
-                })}
-              </div>
-
-              <FormControlLabel
-                className={classes.input}
-                control={
-                  <Checkbox
-                    id="translate_keywords"
-                    name="translate_keywords"
-                    value={this.state.translate_keywords}
-                    onChange={this.handleChange}
-                    color="primary"
-                    inputProps={{ 'aria-label': 'secondary checkbox' }}
-                  />
-                }
-                label="Translate Keywords into other Language"
-              />
-            </CardContent>
-
-            <CardActions>
-              <Button size="small" color="primary" type="submit"><SaveAltIcon />Save</Button>
-              <Button size="small" onClick={() => history.goBack()}><ClearIcon />Cancel</Button>
-            </CardActions>
-          </form>
-          { /* Flag based display of info snackbar */}
-          {this.state.success && (
-            <InfoSnackbar
-              onClose={() => this.setState({ success: null })}
-              message={this.state.success}
+        <form onSubmit={handleSubmit}>
+          <CardContent className={classes.modalCardContent}>
+            <TextField
+              required
+              type="text"
+              name="name"
+              key="inputPsychologistName"
+              placeholder="Psychologist Name"
+              label="Psychologist Name"
+              value={name}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              autoFocus
             />
-          )}
-        </Card>
-      </Modal>
-    )
-  }
+
+            <TextField
+              required
+              type="url"
+              name="website"
+              className={classes.input}
+              key="inputPsychologistWebsite"
+              placeholder="Psychologist Website"
+              label="Psychologist Website"
+              value={website}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+            />
+
+            <MuiChipsInput
+              className={classes.input}
+              label="Keywords CZ"
+              value={keywords_cz}
+              onAdd={(chip) => handleAddKeyword(chip, "CZ")}
+              onDelete={(chip, index) => handleDeleteKeyword(chip, index, "CZ")}
+            />
+
+            <MuiChipsInput
+              className={classes.input}
+              label="Keywords EN"
+              value={keywords_en}
+              onAdd={(chip) => handleAddKeyword(chip, "EN")}
+              onDelete={(chip, index) => handleDeleteKeyword(chip, index, "EN")}
+            />
+
+            <Typography variant="body2" color="textSecondary" className={classes.input}>Proposed Keywords</Typography>
+            <div className={classes.proposed_keywords}>
+              {proposed_keywords.sort().map((element) => {
+                let index = proposed_keywords.indexOf(element)
+                return (
+                  <Chip
+                    key={index}
+                    deleteIcon={<AddIcon />}
+                    onDelete={handleProposedKeywords(index, element)}
+                    icon={<SpellcheckIcon />}
+                    label={element}
+                  />
+                )
+              })}
+            </div>
+
+            <FormControlLabel
+              className={classes.input}
+              control={
+                <Checkbox
+                  id="translate_keywords"
+                  name="translate_keywords"
+                  value={translate_keywords}
+                  onChange={handleChange}
+                  color="primary"
+                  inputProps={{ 'aria-label': 'secondary checkbox' }}
+                />
+              }
+              label="Translate Keywords into other Language"
+            />
+          </CardContent>
+
+          <CardActions>
+            <Button size="small" color="primary" type="submit"><SaveAltIcon />Save</Button>
+            <Button size="small"><ClearIcon />Cancel</Button>
+          </CardActions>
+        </form>
+        { /* Flag based display of info snackbar */}
+        {success && (
+          <InfoSnackbar
+            onClose={() => setSuccess({ success: null })}
+            message={success}
+          />
+        )}
+      </Card>
+    </Modal>
+  )
 }
 
-export default compose(
-  withRouter,
-  withStyles(styles),
-)(PsychologistEditor);
+export default withStyles(styles)(PsychologistEditor);

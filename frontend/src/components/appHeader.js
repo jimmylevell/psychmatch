@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   AppBar,
@@ -6,16 +6,18 @@ import {
   Button,
   Box,
   Typography,
-  withStyles,
-} from '@material-ui/core';
-import { compose } from 'recompose';
-import FeedbackIcon from '@material-ui/icons/Feedback';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { AuthenticatedTemplate, } from "@azure/msal-react";
 
 import Help from './help'
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   header: {
     backgroundColor: "#82B282",
   },
@@ -49,64 +51,48 @@ const styles = theme => ({
   }
 })
 
-class AppHeader extends Component {
-  constructor() {
-    super()
+function AppHeader(props) {
+  const { classes } = props
+  const [showHelp, setShowHelp] = useState(false)
 
-    this.state = {
-      showHelp: false
-    }
-
-    this.handleChange = this.handleChange.bind(this)
+  const handleChange = () => {
+    setShowHelp(!showHelp)
   }
 
-  handleChange() {
-    this.setState({
-      showHelp: !this.state.showHelp
-    })
-  }
+  return (
+    <AppBar position="static" className={classes.header}>
+      <Toolbar className={classes.toolBar}>
+        <AuthenticatedTemplate>
+          <Button color="inherit" component={Link} to="/">
+            <FeedbackIcon />
+            <Typography variant="h6" color="inherit">
+              Psychmatch
+            </Typography>
+          </Button>
 
-  render() {
-    const { classes } = this.props;
+          {/* link collection */}
+          <Box display='flex' flexGrow={1}>
+            {/* whatever is on the left side */}
+            <Link className={classes.link} to="/upload">Upload</Link>
+            <Link className={classes.link} to="/documents">Documents</Link>
+            <Link className={classes.link} to="/psychologists">Psychologists</Link>
+          </Box>
+        </AuthenticatedTemplate>
+      </Toolbar>
 
-
-    return (
-      <AppBar position="static" className={classes.header}>
-        <Toolbar className={classes.toolBar}>
-          <AuthenticatedTemplate>
-            <Button color="inherit" component={Link} to="/">
-              <FeedbackIcon />
-              <Typography variant="h6" color="inherit">
-                Psychmatch
-              </Typography>
-            </Button>
-
-            {/* link collection */}
-            <Box display='flex' flexGrow={1}>
-              {/* whatever is on the left side */}
-              <Link className={classes.link} to="/upload">Upload</Link>
-              <Link className={classes.link} to="/documents">Documents</Link>
-              <Link className={classes.link} to="/psychologists">Psychologists</Link>
-            </Box>
-          </AuthenticatedTemplate>
-        </Toolbar>
-
-        <Button
-          onClick={this.handleChange}
-          className={classes.headerButton}
-        >
-          <HelpOutlineIcon
-            color="secondary"
-            aria-label="add"
-            className={classes.helpIcon}
-          />
-        </Button>
-        <Help handleChange={this.handleChange} showModal={this.state.showHelp} />
-      </AppBar>
-    )
-  }
+      <Button
+        onClick={handleChange}
+        className={classes.headerButton}
+      >
+        <HelpOutlineIcon
+          color="secondary"
+          aria-label="add"
+          className={classes.helpIcon}
+        />
+      </Button>
+      <Help handleChange={handleChange} showModal={showHelp} />
+    </AppBar>
+  )
 }
 
-export default compose(
-  withStyles(styles),
-)(AppHeader);
+export default withStyles(styles)(AppHeader);

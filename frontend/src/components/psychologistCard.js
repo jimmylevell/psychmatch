@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  withStyles,
   Card,
   CardContent,
   CardHeader,
@@ -14,19 +13,22 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  TableRow
-} from '@material-ui/core';
-import FeedbackIcon from '@material-ui/icons/Feedback';
-import LanguageIcon from '@material-ui/icons/Language';
-import EditIcon from '@material-ui/icons/Edit';
+  TableRow,
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import LanguageIcon from '@mui/icons-material/Language';
+import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
-import { compose } from 'recompose';
 
 import { ModelService } from '../service';
 
 const NUMBER_OF_MATCHES = 8; // number of matches to show
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   tableHeader: {
     fontWeight: "bold"
   },
@@ -42,75 +44,60 @@ const styles = theme => ({
   },
 })
 
-class PsychologistCard extends Component {
-  constructor() {
-    super()
+function PsychologistCard(props) {
+  const { classes } = props
 
-    this.state = {
-      id: null,
-      psychologist: null,
-      match_score: 0.0,
-      document_keywords: [],
-      most_important_matches: [],     // keywords that are most important for this psychologist and are being displayed
+  const [id, setId] = useState(null);
+  const [psychologist, setPsychologist] = useState(null);
+  const [match_score, setMatchScore] = useState(0.0);
+  const [document_keywords, setDocumentKeywords] = useState([]);
+  const [most_important_matches, setMostImportantMatches] = useState([]);
 
-      service: null,
-    }
-  }
+  const [service, setService] = useState(ModelService.getInstance());
 
-  componentDidMount() {
-    this.loadData()
-  }
+  useEffect(() => {
+    loadData()
+  }, [props.match_score, props.keywords]);
 
-  componentDidUpdate() {
-    // check if score has changed
-    if (this.state.match_score !== this.props.match_score) {
-      this.loadData()
-    }
-  }
+  useEffect(() => {
+    console.log(id)
+    service.getPsychologist(id).then(psychologist => {
+      setPsychologist(psychologist);
+    })
 
-  loadData() {
+  }, [id]);
+
+  const loadData = () => {
     let most_important_matches = []
 
-    if (this.props.most_important_matches) {
-      most_important_matches = this.props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES)
+    if (props.most_important_matches) {
+      most_important_matches = props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES)
     }
 
-    this.setState({
-      id: this.props.id,
-      match_score: this.props.match_score,
-      document_keywords: this.props.keywords,
-      most_important_matches: most_important_matches,
-
-      service: ModelService.getInstance(this.props.token),
-    }, () => {
-      this.state.service.getPsychologist(this.state.id).then(psychologist => {
-        this.setState({
-          psychologist: psychologist
-        })
-      })
-    })
+    setId(props.id)
+    setMatchScore(props.match_score)
+    setDocumentKeywords(props.keywords)
+    setMostImportantMatches(most_important_matches)
   }
 
-  addKeywordsToPsychologist() {
+  const addKeywordsToPsychologist = () => {
     if (window.confirm(`Are you sure you want to recommend the document keywords to this psychologist?`)) {
-      this.props.addKeywordsToPsychologist(this.state.id, this.state.document_keywords)
+      props.addKeywordsToPsychologist(id, document_keywords)
     }
   }
 
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <Grid item xs={3}>
-        {this.state.psychologist && (
+  return (
+    <Grid item xs={3} >
+      {
+        psychologist && (
           <Card>
             <CardHeader
               avatar={
                 <Avatar className={classes.largeAvatar} variant="rounded" aria-label="score">
-                  {parseFloat(this.state.match_score).toFixed(2)}
+                  {parseFloat(match_score).toFixed(2)}
                 </Avatar>
               }
-              title={this.state.psychologist.name}
+              title={psychologist.name}
             />
 
             <CardContent>
@@ -124,8 +111,8 @@ class PsychologistCard extends Component {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {this.state.most_important_matches && (
-                      this.state.most_important_matches.map(match => (
+                    {most_important_matches && (
+                      most_important_matches.map(match => (
                         <TableRow className={classes.tableRow}>
                           <TableCell> {match.document_keyword} </TableCell>
                           <TableCell> {match.psychologist_keyword} </TableCell>
@@ -139,17 +126,15 @@ class PsychologistCard extends Component {
             </CardContent>
 
             <CardActions>
-              <Button size="small" component={Link} to={`/psychologists/${this.state.id}/edit`} ><EditIcon />Edit</Button>
-              <Button size="small" href={`${this.state.psychologist.website}`} ><LanguageIcon />Website</Button>
-              <Button size="small" onClick={() => this.addKeywordsToPsychologist()} color="primary" ><FeedbackIcon />Recommend Keywords</Button>
+              <Button size="small" component={Link} to={`/psychologists/${id}/edit`} ><EditIcon />Edit</Button>
+              <Button size="small" href={`${psychologist.website}`} ><LanguageIcon />Website</Button>
+              <Button size="small" onClick={() => addKeywordsToPsychologist()} color="primary" ><FeedbackIcon />Recommend Keywords</Button>
             </CardActions>
           </Card>
-        )}
-      </Grid>
-    )
-  }
+        )
+      }
+    </Grid>
+  )
 }
 
-export default compose(
-  withStyles(styles),
-)(PsychologistCard);
+export default withStyles(styles)(PsychologistCard);

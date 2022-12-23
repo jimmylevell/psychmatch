@@ -1,12 +1,15 @@
-import React, { Fragment, Component } from 'react';
-import { Route } from 'react-router-dom';
+import React, { Fragment, useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import {
   CssBaseline,
-  withStyles
-} from '@material-ui/core';
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
 import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "../authConfig";
+
+import { ModelService } from '../service';
 
 import AppHeader from './appHeader';
 import Login from '../pages/login';
@@ -17,7 +20,9 @@ import PsychologistsManager from '../pages/psychologistsManager';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = ({
   main: {
     padding: theme.spacing(3),
     [theme.breakpoints.down('xs')]: {
@@ -25,80 +30,50 @@ const styles = theme => ({
     },
   },
 });
-class App extends Component {
-  constructor() {
-    super()
+const App = ({ classes }) => {
+  const [token, setToken] = useState(null);
+  let service = null;
 
-    this.state = {
-      token: null,
+  useEffect(() => {
+    if (token) {
+      service = ModelService.getInstance(token);
 
+      console.log(service)
     }
-  }
+  }, [token]);
 
-  tokenUpdated = (token) => {
-    this.setState({
-      token: token
-    })
-  }
-
-  render() {
-    const { classes } = this.props;
-
-    return (
-      <MsalProvider instance={msalInstance}>
-        <Fragment>
-          <Login tokenUpdated={this.tokenUpdated} />
-          <CssBaseline />
-          <AppHeader />
-          <main className={classes.main}>
-            { /* Don't load components if token not present */}
-            {this.state.token && (
-              <AuthenticatedTemplate>
+  return (
+    <MsalProvider instance={msalInstance}>
+      <Fragment>
+        <Login tokenUpdated={setToken} />
+        <CssBaseline />
+        <AppHeader />
+        <main className={classes.main}>
+          { /* Don't load components if token not present */}
+          {token && (
+            <AuthenticatedTemplate>
+              <Routes>
                 { /* Authenticated */}
-                <Route exact path="/">
-                  <DocumentManager token={this.state.token} />
-                </Route>
+                <Route exact path="/" element={<DocumentManager />} />
+                <Route exact path="/upload" element={<DocumentUpload />} />
+                <Route exact path="/documents" element={<DocumentManager />} />
+                <Route exact path="/documents/:id" element={<DocumentViewer />} />
+                <Route exact path="/psychologists" element={<PsychologistsManager />} />
+                <Route exact path="/psychologists/:id" element={<PsychologistsManager />} />
+                <Route exact path="/psychologists/:id/edit" element={<PsychologistsManager />} />
+                <Route exact path="/psychologists/:id/copy" element={<PsychologistsManager />} />
+              </Routes>
+            </AuthenticatedTemplate>
+          )}
 
-                <Route exact path="/upload">
-                  <DocumentUpload token={this.state.token} />
-                </Route>
-
-                <Route exact path="/documents">
-                  <DocumentManager token={this.state.token} />
-                </Route>
-
-                <Route exact path="/documents/:id">
-                  <DocumentViewer token={this.state.token} />
-                </Route>
-
-                <Route exact path="/psychologists">
-                  <PsychologistsManager token={this.state.token} />
-                </Route>
-
-                <Route exact path="/psychologists/:id">
-                  <PsychologistsManager token={this.state.token} />
-                </Route>
-
-                <Route exact path="/psychologists/:id/edit">
-                  <PsychologistsManager token={this.state.token} />
-                </Route>
-
-                <Route exact path="/psychologists/:id/copy">
-                  <PsychologistsManager token={this.state.token} />
-                </Route>
-
-              </AuthenticatedTemplate>
-            )}
-
-            { /* Unauthenticated */}
-            <UnauthenticatedTemplate>
-              <h5 className="card-title">Please sign-in to see use the application.</h5>
-            </UnauthenticatedTemplate>
-          </main>
-        </Fragment>
-      </MsalProvider>
-    );
-  }
+          { /* Unauthenticated */}
+          <UnauthenticatedTemplate>
+            <h5 className="card-title">Please sign-in to see use the application.</h5>
+          </UnauthenticatedTemplate>
+        </main>
+      </Fragment>
+    </MsalProvider>
+  )
 }
 
 export default withStyles(styles)(App);

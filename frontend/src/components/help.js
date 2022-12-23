@@ -1,18 +1,19 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import {
-  withStyles,
   Card,
   CardContent,
   CardActions,
   Modal,
   Button,
-  Typography
-} from '@material-ui/core';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
-import ClearIcon from '@material-ui/icons/Clear';
+  Typography,
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
+import ClearIcon from '@mui/icons-material/Clear';
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   modal: {
     display: 'flex',
     alignItems: 'center',
@@ -34,61 +35,46 @@ const styles = theme => ({
   }
 });
 
-class Help extends Component {
-  constructor() {
-    super()
+function Help(props) {
+  const { classes } = props;
+  const APP_VERSION = process.env.REACT_APP_VERSION
+  const [showModal, setShowModal] = useState(false);
 
-    this.state = {
-      showModal: false
+  useEffect(() => {
+    if (showModal !== props.showModal) {
+      setShowModal(props.showModal);
     }
+  }, [props.showModal, showModal]);
 
-    this.handleChange = this.handleChange.bind(this)
+  const handleChange = () => {
+    let parentHandler = props.handleChange
+    setShowModal(!showModal);
+    parentHandler()
   }
 
-  componentDidUpdate() {
-    if (this.state.showModal !== this.props.showModal) {
-      this.setState({ showModal: this.props.showModal })
-    }
-  }
+  return (
+    <Fragment>
+      {showModal && (
+        <Modal
+          className={classes.modal}
+          onClose={handleChange}
+          open
+        >
+          <Card className={`${classes.modalCard} ${classes.marginTop}`}>
+            <CardContent className={classes.modalCardContent}>
+              <Typography variant="h6">About the app</Typography>
+              <Typography className={classes.text}>Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.</Typography>
+              <Typography className={classes.text}>App version: {APP_VERSION}</Typography>
+            </CardContent>
+            <CardActions>
+              <Button size="small" onClick={handleChange}><ClearIcon />Close</Button>
+            </CardActions>
+          </Card>
+        </Modal>
+      )}
 
-  handleChange() {
-    let parentHandler = this.props.handleChange
-    this.setState({
-      showModal: !this.state.showModal
-    }, parentHandler)
-  }
-
-  render() {
-    const { classes } = this.props
-    const APP_VERSION = process.env.REACT_APP_VERSION
-
-    return (
-      <Fragment>
-        {this.state.showModal && (
-          <Modal
-            className={classes.modal}
-            onClose={this.handleChange}
-            open
-          >
-            <Card className={`${classes.modalCard} ${classes.marginTop}`}>
-              <CardContent className={classes.modalCardContent}>
-                <Typography variant="h6">About the app</Typography>
-                <Typography className={classes.text}>Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.</Typography>
-                <Typography className={classes.text}>App version: {APP_VERSION}</Typography>
-              </CardContent>
-              <CardActions>
-                <Button size="small" onClick={this.handleChange}><ClearIcon />Close</Button>
-              </CardActions>
-            </Card>
-          </Modal>
-        )}
-
-      </Fragment>
-    )
-  }
+    </Fragment>
+  )
 }
 
-export default compose(
-  withRouter,
-  withStyles(styles),
-)(Help);
+export default withStyles(styles)(Help);

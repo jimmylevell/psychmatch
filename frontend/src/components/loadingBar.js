@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  withStyles,
-  CircularProgress
-} from '@material-ui/core';
-import { compose } from 'recompose';
-import { withRouter } from 'react-router-dom';
+  CircularProgress,
+  createTheme
+} from '@mui/material';
+import { withStyles } from '@mui/styles';
 
-const styles = theme => ({
+const theme = createTheme();
+
+const styles = () => ({
   loadingBar: {
     position: "fixed",
     top: theme.spacing(10),
@@ -23,7 +24,4 @@ const LoadingBar = ({ classes }) => (
   </div>
 );
 
-export default compose(
-  withRouter,
-  withStyles(styles),
-)(LoadingBar);
+export default withStyles(styles)(LoadingBar);
