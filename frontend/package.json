@@ -13,6 +13,7 @@
   "dependencies": {
     "@azure/msal-browser": "^2.37.1",
     "@azure/msal-react": "^1.5.8",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
