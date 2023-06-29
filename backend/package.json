@@ -31,7 +31,7 @@
     "mongoose": "^6.8.0",
 >>>>>>> 52737eea56cd8d877af122dfbf187ea3a3c9649b
     "morgan": "^1.10.0",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.3.0",
     "nodemon": "^2.0.20",
     "passport": "^0.6.0",
     "passport-azure-ad": "^4.3.4",
