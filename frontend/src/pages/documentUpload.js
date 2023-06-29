@@ -5,7 +5,6 @@ import {
   TextField,
   createTheme
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import AddIcon from '@mui/icons-material/Add';
 
 import { ModelService } from '../service';
@@ -16,20 +15,7 @@ import InfoSnackbar from '../components/infoSnackbar'
 
 const theme = createTheme();
 
-const styles = () => ({
-  contentInput: {
-    width: "90%",
-    margin: theme.spacing(1),
-    fontSize: "1.2em"
-  },
-  button: {
-    margin: theme.spacing(1),
-  }
-});
-
 function DocumentUploadComponent(props) {
-  const { classes } = props;
-
   const [document, setDocument] = useState('');
 
   const [service, setService] = useState(ModelService.getInstance());
@@ -81,7 +67,11 @@ function DocumentUploadComponent(props) {
           onChange={handleChange}
           variant="outlined"
           fullWidth={true}
-          className={classes.contentInput}
+          sx={{
+            width: "90%",
+            margin: theme.spacing(1),
+            fontSize: "1.2em"
+          }}
           multiline
           minRows={20}
         />
@@ -89,7 +79,7 @@ function DocumentUploadComponent(props) {
         <Button
           color="primary"
           variant="outlined"
-          className={classes.button}
+          sx={{ margin: theme.spacing(1), }}
           disabled={!document}
           type="submit"
         >
@@ -121,4 +111,4 @@ function DocumentUploadComponent(props) {
   )
 }
 
-export default withStyles(styles)(DocumentUploadComponent);
+export default DocumentUploadComponent;

@@ -8,35 +8,11 @@ import {
   Typography,
   createTheme
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import ClearIcon from '@mui/icons-material/Clear';
 
 const theme = createTheme();
 
-const styles = () => ({
-  modal: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalCard: {
-    width: '90%',
-    maxWidth: 700,
-  },
-  modalCardContent: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  marginTop: {
-    marginTop: theme.spacing(5),
-  },
-  text: {
-    marginTop: theme.spacing(2)
-  }
-});
-
 function Help(props) {
-  const { classes } = props;
   const APP_VERSION = process.env.REACT_APP_VERSION
   const [showModal, setShowModal] = useState(false);
 
@@ -56,15 +32,30 @@ function Help(props) {
     <Fragment>
       {showModal && (
         <Modal
-          className={classes.modal}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
           onClose={handleChange}
           open
         >
-          <Card className={`${classes.modalCard} ${classes.marginTop}`}>
-            <CardContent className={classes.modalCardContent}>
+          <Card sx={{
+            width: '90%',
+            maxWidth: 700,
+            marginTop: theme.spacing(5),
+          }} >
+            <CardContent sx={{
+              display: 'flex',
+              flexDirection: 'column',
+            }}>
               <Typography variant="h6">About the app</Typography>
-              <Typography className={classes.text}>Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.</Typography>
-              <Typography className={classes.text}>App version: {APP_VERSION}</Typography>
+              <Typography sx={{
+                marginTop: theme.spacing(2)
+              }}>Keyword-based match making of first client contact emails with possible psychologist and psychotherapist.</Typography>
+              <Typography sx={{
+                marginTop: theme.spacing(2)
+              }}>App version: {APP_VERSION}</Typography>
             </CardContent>
             <CardActions>
               <Button size="small" onClick={handleChange}><ClearIcon />Close</Button>
@@ -77,4 +68,4 @@ function Help(props) {
   )
 }
 
-export default withStyles(styles)(Help);
+export default Help;

@@ -16,7 +16,6 @@ import {
   TableRow,
   createTheme
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import LanguageIcon from '@mui/icons-material/Language';
 import EditIcon from '@mui/icons-material/Edit';
@@ -27,22 +26,6 @@ import { ModelService } from '../service';
 const NUMBER_OF_MATCHES = 8; // number of matches to show
 
 const theme = createTheme();
-
-const styles = () => ({
-  tableHeader: {
-    fontWeight: "bold"
-  },
-  tableRow: {
-    textDecoration: "none",
-    "&:hover": {
-      background: "#d6effb"
-    },
-  },
-  largeAvatar: {
-    width: theme.spacing(7),
-    height: theme.spacing(5),
-  },
-})
 
 function PsychologistCard(props) {
   const { classes } = props
@@ -93,7 +76,10 @@ function PsychologistCard(props) {
           <Card>
             <CardHeader
               avatar={
-                <Avatar className={classes.largeAvatar} variant="rounded" aria-label="score">
+                <Avatar sx={{
+                  width: theme.spacing(7),
+                  height: theme.spacing(5),
+                }} variant="rounded" aria-label="score">
                   {parseFloat(match_score).toFixed(2)}
                 </Avatar>
               }
@@ -105,15 +91,26 @@ function PsychologistCard(props) {
                 <Table aria-label="data table">
                   <TableHead>
                     <TableRow>
-                      <TableCell className={classes.tableHeader}>Document</TableCell>
-                      <TableCell className={classes.tableHeader}>Psychologist</TableCell>
-                      <TableCell className={classes.tableHeader}>Score</TableCell>
+                      <TableCell sx={{
+                        fontWeight: "bold"
+                      }} >Document</TableCell>
+                      <TableCell sx={{
+                        fontWeight: "bold"
+                      }} >Psychologist</TableCell>
+                      <TableCell sx={{
+                        fontWeight: "bold"
+                      }} >Score</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {most_important_matches && (
                       most_important_matches.map(match => (
-                        <TableRow className={classes.tableRow}>
+                        <TableRow sx={{
+                          textDecoration: "none",
+                          "&:hover": {
+                            background: "#d6effb"
+                          },
+                        }}>
                           <TableCell> {match.document_keyword} </TableCell>
                           <TableCell> {match.psychologist_keyword} </TableCell>
                           <TableCell> {match.score} </TableCell>
@@ -137,4 +134,4 @@ function PsychologistCard(props) {
   )
 }
 
-export default withStyles(styles)(PsychologistCard);
+export default PsychologistCard;

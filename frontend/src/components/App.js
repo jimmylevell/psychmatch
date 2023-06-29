@@ -4,7 +4,6 @@ import {
   CssBaseline,
   createTheme
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { msalConfig } from "../authConfig";
@@ -22,23 +21,13 @@ const msalInstance = new PublicClientApplication(msalConfig);
 
 const theme = createTheme();
 
-const styles = ({
-  main: {
-    padding: theme.spacing(3),
-    [theme.breakpoints.down('xs')]: {
-      padding: theme.spacing(0.5),
-    },
-  },
-});
-const App = ({ classes }) => {
+const App = () => {
   const [token, setToken] = useState(null);
   let service = null;
 
   useEffect(() => {
     if (token) {
       service = ModelService.getInstance(token);
-
-      console.log(service)
     }
   }, [token]);
 
@@ -48,7 +37,12 @@ const App = ({ classes }) => {
         <Login tokenUpdated={setToken} />
         <CssBaseline />
         <AppHeader />
-        <main className={classes.main}>
+        <main sx={{
+          padding: theme.spacing(3),
+          [theme.breakpoints.down('xs')]: {
+            padding: theme.spacing(0.5),
+          },
+        }}>
           { /* Don't load components if token not present */}
           {token && (
             <AuthenticatedTemplate>
@@ -76,4 +70,4 @@ const App = ({ classes }) => {
   )
 }
 
-export default withStyles(styles)(App);
+export default App;

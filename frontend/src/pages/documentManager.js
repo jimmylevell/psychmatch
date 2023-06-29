@@ -13,7 +13,6 @@ import {
   TableRow,
   createTheme
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import { orderBy, filter } from 'lodash';
@@ -29,29 +28,7 @@ const MAX_NUMBER_OF_KEYWORDS = 50
 
 const theme = createTheme();
 
-const styles = () => ({
-  documentsView: {
-    whiteSpace: "inherit",
-    marginTop: theme.spacing(2)
-  },
-  searchInput: {
-    marginBottom: theme.spacing(2),
-    width: "100%"
-  },
-  tableHeader: {
-    fontWeight: "bold"
-  },
-  tableRow: {
-    textDecoration: "none",
-    "&:hover": {
-      background: "#d6effb"
-    },
-  }
-});
-
 function DocumentManager(props) {
-  const { classes } = props;
-
   const [query, setQuery] = useState("");
   const [documents, setDocuments] = useState([]);
   const [filteredDocuments, setFilteredDocuments] = useState([]);
@@ -126,7 +103,10 @@ function DocumentManager(props) {
         key="inputQuery"
         placeholder="Search"
         label="Search Content"
-        className={classes.searchInput}
+        sx={{
+          marginBottom: theme.spacing(2),
+          width: "100%"
+        }}
         value={query}
         onChange={handleSearchChange}
         variant="outlined"
@@ -138,22 +118,30 @@ function DocumentManager(props) {
 
       {documents.length > 0 ? (
         // documents available
-        <Paper elevation={1} className={classes.documentsView}>
+        <Paper elevation={1} sx={{
+          whiteSpace: "inherit",
+          marginTop: theme.spacing(2)
+        }}>
           <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="data table">
+            <Table aria-label="data table">
               <TableHead>
                 <TableRow>
-                  <TableCell className={classes.tableHeader}>Content CZ</TableCell>
-                  <TableCell className={classes.tableHeader}>Keywords CZ</TableCell>
-                  <TableCell className={classes.tableHeader}>Keywords EN</TableCell>
-                  <TableCell className={classes.tableHeader}>Updated At</TableCell>
-                  <TableCell className={classes.tableHeader}>Share</TableCell>
-                  <TableCell className={classes.tableHeader}>Remove</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Content CZ</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Keywords CZ</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Keywords EN</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Updated At</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Share</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Remove</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {orderBy(filteredDocuments, ['updatedAt'], ['desc']).map(document => (
-                  <TableRow key={document._id} className={classes.tableRow} component={Link} to={`/documents/${document._id}/`}>
+                  <TableRow key={document._id} sx={{
+                    textDecoration: "none",
+                    "&:hover": {
+                      background: "#d6effb"
+                    },
+                  }} component={Link} to={`/documents/${document._id}/`}>
                     { /* Only show substring of content if it is to large */}
                     <TableCell>
                       {document.content_cz.length > MAX_LENGTH_OF_CONTENT_PREVIEW ? (
@@ -227,4 +215,4 @@ function DocumentManager(props) {
   );
 }
 
-export default withStyles(styles)(DocumentManager);
+export default DocumentManager;

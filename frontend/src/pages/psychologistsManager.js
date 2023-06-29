@@ -12,7 +12,6 @@ import {
   TextField,
   createTheme
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import {
   Delete as DeleteIcon,
   Create as CreateIcon,
@@ -31,27 +30,7 @@ import InfoSnackbar from '../components/infoSnackbar'
 
 const theme = createTheme();
 
-const styles = () => ({
-  fab: {
-    position: 'absolute',
-    bottom: theme.spacing(3),
-    right: theme.spacing(3),
-    [theme.breakpoints.down('xs')]: {
-      bottom: theme.spacing(2),
-      right: theme.spacing(2),
-    }
-  },
-  searchDiv: {
-    marginBottom: theme.spacing(1)
-  },
-  searchInput: {
-    width: "100%",
-  }
-});
-
 function PsychologistManager(props) {
-  const { classes } = props;
-
   const [query, setQuery] = useState("");
   const [psychologists, setPsychologists] = useState([]);
   const [filteredPsychologists, setFilteredPsychologists] = useState([]);
@@ -155,7 +134,9 @@ function PsychologistManager(props) {
         key="inputQuery"
         placeholder="Search"
         label="Search"
-        className={classes.searchInput}
+        sx={{
+          width: "100%",
+        }}
         value={query}
         onChange={handleSearchChange}
         variant="outlined"
@@ -205,7 +186,15 @@ function PsychologistManager(props) {
         <Fab
           color="secondary"
           aria-label="add"
-          className={classes.fab}
+          sx={{
+            position: 'absolute',
+            bottom: theme.spacing(3),
+            right: theme.spacing(3),
+            [theme.breakpoints.down('xs')]: {
+              bottom: theme.spacing(2),
+              right: theme.spacing(2),
+            }
+          }}
           component={Link}
           onClick={() => { handleEditorOpen(null, 'create') }}
         >
@@ -248,4 +237,4 @@ function PsychologistManager(props) {
   );
 }
 
-export default withStyles(styles)(PsychologistManager);
+export default PsychologistManager;

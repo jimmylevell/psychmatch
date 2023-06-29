@@ -8,7 +8,6 @@ import {
   createTheme
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { withStyles } from '@mui/styles';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { ModelService } from '../service';
@@ -20,24 +19,7 @@ import PsychologistCard from '../components/psychologistCard';
 
 const theme = createTheme();
 
-const styles = () => ({
-  title: {
-    marginBottom: theme.spacing(1)
-  },
-  subtitle: {
-    marginLeft: theme.spacing(1.5),
-  },
-  table: {
-    marginTop: theme.spacing(0.5),
-    marginLeft: theme.spacing(0.2),
-  },
-  buttons: {
-    margin: theme.spacing(1)
-  }
-});
-
 function DocumentViewer(props) {
-  const { classes } = props;
   const params = useParams();
 
   const [documentId, setDocumentId] = useState(null);
@@ -109,12 +91,14 @@ function DocumentViewer(props) {
       {document !== null ? (
         // document present
         <div>
-          <Typography className={classes.title} variant="h4">Document View
+          <Typography sx={{
+            marginBottom: theme.spacing(1)
+          }} variant="h4">Document View
             <Button
               size="small"
               color="primary"
               onClick={handleReexecution}
-              className={classes.buttons}
+              sx={{ margin: theme.spacing(1) }}
             >
               <RefreshIcon />Re-Execute Match Making
             </Button>
@@ -155,8 +139,13 @@ function DocumentViewer(props) {
               </Card>
             </Grid>
 
-            <Typography className={classes.subtitle} variant="h5">Document View</Typography>
-            <Grid container className={classes.table} spacing={2}>
+            <Typography sx={{
+              marginLeft: theme.spacing(1.5),
+            }} variant="h5">Document View</Typography>
+            <Grid container sx={{
+              marginTop: theme.spacing(0.5),
+              marginLeft: theme.spacing(0.2),
+            }} spacing={2}>
               {document.matched_psychologists && (
                 document.matched_psychologists.sort((a, b) => b.score - a.score).map(function (match) {
                   return <PsychologistCard
@@ -177,7 +166,9 @@ function DocumentViewer(props) {
         // no document could be found
         !loading && (
           <Fragment>
-            <Typography className={classes.title} variant="h4">Document View</Typography>
+            <Typography sx={{
+              marginBottom: theme.spacing(1)
+            }} variant="h4">Document View</Typography>
             <Typography variant="subtitle1">No document with given ID could be found</Typography>
           </Fragment>
         )
@@ -207,4 +198,4 @@ function DocumentViewer(props) {
   );
 }
 
-export default withStyles(styles)(DocumentViewer);
+export default DocumentViewer;

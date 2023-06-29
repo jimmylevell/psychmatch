@@ -13,7 +13,6 @@ import {
   Chip,
   createTheme
 } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import SpellcheckIcon from '@mui/icons-material/Spellcheck';
 import AddIcon from '@mui/icons-material/Add';
@@ -23,39 +22,6 @@ import { MuiChipsInput } from 'mui-chips-input'
 import InfoSnackbar from './infoSnackbar';
 
 const theme = createTheme();
-
-const styles = () => ({
-  modal: {
-    display: 'flex',
-    outline: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalCard: {
-    width: '100%',
-    maxWidth: 800,
-    maxHeight: "100%",
-    overflowY: 'scroll',
-    height: '80vh',
-  },
-  modalCardContent: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  marginTop: {
-    marginTop: theme.spacing(2),
-  },
-  input: {
-    marginTop: theme.spacing(2)
-  },
-  proposed_keywords: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    '& > *': {
-      margin: theme.spacing(0.5),
-    },
-  }
-});
 
 function PsychologistEditor(props) {
   const { classes, psychologist, editorMode, onClose } = props;
@@ -162,15 +128,29 @@ function PsychologistEditor(props) {
 
   return (
     <Modal
-      className={classes.modal}
+      sx={{
+        display: 'flex',
+        outline: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
       onClose={() => onClose()}
       open
     >
-      <Card className={classes.modalCard}>
+      <Card sx={{
+        width: '100%',
+        maxWidth: 800,
+        maxHeight: "100%",
+        overflowY: 'scroll',
+        height: '80vh',
+      }}>
         <CardHeader title={TITLE} />
 
         <form onSubmit={handleSubmit}>
-          <CardContent className={classes.modalCardContent}>
+          <CardContent sx={{
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
             <TextField
               required
               type="text"
@@ -189,7 +169,9 @@ function PsychologistEditor(props) {
               required
               type="url"
               name="website"
-              className={classes.input}
+              sx={{
+                marginTop: theme.spacing(2)
+              }}
               key="inputPsychologistWebsite"
               placeholder="Psychologist Website"
               label="Psychologist Website"
@@ -200,7 +182,9 @@ function PsychologistEditor(props) {
             />
 
             <MuiChipsInput
-              className={classes.input}
+              sx={{
+                marginTop: theme.spacing(2)
+              }}
               label="Keywords CZ"
               value={keywords_cz}
               onAdd={(chip) => handleAddKeyword(chip, "CZ")}
@@ -208,14 +192,18 @@ function PsychologistEditor(props) {
             />
 
             <MuiChipsInput
-              className={classes.input}
+              sx={{
+                marginTop: theme.spacing(2)
+              }}
               label="Keywords EN"
               value={keywords_en}
               onAdd={(chip) => handleAddKeyword(chip, "EN")}
               onDelete={(chip, index) => handleDeleteKeyword(chip, index, "EN")}
             />
 
-            <Typography variant="body2" color="textSecondary" className={classes.input}>Proposed Keywords</Typography>
+            <Typography variant="body2" color="textSecondary" sx={{
+              marginTop: theme.spacing(2)
+            }}>Proposed Keywords</Typography>
             <div className={classes.proposed_keywords}>
               {proposed_keywords.sort().map((element) => {
                 let index = proposed_keywords.indexOf(element)
@@ -232,7 +220,9 @@ function PsychologistEditor(props) {
             </div>
 
             <FormControlLabel
-              className={classes.input}
+              sx={{
+                marginTop: theme.spacing(2)
+              }}
               control={
                 <Checkbox
                   id="translate_keywords"
@@ -264,4 +254,4 @@ function PsychologistEditor(props) {
   )
 }
 
-export default withStyles(styles)(PsychologistEditor);
+export default PsychologistEditor;
