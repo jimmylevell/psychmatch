@@ -23,11 +23,10 @@ const theme = createTheme();
 
 const App = () => {
   const [token, setToken] = useState(null);
-  let service = null;
 
   useEffect(() => {
     if (token) {
-      service = ModelService.getInstance(token);
+      ModelService.getInstance(token);
     }
   }, [token]);
 

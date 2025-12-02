@@ -33,16 +33,10 @@ function DocumentManager(props) {
   const [documents, setDocuments] = useState([]);
   const [filteredDocuments, setFilteredDocuments] = useState([]);
 
-  const [service, setService] = useState(ModelService.getInstance());
+  const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    if (ModelService.token) {
-      getDocuments();
-    }
-  }, [service]);
 
   const getDocuments = async () => {
     try {
@@ -56,6 +50,13 @@ function DocumentManager(props) {
 
     setLoading(false);
   }
+
+  useEffect(() => {
+    if (ModelService.token) {
+      getDocuments();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const deleteDocument = async (evt, document) => {
     evt.preventDefault()

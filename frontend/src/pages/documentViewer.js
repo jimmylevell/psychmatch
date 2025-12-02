@@ -25,17 +25,10 @@ function DocumentViewer(props) {
   const [documentId, setDocumentId] = useState(null);
   const [document, setDocument] = useState(null);
 
-  const [service, setService] = useState(ModelService.getInstance());
+  const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-
-  useEffect(() => {
-    if (ModelService.token) {
-      setDocumentId(params.id)
-      getDocument(params.id)
-    }
-  }, [service]);
 
   const getDocument = async (id) => {
     let document = null;
@@ -52,6 +45,14 @@ function DocumentViewer(props) {
     setDocument(document)
     setLoading(false)
   }
+
+  useEffect(() => {
+    if (ModelService.token && params.id) {
+      setDocumentId(params.id)
+      getDocument(params.id)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]);
 
   const handleReexecution = async () => {
     if (window.confirm(`Are you sure you would like to reprocess the following document? All previous matches will be lost.`)) {

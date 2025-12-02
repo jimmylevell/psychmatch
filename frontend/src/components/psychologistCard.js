@@ -28,40 +28,40 @@ const NUMBER_OF_MATCHES = 8; // number of matches to show
 const theme = createTheme();
 
 function PsychologistCard(props) {
-  const { classes } = props
-
   const [id, setId] = useState(null);
   const [psychologist, setPsychologist] = useState(null);
   const [match_score, setMatchScore] = useState(0.0);
   const [document_keywords, setDocumentKeywords] = useState([]);
   const [most_important_matches, setMostImportantMatches] = useState([]);
 
-  const [service, setService] = useState(ModelService.getInstance());
-
-  useEffect(() => {
-    loadData()
-  }, [props.match_score, props.keywords]);
-
-  useEffect(() => {
-    console.log(id)
-    service.getPsychologist(id).then(psychologist => {
-      setPsychologist(psychologist);
-    })
-
-  }, [id]);
+  const service = ModelService.getInstance();
 
   const loadData = () => {
-    let most_important_matches = []
+    let most_important_matches_data = []
 
     if (props.most_important_matches) {
-      most_important_matches = props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES)
+      most_important_matches_data = props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES)
     }
 
     setId(props.id)
     setMatchScore(props.match_score)
     setDocumentKeywords(props.keywords)
-    setMostImportantMatches(most_important_matches)
+    setMostImportantMatches(most_important_matches_data)
   }
+
+  useEffect(() => {
+    loadData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.match_score, props.keywords, props.most_important_matches, props.id]);
+
+  useEffect(() => {
+    if (id) {
+      console.log(id)
+      service.getPsychologist(id).then(psychologist => {
+        setPsychologist(psychologist);
+      })
+    }
+  }, [id, service]);
 
   const addKeywordsToPsychologist = () => {
     if (window.confirm(`Are you sure you want to recommend the document keywords to this psychologist?`)) {

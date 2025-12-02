@@ -31,7 +31,7 @@ function PsychologistEditor(props) {
   const [website, setWebsite] = useState("");
   const [keywords_cz, setKeywordsCz] = useState([]);
   const [keywords_en, setKeywordsEn] = useState([]);
-  const [translate_keywords, setTranslateKeywords] = useState(false);
+  const [translate_keywords] = useState(false);
   const [proposed_keywords, setProposedKeywords] = useState([]);
 
   const TITLE = id ? "Editing " + name : "Add a new Psychologist";
@@ -54,7 +54,7 @@ function PsychologistEditor(props) {
       setKeywordsEn(psychologist.keywords_en);
       setProposedKeywords(psychologist.proposed_keywords);
     }
-  }, [psychologist]);
+  }, [psychologist, editorMode]);
 
   const handleSubmit = evt => {
     evt.preventDefault();
@@ -115,14 +115,11 @@ function PsychologistEditor(props) {
   }
 
   const handleProposedKeywords = (index, keyword) => () => {
-    let proposed_keywords = proposed_keywords
-    proposed_keywords = proposed_keywords.filter(key => key !== keyword)
+    let updated_proposed_keywords = proposed_keywords.filter(key => key !== keyword)
+    let updated_keywords_en = [...keywords_en, keyword]
 
-    let keywords_en = keywords_en
-    keywords_en = [...keywords_en, keyword]
-
-    setProposedKeywords(proposed_keywords)
-    setKeywordsEn(keywords_en)
+    setProposedKeywords(updated_proposed_keywords)
+    setKeywordsEn(updated_keywords_en)
     setSuccess({ success: "Keyword '" + keyword + "' added to Keywords EN" })
   }
 

@@ -7,23 +7,12 @@ import { isTokenExpired } from "../utilities";
 function Login(props) {
   const [token, setToken] = useState(null);
 
-  useEffect(() => {
-    const msalInstance = props.msalContext.instance;
-    msalInstance.loginPopup()
-  }, [props.msalContext.instance]);
-
-  useEffect(() => {
-    callLogin()
-  }, []);
-
-  useEffect(() => {
-    props.tokenUpdated(token)
-  }, [token]);
+  const { msalContext, tokenUpdated } = props;
 
   const callLogin = () => {
-    const msalInstance = props.msalContext.instance;
-    const msalAccounts = props.msalContext.accounts;
-    const msalInProgress = props.msalContext.inProgress;
+    const msalInstance = msalContext.instance;
+    const msalAccounts = msalContext.accounts;
+    const msalInProgress = msalContext.inProgress;
 
     const request = {
       ...tokenRequest,
@@ -57,6 +46,20 @@ function Login(props) {
       }
     }
   }
+
+  useEffect(() => {
+    const msalInstance = msalContext.instance;
+    msalInstance.loginPopup()
+  }, [msalContext]);
+
+  useEffect(() => {
+    callLogin()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    tokenUpdated(token)
+  }, [token, tokenUpdated]);
 
   return (
     <div>

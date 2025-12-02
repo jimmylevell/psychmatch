@@ -39,16 +39,24 @@ function PsychologistManager(props) {
   const [editorMode, setEditorMode] = useState(null);
   const [editorOpen, setEditorOpen] = useState(false);
 
-  const [service, setService] = useState(ModelService.getInstance());
+  const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
+  const getPsychologists = () => {
+    service.getPsychologists()
+      .then(psychologists => {
+        setPsychologists(psychologists || [])
+      })
+  }
 
   useEffect(() => {
     if (ModelService.token) {
       getPsychologists();
     }
-  }, [service, query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setFilteredPsychologists(filter(psychologists, function (obj) {
@@ -59,13 +67,6 @@ function PsychologistManager(props) {
       }
     }))
   }, [psychologists, query]);
-
-  const getPsychologists = () => {
-    service.getPsychologists()
-      .then(psychologists => {
-        setPsychologists(psychologists || [])
-      })
-  }
 
   const onSavePsychologist = async (id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords) => {
     var postData = {
@@ -151,7 +152,7 @@ function PsychologistManager(props) {
         // psychologist available
         <Paper elevation={1}>
           <List>
-            {orderBy(psychologists, ['updatedAt', 'name'], ['desc', 'asc']).map(psychologist => (
+            {orderBy(filteredPsychologists, ['updatedAt', 'name'], ['desc', 'asc']).map(psychologist => (
               <ListItem key={psychologist._id}>
                 <ListItemText
                   primary={psychologist.name}
