@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -36,7 +36,7 @@ function PsychologistCard(props) {
 
   const service = ModelService.getInstance();
 
-  const loadData = () => {
+  const loadData = useCallback(() => {
     let most_important_matches_data = []
 
     if (props.most_important_matches) {
@@ -47,12 +47,11 @@ function PsychologistCard(props) {
     setMatchScore(props.match_score)
     setDocumentKeywords(props.keywords)
     setMostImportantMatches(most_important_matches_data)
-  }
+  }, [props.id, props.match_score, props.keywords, props.most_important_matches]);
 
   useEffect(() => {
     loadData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.match_score, props.keywords, props.most_important_matches, props.id]);
+  }, [loadData]);
 
   useEffect(() => {
     if (id) {

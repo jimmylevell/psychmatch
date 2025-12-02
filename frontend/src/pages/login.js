@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { withMsal } from "@azure/msal-react";
 
 import { tokenRequest } from "../authConfig";
@@ -9,7 +9,7 @@ function Login(props) {
 
   const { msalContext, tokenUpdated } = props;
 
-  const callLogin = () => {
+  const callLogin = useCallback(() => {
     const msalInstance = msalContext.instance;
     const msalAccounts = msalContext.accounts;
     const msalInProgress = msalContext.inProgress;
@@ -45,7 +45,7 @@ function Login(props) {
           })
       }
     }
-  }
+  }, [msalContext, token]);
 
   useEffect(() => {
     const msalInstance = msalContext.instance;
@@ -54,8 +54,7 @@ function Login(props) {
 
   useEffect(() => {
     callLogin()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [callLogin]);
 
   useEffect(() => {
     tokenUpdated(token)

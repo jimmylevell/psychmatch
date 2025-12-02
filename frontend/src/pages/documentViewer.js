@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import {
   Typography,
   Grid,
@@ -30,7 +30,7 @@ function DocumentViewer(props) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const getDocument = async (id) => {
+  const getDocument = useCallback(async (id) => {
     let document = null;
 
     try {
@@ -44,15 +44,14 @@ function DocumentViewer(props) {
 
     setDocument(document)
     setLoading(false)
-  }
+  }, [service]);
 
   useEffect(() => {
     if (ModelService.token && params.id) {
       setDocumentId(params.id)
       getDocument(params.id)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+  }, [params.id, getDocument]);
 
   const handleReexecution = async () => {
     if (window.confirm(`Are you sure you would like to reprocess the following document? All previous matches will be lost.`)) {

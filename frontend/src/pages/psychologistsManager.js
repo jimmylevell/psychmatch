@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Typography,
@@ -44,19 +44,18 @@ function PsychologistManager(props) {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  const getPsychologists = () => {
+  const getPsychologists = useCallback(() => {
     service.getPsychologists()
       .then(psychologists => {
         setPsychologists(psychologists || [])
       })
-  }
+  }, [service]);
 
   useEffect(() => {
     if (ModelService.token) {
       getPsychologists();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getPsychologists]);
 
   useEffect(() => {
     setFilteredPsychologists(filter(psychologists, function (obj) {

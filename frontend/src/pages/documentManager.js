@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Typography,
@@ -38,7 +38,7 @@ function DocumentManager(props) {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
 
-  const getDocuments = async () => {
+  const getDocuments = useCallback(async () => {
     try {
       let data = (await service.getDocuments()).documents
       setDocuments(data);
@@ -49,14 +49,13 @@ function DocumentManager(props) {
     }
 
     setLoading(false);
-  }
+  }, [service]);
 
   useEffect(() => {
     if (ModelService.token) {
       getDocuments();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getDocuments]);
 
   const deleteDocument = async (evt, document) => {
     evt.preventDefault()
