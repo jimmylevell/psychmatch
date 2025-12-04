@@ -43,6 +43,14 @@ Using the following docker command a local NLP model can be instantiated.
 
     docker run -p 5000:5000 --name psychmatch-nlp -d --restart always ghcr.io/jimmylevell/psychmatch/psychmatch_nlp_model:latest
 
+Create a virtual environment for the NLP model:
+
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+    # Install the required packages:
+    pip install -r requirements.txt
+
 # Available Scripts
 In the project directory, you can run:
 
