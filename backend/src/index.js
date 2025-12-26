@@ -38,9 +38,7 @@ const bearerStrategy = new BearerStrategy(options, (token, done) => {
 
 // load environmental dependent MongoDB configuration
 mongoose.Promise = global.Promise;
-mongoose.connect(config.MONGO_DB_STRING, {
-  useNewUrlParser: true
-}).then(() => {
+mongoose.connect(config.MONGO_DB_STRING).then(() => {
   console.log('Database sucessfully connected')
 },
   error => {
