@@ -1,7 +1,60 @@
 const API = process.env.REACT_APP_BACKEND_URL;
 
+export interface Document {
+  _id: string;
+  content_cz: string;
+  content_en: string;
+  keywords_cz: string[];
+  keywords_en: string[];
+  matched_psychologists: MatchedPsychologist[];
+  updatedAt: string;
+  createdAt: string;
+}
+
+export interface MatchedPsychologist {
+  psychologist: string;
+  score: number;
+  most_important_matches: Match[];
+}
+
+export interface Match {
+  document_keyword: string;
+  psychologist_keyword: string;
+  score: number;
+}
+
+export interface Psychologist {
+  _id: string;
+  name: string;
+  website: string;
+  keywords_cz: string[];
+  keywords_en: string[];
+  proposed_keywords: string[];
+  translate_keywords: boolean;
+  updatedAt?: string;
+  createdAt?: string;
+}
+
+export interface DocumentsResponse {
+  documents: Document[];
+}
+
+export interface DocumentResponse {
+  document: Document;
+}
+
+export interface PsychologistsResponse {
+  psychologists: Psychologist[];
+}
+
+export interface PsychologistResponse {
+  psychologist: Psychologist;
+}
+
 export class ModelService {
-  data = [];
+  data: any[] = [];
+  private static instance: ModelService;
+  static token: string | null = null;
 
   constructor() {
     if (ModelService.instance) {
@@ -10,22 +63,22 @@ export class ModelService {
   }
 
   // singleton static method to get instance of service
-  static getInstance(token) {
+  static getInstance(token?: string): ModelService {
     if (!ModelService.instance) {
       console.log("creating new instance")
     }
     ModelService.instance = ModelService.instance || new ModelService();
 
-    if (token && ModelService.instance.token !== token) {
+    if (token && ModelService.token !== token) {
       ModelService.token = token;
     }
     return ModelService.instance;
   }
 
   // used to communicate with backend
-  async fetch(method, endpoint, body) {
+  async fetch<T>(method: string, endpoint: string, body?: any): Promise<T> {
     try {
-      let header = {};
+      let header: RequestInit = {};
       if (method === 'GET') {
         header = {
           method,
@@ -63,11 +116,10 @@ export class ModelService {
   }
 
   // returns all documents
-  async getDocuments() {
+  async getDocuments(): Promise<DocumentsResponse> {
     try {
-      return this.fetch('GET', '/documents', '').then((response) => {
-        this.data = response;
-        return this.data;
+      return this.fetch<DocumentsResponse>('GET', '/documents', '').then((response) => {
+        return response;
       });
     }
     catch (error) {
@@ -76,9 +128,9 @@ export class ModelService {
   }
 
   // get document
-  async getDocument(documentId) {
+  async getDocument(documentId: string): Promise<Document> {
     try {
-      return this.fetch('GET', `/documents/${documentId}`, '').then((response) => {
+      return this.fetch<DocumentResponse>('GET', `/documents/${documentId}`, '').then((response) => {
         return response.document;
       })
     }
@@ -88,7 +140,7 @@ export class ModelService {
   }
 
   // new document
-  async newDocument(document) {
+  async newDocument(document: Partial<Document>): Promise<any> {
     try {
       return this.fetch('POST', '/documents', document).then((response) => {
         return response;
@@ -101,7 +153,7 @@ export class ModelService {
   }
 
   // update document
-  async updateDocument(documentId, document) {
+  async updateDocument(documentId: string, document: Partial<Document>): Promise<any> {
     try {
       return this.fetch('PUT', `/documents/${documentId}`, document).then((response) => {
         return response;
@@ -113,7 +165,7 @@ export class ModelService {
   }
 
   // delete document
-  async deleteDocument(documentId) {
+  async deleteDocument(documentId: string): Promise<any> {
     try {
       return this.fetch('DELETE', `/documents/${documentId}`, '').then((response) => {
         return response;
@@ -125,9 +177,9 @@ export class ModelService {
   }
 
   // reexecute document
-  async reexecuteDocument(documentId) {
+  async reexecuteDocument(documentId: string): Promise<Document> {
     try {
-      return this.fetch('GET', '/documents/' + documentId + "/reexecute",).then((response) => {
+      return this.fetch<DocumentResponse>('GET', '/documents/' + documentId + "/reexecute",).then((response) => {
         return response.document;
       })
     }
@@ -138,9 +190,9 @@ export class ModelService {
   }
 
   // get psychologists
-  async getPsychologists() {
+  async getPsychologists(): Promise<Psychologist[]> {
     try {
-      return this.fetch('GET', '/psychologists', '').then((response) => {
+      return this.fetch<PsychologistsResponse>('GET', '/psychologists', '').then((response) => {
         return response.psychologists;
       })
     }
@@ -150,7 +202,7 @@ export class ModelService {
   }
 
   // new psychologist
-  async newPsychologist(psychologist) {
+  async newPsychologist(psychologist: Partial<Psychologist>): Promise<any> {
     try {
       return this.fetch('POST', '/psychologists', psychologist).then((response) => {
         return response;
@@ -162,9 +214,9 @@ export class ModelService {
   }
 
   // get psychologist
-  async getPsychologist(psychologistId) {
+  async getPsychologist(psychologistId: string): Promise<Psychologist> {
     try {
-      return this.fetch('GET', `/psychologists/${psychologistId}`, '').then((response) => {
+      return this.fetch<PsychologistResponse>('GET', `/psychologists/${psychologistId}`, '').then((response) => {
         return response.psychologist;
       })
     }
@@ -174,7 +226,7 @@ export class ModelService {
   }
 
   // update psychologist
-  async updatePsychologist(psychologistId, psychologist) {
+  async updatePsychologist(psychologistId: string, psychologist: Partial<Psychologist>): Promise<any> {
     try {
       return this.fetch('PUT', `/psychologists/${psychologistId}`, psychologist).then((response) => {
         return response;
@@ -186,7 +238,7 @@ export class ModelService {
   }
 
   // add keywords to psychologist
-  addKeywordsToPsychologist(psychologistId, keywords) {
+  addKeywordsToPsychologist(psychologistId: string, keywords: string[]): Promise<any> {
     try {
       return this.fetch('PUT', `/psychologists/${psychologistId}/keywords`, keywords).then((response) => {
         return response;
@@ -198,7 +250,7 @@ export class ModelService {
   }
 
   // delete psychologist
-  async deletePsychologist(psychologistId) {
+  async deletePsychologist(psychologistId: string): Promise<any> {
     try {
       return this.fetch('DELETE', `/psychologists/${psychologistId}`, '').then((response) => {
         return response;

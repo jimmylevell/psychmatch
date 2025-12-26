@@ -2,7 +2,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import {
   CssBaseline,
-  createTheme
+  createTheme,
+  Box
 } from '@mui/material';
 import { MsalProvider, AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
@@ -21,8 +22,8 @@ const msalInstance = new PublicClientApplication(msalConfig);
 
 const theme = createTheme();
 
-const App = () => {
-  const [token, setToken] = useState(null);
+const App: React.FC = () => {
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (token) {
@@ -36,7 +37,7 @@ const App = () => {
         <Login tokenUpdated={setToken} />
         <CssBaseline />
         <AppHeader />
-        <main sx={{
+        <Box component="main" sx={{
           padding: theme.spacing(3),
           [theme.breakpoints.down('xs')]: {
             padding: theme.spacing(0.5),
@@ -47,14 +48,14 @@ const App = () => {
             <AuthenticatedTemplate>
               <Routes>
                 { /* Authenticated */}
-                <Route exact path="/" element={<DocumentManager />} />
-                <Route exact path="/upload" element={<DocumentUpload />} />
-                <Route exact path="/documents" element={<DocumentManager />} />
-                <Route exact path="/documents/:id" element={<DocumentViewer />} />
-                <Route exact path="/psychologists" element={<PsychologistsManager />} />
-                <Route exact path="/psychologists/:id" element={<PsychologistsManager />} />
-                <Route exact path="/psychologists/:id/edit" element={<PsychologistsManager />} />
-                <Route exact path="/psychologists/:id/copy" element={<PsychologistsManager />} />
+                <Route path="/" element={<DocumentManager />} />
+                <Route path="/upload" element={<DocumentUpload />} />
+                <Route path="/documents" element={<DocumentManager />} />
+                <Route path="/documents/:id" element={<DocumentViewer />} />
+                <Route path="/psychologists" element={<PsychologistsManager />} />
+                <Route path="/psychologists/:id" element={<PsychologistsManager />} />
+                <Route path="/psychologists/:id/edit" element={<PsychologistsManager />} />
+                <Route path="/psychologists/:id/copy" element={<PsychologistsManager />} />
               </Routes>
             </AuthenticatedTemplate>
           )}
@@ -63,7 +64,7 @@ const App = () => {
           <UnauthenticatedTemplate>
             <h5 className="card-title">Please sign-in to see use the application.</h5>
           </UnauthenticatedTemplate>
-        </main>
+        </Box>
       </Fragment>
     </MsalProvider>
   )

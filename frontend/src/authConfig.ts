@@ -1,8 +1,8 @@
-import { LogLevel } from "@azure/msal-browser";
+import { LogLevel, Configuration } from "@azure/msal-browser";
 
-export const msalConfig = {
+export const msalConfig: Configuration = {
   auth: {
-    clientId: process.env.REACT_APP_AZURE_CLIENT_ID,
+    clientId: process.env.REACT_APP_AZURE_CLIENT_ID || "",
     authority: "https://login.microsoftonline.com/" + process.env.REACT_APP_AZURE_ID,
     redirectUri: "/",
     postLogoutRedirectUri: "/",
@@ -14,7 +14,7 @@ export const msalConfig = {
   },
   system: {
     loggerOptions: {
-      loggerCallback: (level, message, containsPii) => {
+      loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
         if (containsPii) {
           return;
         }
@@ -40,10 +40,14 @@ export const msalConfig = {
   }
 };
 
+export const tokenRequest = {
+  scopes: ["api://35aef02e-4185-4203-ba60-a16bb4152c55/access_as_user"],
+}
 export const loginRequest = {
-  scopes: ["User.Read"]
+  scopes: [""]
 };
 
-export const tokenRequest = {
-  scopes: ["api://35aef02e-4185-4203-ba60-a16bb4152c55/access_as_user"]
+export const silentRequest = {
+  scopes: ["access_as_user"],
+  loginHint: "user@levell.ch"
 };
