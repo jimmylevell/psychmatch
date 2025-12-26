@@ -1,22 +1,24 @@
-require('dotenv').config({ path: '.env' });
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env' });
+
+import express, { Application } from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import morgan from 'morgan';
+import passport from 'passport';
+import { BearerStrategy } from 'passport-azure-ad';
+import swaggerUi from 'swagger-ui-express';
 
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const morgan = require("morgan");
-const passport = require("passport");
-const swaggerUi = require('swagger-ui-express');
-
-const BearerStrategy = require('passport-azure-ad').BearerStrategy;
-const app = express();
-const port = process.env.BACKEND_PORT || 3000;
 
 const swaggerDocument = require('./swagger');
-const documentApi = require('./routes/documentRoutes')
-const psychologistApi = require('./routes/psychologistRoutes')
+const documentApi = require('./routes/documentRoutes');
+const psychologistApi = require('./routes/psychologistRoutes');
+
+const app: Application = express();
+const port = process.env.BACKEND_PORT || 3000;
 
 // Azure AD authentication
 const options = {
@@ -30,11 +32,10 @@ const options = {
   scope: config.SAML.resource.scope
 };
 
-const bearerStrategy = new BearerStrategy(options, (token, done) => {
+const bearerStrategy = new BearerStrategy(options, (token: any, done: Function) => {
   // Send user info using the second argument
   done(null, {}, token);
-}
-);
+});
 
 // load environmental dependent MongoDB configuration
 mongoose.Promise = global.Promise;
@@ -44,7 +45,7 @@ mongoose.connect(config.MONGO_DB_STRING).then(() => {
   error => {
     console.error('Database could not be connected: ' + error)
   }
-)
+);
 
 // enable cors
 app.use(cors());
@@ -56,19 +57,22 @@ if (process.env.NODE_ENV === 'development') {
   console.log("Running in PROD mode")
   app.use(morgan('combined'));
 }
+
 app.use(passport.initialize());
 passport.use(bearerStrategy);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // publish API
-app.use('/api/documents', passport.authenticate('oauth-bearer', { session: false }), documentApi)
-app.use('/api/psychologists', passport.authenticate('oauth-bearer', { session: false }), psychologistApi)
+app.use('/api/documents', passport.authenticate('oauth-bearer', { session: false }), documentApi);
+app.use('/api/psychologists', passport.authenticate('oauth-bearer', { session: false }), psychologistApi);
 
 // publish Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // start app
 const server = app.listen(port, () => {
   console.log('Connected to port ' + port)
-})
+});
+
+export default app;
