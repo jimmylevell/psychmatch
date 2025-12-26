@@ -1,69 +1,58 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { withMsal } from "@azure/msal-react";
+import React, { useEffect, useCallback } from 'react';
+import { useMsal, useIsAuthenticated } from "@azure/msal-react";
+import { InteractionStatus } from "@azure/msal-browser";
 
-import { tokenRequest } from "../authConfig";
-import { isTokenExpired } from "../utilities";
+import { loginRequest, tokenRequest } from "../authConfig";
 
-function Login(props) {
-  const [token, setToken] = useState(null);
+function Login({ tokenUpdated }) {
+  const { instance, accounts, inProgress } = useMsal();
+  const isAuthenticated = useIsAuthenticated();
 
-  const { msalContext, tokenUpdated } = props;
-
-  const callLogin = useCallback(() => {
-    const msalInstance = msalContext.instance;
-    const msalAccounts = msalContext.accounts;
-    const msalInProgress = msalContext.inProgress;
+  const acquireToken = useCallback(async () => {
+    if (accounts.length === 0 || inProgress !== InteractionStatus.None) {
+      return;
+    }
 
     const request = {
       ...tokenRequest,
-      account: msalAccounts[0]
+      account: accounts[0]
     };
 
-    // if account is available
-    if (msalAccounts.length > 0) {
-      // if token is present, and expired
-      if (((!token || isTokenExpired(token)) && msalInProgress !== true)) {
-        msalInstance.acquireTokenSilent(request)
-          .then((response) => {
-            setToken(response.accessToken);
-          })
-          .catch((error) => {
-            if (error.errorCode === "invalid_grant") {
-              // fallback to interaction when silent call fails
-              msalInstance.acquireTokenPopup(request)
-                .then((response) => {
-                  //console.log(response)
-                })
-                .catch((error) => {
-                  console.error(error);
-                });
-            } else {
-              console.error(error);
-            }
-
-            console.error(error)
-          })
+    try {
+      const response = await instance.acquireTokenSilent(request);
+      tokenUpdated(response.accessToken);
+    } catch (error) {
+      console.error("Silent token acquisition failed:", error);
+      try {
+        const response = await instance.acquireTokenPopup(request);
+        tokenUpdated(response.accessToken);
+      } catch (popupError) {
+        console.error("Token acquisition failed:", popupError);
       }
     }
-  }, [msalContext, token]);
+  }, [instance, accounts, inProgress, tokenUpdated]);
 
   useEffect(() => {
-    const msalInstance = msalContext.instance;
-    msalInstance.loginPopup()
-  }, [msalContext]);
+    const handleLogin = async () => {
+      if (inProgress !== InteractionStatus.None) {
+        return;
+      }
 
-  useEffect(() => {
-    callLogin()
-  }, [callLogin]);
+      if (!isAuthenticated) {
+        try {
+          await instance.loginPopup(loginRequest);
+        } catch (error) {
+          console.error("Login failed:", error);
+        }
+      } else {
+        await acquireToken();
+      }
+    };
 
-  useEffect(() => {
-    tokenUpdated(token)
-  }, [token, tokenUpdated]);
+    handleLogin();
+  }, [isAuthenticated, inProgress, instance, acquireToken]);
 
-  return (
-    <div>
-    </div>
-  )
+  return null;
 }
 
-export default withMsal(Login);
+export default Login;
