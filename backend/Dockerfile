@@ -1,7 +1,7 @@
 ###############################################################################################
 # Psychmatch backend - BASE
 ###############################################################################################
-FROM node:24.11.1 as psychmatch-backend-base
+FROM node:24.12.0 as psychmatch-backend-base
 
 RUN mkdir -p /srv/app
 WORKDIR /srv/app
