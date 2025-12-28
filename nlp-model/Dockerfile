@@ -22,17 +22,15 @@ RUN pip install nltk
 
 # install spacy
 RUN pip install spacy
-RUN python -m spacy download en_core_web_lg
-
-# download the model
-COPY ./src/utils.py /usr/src/app/utils.py
-COPY ./src/download_model.py /usr/src/app/download_model.py
-RUN python /usr/src/app/download_model.py
+# Note: Spacy model and gensim models will be downloaded on first container run
 
 ###############################################################################################
 # Psychmatch nlp-model - DEVELOPMENT
 ###############################################################################################
 FROM psychmatch-nlp-model-base as psychmatch-nlp-model-dev
+
+COPY ./src/utils.py /usr/src/app/utils.py
+COPY ./src/download_model.py /usr/src/app/download_model.py
 
 COPY ./docker/entrypoint.sh /docker
 RUN chmod +x /docker/entrypoint.sh
