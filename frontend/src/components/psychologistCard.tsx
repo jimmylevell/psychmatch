@@ -21,23 +21,31 @@ import LanguageIcon from '@mui/icons-material/Language';
 import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
 
-import { ModelService } from '../service';
+import { ModelService, Match, Psychologist } from '../service';
 
 const NUMBER_OF_MATCHES = 8; // number of matches to show
 
 const theme = createTheme();
 
-function PsychologistCard(props) {
-  const [id, setId] = useState(null);
-  const [psychologist, setPsychologist] = useState(null);
-  const [match_score, setMatchScore] = useState(0.0);
-  const [document_keywords, setDocumentKeywords] = useState([]);
-  const [most_important_matches, setMostImportantMatches] = useState([]);
+interface PsychologistCardProps {
+  id: string;
+  match_score: number;
+  keywords: string[];
+  most_important_matches: Match[];
+  addKeywordsToPsychologist: (id: string, keywords: string[]) => void;
+}
+
+const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
+  const [id, setId] = useState<string | null>(null);
+  const [psychologist, setPsychologist] = useState<Psychologist | null>(null);
+  const [match_score, setMatchScore] = useState<number>(0.0);
+  const [document_keywords, setDocumentKeywords] = useState<string[]>([]);
+  const [most_important_matches, setMostImportantMatches] = useState<Match[]>([]);
 
   const service = ModelService.getInstance();
 
   const loadData = useCallback(() => {
-    let most_important_matches_data = []
+    let most_important_matches_data: Match[] = []
 
     if (props.most_important_matches) {
       most_important_matches_data = props.most_important_matches.sort((a, b) => (b.score - a.score)).slice(0, NUMBER_OF_MATCHES)
@@ -63,7 +71,7 @@ function PsychologistCard(props) {
   }, [id, service]);
 
   const addKeywordsToPsychologist = () => {
-    if (window.confirm(`Are you sure you want to recommend the document keywords to this psychologist?`)) {
+    if (id && window.confirm(`Are you sure you want to recommend the document keywords to this psychologist?`)) {
       props.addKeywordsToPsychologist(id, document_keywords)
     }
   }
@@ -79,7 +87,7 @@ function PsychologistCard(props) {
                   width: theme.spacing(7),
                   height: theme.spacing(5),
                 }} variant="rounded" aria-label="score">
-                  {parseFloat(match_score).toFixed(2)}
+                  {parseFloat(match_score.toString()).toFixed(2)}
                 </Avatar>
               }
               title={psychologist.name}
@@ -103,8 +111,8 @@ function PsychologistCard(props) {
                   </TableHead>
                   <TableBody>
                     {most_important_matches && (
-                      most_important_matches.map(match => (
-                        <TableRow sx={{
+                      most_important_matches.map((match, index) => (
+                        <TableRow key={index} sx={{
                           textDecoration: "none",
                           "&:hover": {
                             background: "#d6effb"

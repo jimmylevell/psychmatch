@@ -6,7 +6,7 @@ import {
 
 const theme = createTheme();
 
-const LoadingBar = () => (
+const LoadingBar: React.FC = () => (
   <div>
     <CircularProgress sx={{
       position: "fixed",

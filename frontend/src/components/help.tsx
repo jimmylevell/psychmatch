@@ -12,7 +12,12 @@ import ClearIcon from '@mui/icons-material/Clear';
 
 const theme = createTheme();
 
-function Help(props) {
+interface HelpProps {
+  showModal: boolean;
+  handleChange: () => void;
+}
+
+const Help: React.FC<HelpProps> = (props) => {
   const APP_VERSION = process.env.REACT_APP_VERSION
   const [showModal, setShowModal] = useState(false);
 

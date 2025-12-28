@@ -20,23 +20,44 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { MuiChipsInput } from 'mui-chips-input'
 
 import InfoSnackbar from './infoSnackbar';
+import { Psychologist } from '../service';
 
 const theme = createTheme();
 
-function PsychologistEditor(props) {
+interface PsychologistEditorProps {
+  classes?: any;
+  psychologist: Psychologist | null;
+  editorMode: string;
+  onClose: () => void;
+  onSave: (
+    id: string | null,
+    name: string,
+    website: string,
+    keywords_cz: string[],
+    keywords_en: string[],
+    translate_keywords: boolean,
+    proposed_keywords: string[]
+  ) => void;
+}
+
+interface SuccessState {
+  success: string;
+}
+
+const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const { classes, psychologist, editorMode, onClose } = props;
 
-  const [id, setId] = useState(null);
+  const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [website, setWebsite] = useState("");
-  const [keywords_cz, setKeywordsCz] = useState([]);
-  const [keywords_en, setKeywordsEn] = useState([]);
+  const [keywords_cz, setKeywordsCz] = useState<string[]>([]);
+  const [keywords_en, setKeywordsEn] = useState<string[]>([]);
   const [translate_keywords] = useState(false);
-  const [proposed_keywords, setProposedKeywords] = useState([]);
+  const [proposed_keywords, setProposedKeywords] = useState<string[]>([]);
 
   const TITLE = id ? "Editing " + name : "Add a new Psychologist";
 
-  const [success, setSuccess] = useState(null);
+  const [success, setSuccess] = useState<SuccessState | null>(null);
 
   useEffect(() => {
     if (psychologist) {
@@ -45,7 +66,7 @@ function PsychologistEditor(props) {
         setName(psychologist.name + " (copy)");
       }
       else {
-        setId(psychologist.id);
+        setId(psychologist._id);
         setName(psychologist.name);
       }
 
@@ -56,7 +77,7 @@ function PsychologistEditor(props) {
     }
   }, [psychologist, editorMode]);
 
-  const handleSubmit = evt => {
+  const handleSubmit = (evt: React.FormEvent) => {
     evt.preventDefault();
 
     const { onSave } = props
@@ -65,30 +86,30 @@ function PsychologistEditor(props) {
     onSave(id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords)
   };
 
-  const handleChange = (evt) => {
+  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const target = evt.target
     const name = target.name
     const value = evt.target.type === 'checkbox' ? evt.target.checked : evt.target.value
 
     switch (name) {
       case 'name':
-        setName(value)
+        setName(value as string)
         break
       case 'website':
-        setWebsite(value)
+        setWebsite(value as string)
         break
       case 'keywords_cz':
-        setKeywordsCz(value)
+        setKeywordsCz(value as any)
         break
       case 'keywords_en':
-        setKeywordsEn(value)
+        setKeywordsEn(value as any)
         break
       default:
         break
     }
   }
 
-  const handleAddKeyword = (keyword, language) => {
+  const handleAddKeyword = (keyword: string, language: string) => {
     if (language === "CZ") {
       setKeywordsCz([...keywords_cz, keyword])
     } else if (language === "EN") {
@@ -98,14 +119,14 @@ function PsychologistEditor(props) {
     }
   }
 
-  const handleDeleteKeyword = (keyword, index, language) => {
+  const handleDeleteKeyword = (keyword: string, index: number, language: string) => {
     if (language === "CZ") {
-      let keywords = keywords_cz
+      let keywords = [...keywords_cz]
       keywords.splice(index, 1)
 
       setKeywordsCz(keywords)
     } else if (language === "EN") {
-      let keywords = keywords_en
+      let keywords = [...keywords_en]
       keywords.splice(index, 1)
 
       setKeywordsEn(keywords)
@@ -114,7 +135,7 @@ function PsychologistEditor(props) {
     }
   }
 
-  const handleProposedKeywords = (index, keyword) => () => {
+  const handleProposedKeywords = (index: number, keyword: string) => () => {
     let updated_proposed_keywords = proposed_keywords.filter(key => key !== keyword)
     let updated_keywords_en = [...keywords_en, keyword]
 
