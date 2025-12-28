@@ -99,7 +99,7 @@ const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
                 ) : (
                   <Avatar sx={{
                     width: theme.spacing(7),
-                    height: theme.spacing(5),
+                    height: theme.spacing(7),
                   }} variant="rounded" aria-label="score">
                     {parseFloat(match_score.toString()).toFixed(2)}
                   </Avatar>

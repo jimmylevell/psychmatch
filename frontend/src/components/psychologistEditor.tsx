@@ -161,6 +161,19 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const handleImageChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const file = evt.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setSuccess({ success: "Please upload an image file" });
+        return;
+      }
+      
+      // Validate file size (max 2MB)
+      const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+      if (file.size > maxSize) {
+        setSuccess({ success: "Image size must be less than 2MB" });
+        return;
+      }
+      
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
