@@ -4,12 +4,12 @@ import * as deepl from '../utils/deepl';
 import * as keywordextraction from '../utils/keywordextraction';
 import * as matchMaking from '../utils/matchMaking';
 
-import Document from '../database/models/Document';
+import Document, { IDocument } from '../database/models/Document';
 import Psychologist from '../database/models/Psychologist';
 
 const router: Router = express.Router();
 
-function processDocument(document) {
+function processDocument(document: IDocument): Promise<IDocument> {
   return new Promise(function (resolve, reject) {
     deepl.translate(document.content_cz, 'CS', 'EN')
       .then((result) => {
@@ -54,9 +54,9 @@ router.post('/', (req, res, next) => {
   });
 
   processDocument(document)
-    .then(document => {
+    .then((document: IDocument) => {
       document.save()
-        .then(result => {
+        .then((result: IDocument) => {
           console.log("Info: Document created: " + document._id);
 
           res.status(200).json({
@@ -67,14 +67,14 @@ router.post('/', (req, res, next) => {
             }
           })
         })
-        .catch(err => {
+        .catch((err: any) => {
           console.error(err)
           res.status(500).json({
             error: err
           });
         })
     })
-    .catch(err => {
+    .catch((err: any) => {
       console.error(err)
       res.status(500).json({
         error: err
@@ -107,7 +107,7 @@ router.get("/:id", (req, res, next) => {
 
   Document.findOne({ '_id': documentId })
     .then(data => {
-      console.log("Info: Document found: " + data._id);
+      console.log("Info: Document found: " + data?._id);
 
       res.status(200).json({
         message: "Document retrieved successfully!",
@@ -128,7 +128,7 @@ router.put("/:id", (req, res, next) => {
 
   Document.findOneAndUpdate({ '_id': documentId }, req.body)
     .then(data => {
-      console.log("Info: Document updated: " + data._id);
+      console.log("Info: Document updated: " + data?._id);
 
       res.status(200).json({
         message: "Document updated successfully!",
@@ -149,7 +149,7 @@ router.delete("/:id", (req, res, next) => {
 
   Document.deleteOne({ '_id': documentId })
     .then(data => {
-      console.log("Info: Document deleted: " + data._id);
+      console.log("Info: Document deleted: " + documentId);
 
       res.status(200).json({
         message: "Document deleted successfully!",
@@ -170,10 +170,13 @@ router.get('/:id/reexecute', (req, res, next) => {
 
   Document.findOne({ '_id': documentId })
     .then(data => {
+      if (!data) {
+        throw new Error('Document not found');
+      }
       // reexecute document
       processDocument(data)
-        .then(document => {
-          document.save().then(result => {
+        .then((document: IDocument) => {
+          document.save().then((result: IDocument) => {
             console.log("Info: Document reexecuted: " + document._id);
 
             res.status(200).json({

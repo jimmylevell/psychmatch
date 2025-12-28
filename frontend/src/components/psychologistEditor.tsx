@@ -73,7 +73,15 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setWebsite(psychologist.website);
       setKeywordsCz(psychologist.keywords_cz);
       setKeywordsEn(psychologist.keywords_en);
-      setProposedKeywords(psychologist.proposed_keywords);
+      setProposedKeywords(psychologist.proposed_keywords || []);
+    } else {
+      // Reset state for new psychologist
+      setId(null);
+      setName("");
+      setWebsite("");
+      setKeywordsCz([]);
+      setKeywordsEn([]);
+      setProposedKeywords([]);
     }
   }, [psychologist, editorMode]);
 
@@ -222,7 +230,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
             <Typography variant="body2" color="textSecondary" sx={{
               marginTop: theme.spacing(2)
             }}>Proposed Keywords</Typography>
-            <div className={classes.proposed_keywords}>
+            <div className={classes?.proposed_keywords}>
               {proposed_keywords.sort().map((element) => {
                 let index = proposed_keywords.indexOf(element)
                 return (

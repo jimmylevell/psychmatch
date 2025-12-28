@@ -1,26 +1,58 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const dotenv_1 = __importDefault(require("dotenv"));
-const fs_1 = __importDefault(require("fs"));
-dotenv_1.default.config({ path: '.env' });
-function getDockerSecret(secret_name) {
+import dotenv from 'dotenv';
+import fs from 'fs';
+
+dotenv.config({ path: '.env' });
+
+function getDockerSecret(secret_name: string): string {
     try {
-        return fs_1.default.readFileSync(`/run/secrets/${secret_name}`, 'utf8').trim();
-    }
-    catch (err) {
+        return fs.readFileSync(`/run/secrets/${secret_name}`, 'utf8').trim();
+    } catch (err: any) {
         if (err.code !== 'ENOENT') {
             console.error(`An error occurred while trying to read the secret: ${secret_name}. Err: ${err}`);
-        }
-        else {
+        } else {
             console.log(`Could not find the secret, probably not running in swarm mode: ${secret_name}. Err: ${err}`);
         }
         return '';
     }
 }
-const configs = {
+
+interface Config {
+    MONGO_DB_STRING: string;
+    deepl: {
+        API: string;
+        KEY: string;
+    };
+    nlpmodel: {
+        API: string;
+    };
+    SAML: {
+        credentials: {
+            tenantID: string;
+            clientID: string;
+            audience: string;
+        };
+        resource: {
+            scope: string[];
+        };
+        metadata: {
+            authority: string;
+            discovery: string;
+            version: string;
+        };
+        settings: {
+            passReqToCallback: boolean;
+            loggingLevel: string;
+        };
+    };
+}
+
+interface Configs {
+    development: Config;
+    test: Config;
+    production: Config;
+}
+
+const configs: Configs = {
     development: {
         MONGO_DB_STRING: process.env.MONGO_DB_STRING || "mongodb://mongoadmin:password@localhost:27017/psychmatch?authSource=admin",
         deepl: {
@@ -109,5 +141,6 @@ const configs = {
         }
     }
 };
-exports.default = configs;
-//# sourceMappingURL=config.js.map
+
+export default configs;
+export type { Config, Configs };

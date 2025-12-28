@@ -131,7 +131,7 @@ const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
 
             <CardActions>
               <Button size="small" component={Link} to={`/psychologists/${id}/edit`} ><EditIcon />Edit</Button>
-              <Button size="small" href={`${psychologist.website}`} ><LanguageIcon />Website</Button>
+              <Button size="small" href={`${psychologist.website}`} target="_blank" rel="noopener noreferrer"><LanguageIcon />Website</Button>
               <Button size="small" onClick={() => addKeywordsToPsychologist()} color="primary" ><FeedbackIcon />Recommend Keywords</Button>
             </CardActions>
           </Card>

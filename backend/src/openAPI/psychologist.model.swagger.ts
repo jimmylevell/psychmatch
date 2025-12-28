@@ -1,4 +1,4 @@
-let psychologist = {}
+let psychologist: any = {}
 
 psychologist.getPsychologists = {
     tags: ['Psychologist'],

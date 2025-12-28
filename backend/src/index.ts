@@ -10,13 +10,14 @@ import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import jwksRsa from 'jwks-rsa';
 import swaggerUi from 'swagger-ui-express';
+import configs from '../config/config';
 
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.js')[env];
+const env = (process.env.NODE_ENV || 'development') as keyof typeof configs;
+const config = configs[env];
 
-const swaggerDocument = require('./swagger');
-const documentApi = require('./routes/documentRoutes');
-const psychologistApi = require('./routes/psychologistRoutes');
+import swaggerDocument from './swagger';
+import documentApi from './routes/documentRoutes';
+import psychologistApi from './routes/psychologistRoutes';
 
 const app: Application = express();
 const port = process.env.BACKEND_PORT || 3000;

@@ -2,13 +2,13 @@ import express, { Request, Response, NextFunction, Router } from 'express';
 import mongoose from 'mongoose';
 
 import * as deepl from '../utils/deepl';
-import Psychologist from '../database/models/Psychologist';
+import Psychologist, { IPsychologist } from '../database/models/Psychologist';
 
 const router: Router = express.Router();
 
-function processPsychologist(psychologist, translate_keywords) {
+function processPsychologist(psychologist: any, translate_keywords: boolean): Promise<IPsychologist> {
   return new Promise(function (resolve, reject) {
-    let keywords = []
+    let keywords: Promise<any>[] = []
     let source_lang = ""
     let target_lang = ""
     let source_keywords = ""
@@ -27,7 +27,7 @@ function processPsychologist(psychologist, translate_keywords) {
         target_keywords = "keywords_cz"
       }
 
-      psychologist[source_keywords].forEach(keyword => {
+      psychologist[source_keywords].forEach((keyword: string) => {
         keywords.push(deepl.translate(keyword, source_lang, target_lang))
       })
 
@@ -105,7 +105,7 @@ router.get("/:id", (req, res, next) => {
 
   Psychologist.findOne({ '_id': psychologistId })
     .then(data => {
-      console.log("Info: Psychologist found: " + data._id);
+      console.log("Info: Psychologist found: " + data?._id);
 
       res.status(200).json({
         message: "Psychologist retrieved successfully!",
@@ -125,14 +125,14 @@ router.put("/:id", (req, res, next) => {
   let psychologistId = req.params.id
 
   processPsychologist(req.body, req.body.translate_keywords)
-    .then(psychologist => {
+    .then((psychologist: any) => {
       Psychologist.findOneAndUpdate({ '_id': psychologistId }, psychologist)
-        .then(psychologist => {
-          console.log("Info: Psychologist updated: " + psychologist._id);
+        .then((result: IPsychologist | null) => {
+          console.log("Info: Psychologist updated: " + psychologistId);
 
           res.status(200).json({
             message: "Psychologist updated successfully!",
-            psychologist: psychologist
+            psychologist: result
           });
         })
         .catch(err => {
@@ -176,6 +176,9 @@ router.put('/:id/keywords', (req, res, next) => {
 
   Psychologist.findOne({ '_id': psychologistId })
     .then(psychologist => {
+      if (!psychologist) {
+        throw new Error('Psychologist not found');
+      }
       // combine existing and new proposed keywords and make unique
       let keywords = psychologist.proposed_keywords.concat(req.body)
       keywords = [...new Set(keywords)]
