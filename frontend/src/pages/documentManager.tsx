@@ -17,7 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import { orderBy, filter } from 'lodash';
 
-import { ModelService } from '../service';
+import { ModelService, Document } from '../service';
 
 import LoadingBar from '../components/loadingBar';
 import InfoSnackbar from '../components/infoSnackbar';
@@ -28,15 +28,19 @@ const MAX_NUMBER_OF_KEYWORDS = 50
 
 const theme = createTheme();
 
-function DocumentManager(props) {
+interface ErrorState {
+  message: string;
+}
+
+const DocumentManager: React.FC = () => {
   const [query, setQuery] = useState("");
-  const [documents, setDocuments] = useState([]);
-  const [filteredDocuments, setFilteredDocuments] = useState([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [filteredDocuments, setFilteredDocuments] = useState<Document[]>([]);
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null);
-  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorState | null>(null);
 
   const getDocuments = useCallback(async () => {
     try {
@@ -57,7 +61,7 @@ function DocumentManager(props) {
     }
   }, [getDocuments]);
 
-  const deleteDocument = async (evt, document) => {
+  const deleteDocument = async (evt: React.MouseEvent, document: Document) => {
     evt.preventDefault()
     if (window.confirm(`Are you sure you want to delete this document`)) {
       try {
@@ -77,7 +81,7 @@ function DocumentManager(props) {
     }
   }
 
-  const shareDocumentLink = (evt, document, navigator) => {
+  const shareDocumentLink = (evt: React.MouseEvent, document: Document, navigator: Navigator) => {
     evt.preventDefault()
 
     let url = window.location.origin + "/documents/" + document._id
@@ -86,7 +90,7 @@ function DocumentManager(props) {
     setSuccess("Copied document link " + url + " to clipboard successfully")
   }
 
-  const handleSearchChange = evt => {
+  const handleSearchChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(evt.target.value);
 
     setFilteredDocuments(filter(documents, function (obj) {

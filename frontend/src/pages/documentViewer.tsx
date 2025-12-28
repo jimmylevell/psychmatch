@@ -10,7 +10,7 @@ import {
 import { useParams } from 'react-router-dom';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-import { ModelService } from '../service';
+import { ModelService, Document } from '../service';
 
 import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
@@ -19,16 +19,16 @@ import PsychologistCard from '../components/psychologistCard';
 
 const theme = createTheme();
 
-function DocumentViewer(props) {
+const DocumentViewer: React.FC = () => {
   const params = useParams();
 
   const [documentId, setDocumentId] = useState(null);
-  const [document, setDocument] = useState(null);
+  const [document, setDocument] = useState<Document | null>(null);
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<{message: string} | null>(null);
+  const [success, setSuccess] = useState<{message: string} | null>(null);
 
   const getDocument = useCallback(async (id) => {
     let document = null;
