@@ -15,44 +15,45 @@ import InfoSnackbar from '../components/infoSnackbar'
 
 const theme = createTheme();
 
-function DocumentUploadComponent(props) {
+interface ErrorState {
+  message: string;
+}
+
+const DocumentUploadComponent: React.FC = () => {
   const [document, setDocument] = useState('');
 
   const [service, setService] = useState(ModelService.getInstance());
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<ErrorState | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    setService(ModelService.getInstance(props.token))
-  }, [props.token]);
+    setService(ModelService.getInstance())
+  }, []);
 
-  const handleChange = (evt) => {
+  const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setDocument(evt.target.value);
   }
 
-  const onSubmit = async (evt) => {
+  const onSubmit = async (evt: React.FormEvent) => {
     evt.preventDefault()
 
     setLoading(true)
 
     var postData = {
-      document: document
+      content_cz: document
     }
 
     try {
       await service.newDocument(postData)
+      setSuccess("Document uploaded successfully")
+      setDocument('')
     }
     catch (error) {
       setError({ message: "Error uploading document. Response from backend: " + error })
     }
 
     setLoading(false)
-    setDocument('')
-
-    if (error === null) {
-      setSuccess("Document uploaded successfully")
-    }
   }
 
   return (

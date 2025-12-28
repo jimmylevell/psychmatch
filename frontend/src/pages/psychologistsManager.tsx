@@ -21,7 +21,7 @@ import {
 import moment from 'moment';
 import { orderBy, filter } from 'lodash';
 
-import { ModelService } from '../service';
+import { ModelService, Psychologist } from '../service';
 
 import PsychologistEditor from '../components/psychologistEditor';
 import ErrorSnackbar from '../components/errorSnackbar';
@@ -30,19 +30,19 @@ import InfoSnackbar from '../components/infoSnackbar'
 
 const theme = createTheme();
 
-function PsychologistManager(props) {
+const PsychologistManager: React.FC = () => {
   const [query, setQuery] = useState("");
-  const [psychologists, setPsychologists] = useState([]);
-  const [filteredPsychologists, setFilteredPsychologists] = useState([]);
+  const [psychologists, setPsychologists] = useState<Psychologist[]>([]);
+  const [filteredPsychologists, setFilteredPsychologists] = useState<Psychologist[]>([]);
 
-  const [psychologist, setPsychologist] = useState(null);
+  const [psychologist, setPsychologist] = useState<Psychologist | null>(null);
   const [editorMode, setEditorMode] = useState(null);
   const [editorOpen, setEditorOpen] = useState(false);
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<{message: string} | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const getPsychologists = useCallback(() => {
     service.getPsychologists()

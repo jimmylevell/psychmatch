@@ -17,7 +17,7 @@ import Help from './help'
 
 const theme = createTheme();
 
-function AppHeader() {
+const AppHeader: React.FC = () => {
   const [showHelp, setShowHelp] = useState(false)
   const { instance, accounts } = useMsal();
 

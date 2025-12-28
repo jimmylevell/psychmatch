@@ -5,12 +5,18 @@ import {
   IconButton,
   createTheme
 } from '@mui/material';
-import { Error as ErrorIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 
 const theme = createTheme();
 const AUTO_HIDE_DURATION = 6000
 
-const ErrorSnackbar = ({ id, message, onClose }) => (
+interface InfoSnackbarProps {
+  id?: string;
+  message: string;
+  onClose: () => void;
+}
+
+const InfoSnackbar: React.FC<InfoSnackbarProps> = ({ id, message, onClose }) => (
   <Snackbar
     open
     autoHideDuration={AUTO_HIDE_DURATION}
@@ -18,7 +24,7 @@ const ErrorSnackbar = ({ id, message, onClose }) => (
   >
     <SnackbarContent
       sx={{
-        backgroundColor: theme.palette.error.dark,
+        backgroundColor: theme.palette.success.dark,
       }}
       aria-describedby={id}
       message={
@@ -26,7 +32,7 @@ const ErrorSnackbar = ({ id, message, onClose }) => (
           display: 'flex',
           alignItems: 'center',
         }}>
-          <ErrorIcon sx={{
+          <CheckIcon sx={{
             fontSize: 20,
             opacity: 0.9,
             marginRight: theme.spacing(1),
@@ -45,4 +51,4 @@ const ErrorSnackbar = ({ id, message, onClose }) => (
   </Snackbar>
 );
 
-export default ErrorSnackbar;
+export default InfoSnackbar;
