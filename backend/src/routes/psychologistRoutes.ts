@@ -1,10 +1,10 @@
-const express = require('express');
-const mongoose = require('mongoose');
+import express, { Request, Response, NextFunction, Router } from 'express';
+import mongoose from 'mongoose';
 
-const deepl = require('../utils/deepl.js');
-let Psychologist = require('../database/models/Psychologist');
+import * as deepl from '../utils/deepl';
+import Psychologist from '../database/models/Psychologist';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 function processPsychologist(psychologist, translate_keywords) {
   return new Promise(function (resolve, reject) {
@@ -203,4 +203,4 @@ router.put('/:id/keywords', (req, res, next) => {
     })
 })
 
-module.exports = router;
+export default router;

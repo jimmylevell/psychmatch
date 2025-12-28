@@ -130,4 +130,4 @@ psychologist.deletePsychologist = {
     ]
 }
 
-module.exports = psychologist
+export default psychologist
