@@ -22,6 +22,7 @@ import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { MuiChipsInput } from 'mui-chips-input'
 
 import InfoSnackbar from './infoSnackbar';
+import ErrorSnackbar from './errorSnackbar';
 import { Psychologist } from '../service';
 
 const theme = createTheme();
@@ -47,6 +48,10 @@ interface SuccessState {
   success: string;
 }
 
+interface ErrorState {
+  message: string;
+}
+
 const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const { classes, psychologist, editorMode, onClose } = props;
 
@@ -62,6 +67,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const TITLE = id ? "Editing " + name : "Add a new Psychologist";
 
   const [success, setSuccess] = useState<SuccessState | null>(null);
+  const [error, setError] = useState<ErrorState | null>(null);
 
   useEffect(() => {
     if (psychologist) {
@@ -163,14 +169,14 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        setSuccess({ success: "Please upload an image file" });
+        setError({ message: "Please upload an image file" });
         return;
       }
       
       // Validate file size (max 2MB)
       const maxSize = 2 * 1024 * 1024; // 2MB in bytes
       if (file.size > maxSize) {
-        setSuccess({ success: "Image size must be less than 2MB" });
+        setError({ message: "Image size must be less than 2MB" });
         return;
       }
       
@@ -338,6 +344,13 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
           <InfoSnackbar
             onClose={() => setSuccess({ success: null })}
             message={success}
+          />
+        )}
+        { /* Flag based display of error snackbar */}
+        {error && (
+          <ErrorSnackbar
+            onClose={() => setError(null)}
+            message={error.message}
           />
         )}
       </Card>
