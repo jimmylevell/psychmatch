@@ -7,7 +7,8 @@ import cors from 'cors';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import passport from 'passport';
-import { BearerStrategy } from 'passport-azure-ad';
+import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
+import jwksRsa from 'jwks-rsa';
 import swaggerUi from 'swagger-ui-express';
 
 const env = process.env.NODE_ENV || 'development';
@@ -20,21 +21,27 @@ const psychologistApi = require('./routes/psychologistRoutes');
 const app: Application = express();
 const port = process.env.BACKEND_PORT || 3000;
 
-// Azure AD authentication
-const options = {
-  identityMetadata: `https://${config.SAML.metadata.authority}/${config.SAML.credentials.tenantID}/${config.SAML.metadata.version}/${config.SAML.metadata.discovery}`,
-  issuer: `https://${config.SAML.metadata.authority}/${config.SAML.credentials.tenantID}/${config.SAML.metadata.version}`,
-  clientID: config.SAML.credentials.clientID,
+// Azure AD JWT authentication
+const jwtOptions: StrategyOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   audience: config.SAML.credentials.audience,
-  validateIssuer: config.SAML.settings.validateIssuer,
-  passReqToCallback: config.SAML.settings.passReqToCallback,
-  loggingLevel: config.SAML.settings.loggingLevel,
-  scope: config.SAML.resource.scope
+  issuer: `https://${config.SAML.metadata.authority}/${config.SAML.credentials.tenantID}/${config.SAML.metadata.version}`,
+  algorithms: ['RS256'],
+  secretOrKeyProvider: jwksRsa.passportJwtSecret({
+    cache: true,
+    rateLimit: true,
+    jwksRequestsPerMinute: 5,
+    jwksUri: `https://${config.SAML.metadata.authority}/${config.SAML.credentials.tenantID}/discovery/v2.0/keys`
+  })
 };
 
-const bearerStrategy = new BearerStrategy(options, (token: any, done: Function) => {
+const jwtStrategy = new JwtStrategy(jwtOptions, (payload: any, done: Function) => {
+  // Validate token payload
+  if (!payload) {
+    return done(null, false);
+  }
   // Send user info using the second argument
-  done(null, {}, token);
+  done(null, { userId: payload.oid || payload.sub }, payload);
 });
 
 // load environmental dependent MongoDB configuration
@@ -59,13 +66,13 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use(passport.initialize());
-passport.use(bearerStrategy);
+passport.use(jwtStrategy);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // publish API
-app.use('/api/documents', passport.authenticate('oauth-bearer', { session: false }), documentApi);
-app.use('/api/psychologists', passport.authenticate('oauth-bearer', { session: false }), psychologistApi);
+app.use('/api/documents', passport.authenticate('jwt', { session: false }), documentApi);
+app.use('/api/psychologists', passport.authenticate('jwt', { session: false }), psychologistApi);
 
 // publish Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
