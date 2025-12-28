@@ -56,6 +56,10 @@ const swaggerDocument = {
                     keywords_en: {
                         type: "array",
                     },
+                    image: {
+                        type: "string",
+                        description: "Base64 encoded image"
+                    },
                 }
             },
             Document: {

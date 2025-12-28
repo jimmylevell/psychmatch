@@ -8,6 +8,7 @@ export interface IPsychologist extends MongooseDocument {
   keywords_en: string[];
   proposed_keywords: string[];
   translate_keywords?: boolean;
+  image?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -29,7 +30,10 @@ const psychologistSchema = new Schema<IPsychologist>({
   }],
   proposed_keywords: [{
     type: String
-  }]
+  }],
+  image: {
+    type: String
+  }
 }, {
   collection: 'psychologist',
   timestamps: true

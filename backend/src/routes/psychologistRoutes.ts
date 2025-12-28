@@ -55,6 +55,7 @@ router.post('/', (req, res, next) => {
     website: req.body.website,
     keywords_cz: req.body.keywords_cz,
     keywords_en: req.body.keywords_en,
+    image: req.body.image,
   });
 
   processPsychologist(psychologist, req.body.translate_keywords)
@@ -126,6 +127,11 @@ router.put("/:id", (req, res, next) => {
 
   processPsychologist(req.body, req.body.translate_keywords)
     .then((psychologist: any) => {
+      // Preserve the image field from the request
+      if (req.body.image !== undefined) {
+        psychologist.image = req.body.image;
+      }
+      
       Psychologist.findOneAndUpdate({ '_id': psychologistId }, psychologist)
         .then((result: IPsychologist | null) => {
           console.log("Info: Psychologist updated: " + psychologistId);

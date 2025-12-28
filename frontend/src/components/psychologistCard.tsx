@@ -14,6 +14,7 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Box,
   createTheme
 } from '@mui/material';
 import FeedbackIcon from '@mui/icons-material/Feedback';
@@ -83,12 +84,26 @@ const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
           <Card>
             <CardHeader
               avatar={
-                <Avatar sx={{
-                  width: theme.spacing(7),
-                  height: theme.spacing(5),
-                }} variant="rounded" aria-label="score">
-                  {parseFloat(match_score.toString()).toFixed(2)}
-                </Avatar>
+                psychologist.image ? (
+                  <Box
+                    component="img"
+                    src={psychologist.image}
+                    alt={psychologist.name}
+                    sx={{
+                      width: theme.spacing(7),
+                      height: theme.spacing(7),
+                      objectFit: 'cover',
+                      borderRadius: 1
+                    }}
+                  />
+                ) : (
+                  <Avatar sx={{
+                    width: theme.spacing(7),
+                    height: theme.spacing(5),
+                  }} variant="rounded" aria-label="score">
+                    {parseFloat(match_score.toString()).toFixed(2)}
+                  </Avatar>
+                )
               }
               title={psychologist.name}
             />
