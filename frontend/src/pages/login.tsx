@@ -24,20 +24,25 @@ function Login(props: LoginProps) {
       account: msalAccounts[0]
     };
 
+    // Prevent multiple simultaneous interactions
+    if (msalInProgress !== "none") {
+      return;
+    }
+
     // if account is available
     if (msalAccounts.length > 0) {
       // if token is present, and expired
-      if (((!token || isTokenExpired(token)) && !msalInProgress)) {
+      if (!token || isTokenExpired(token)) {
         msalInstance.acquireTokenSilent(request)
           .then((response) => {
             setToken(response.accessToken);
           })
           .catch((error: any) => {
-            if (error.errorCode === "invalid_grant") {
-              // fallback to interaction when silent call fails
+            // Only try popup if no other interaction is in progress
+            if (error.errorCode === "invalid_grant" && msalInProgress === "none") {
               msalInstance.acquireTokenPopup(request)
                 .then((response) => {
-                  //console.log(response)
+                  setToken(response.accessToken);
                 })
                 .catch((error) => {
                   console.error(error);
@@ -45,17 +50,26 @@ function Login(props: LoginProps) {
             } else {
               console.error(error);
             }
-
-            console.error(error)
           })
       }
+    } else {
+      // No account available, trigger login
+      msalInstance.loginPopup()
+        .then((response) => {
+          // After login, the accounts will be available
+          return msalInstance.acquireTokenSilent({
+            ...tokenRequest,
+            account: response.account
+          });
+        })
+        .then((response) => {
+          setToken(response.accessToken);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [msalContext, token]);
-
-  useEffect(() => {
-    const msalInstance = msalContext.instance;
-    msalInstance.loginPopup()
-  }, [msalContext]);
 
   useEffect(() => {
     callLogin()
