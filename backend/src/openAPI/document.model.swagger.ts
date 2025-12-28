@@ -130,4 +130,4 @@ document.deleteDocument = {
     ]
 }
 
-module.exports = document
+export default document

@@ -85,4 +85,4 @@ const swaggerDocument = {
     }
 }
 
-module.exports = swaggerDocument
+export default swaggerDocument

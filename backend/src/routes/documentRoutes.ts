@@ -1,13 +1,13 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const deepl = require('../utils/deepl.js');
-const keywordextraction = require('../utils/keywordextraction.js');
-const matchMaking = require('../utils/matchMaking.js');
+import express, { Request, Response, NextFunction, Router } from 'express';
+import mongoose from 'mongoose';
+import * as deepl from '../utils/deepl';
+import * as keywordextraction from '../utils/keywordextraction';
+import * as matchMaking from '../utils/matchMaking';
 
-let Document = require('../database/models/Document');
-let Psychologist = require('../database/models/Psychologist');
+import Document from '../database/models/Document';
+import Psychologist from '../database/models/Psychologist';
 
-const router = express.Router();
+const router: Router = express.Router();
 
 function processDocument(document) {
   return new Promise(function (resolve, reject) {
@@ -200,4 +200,4 @@ router.get('/:id/reexecute', (req, res, next) => {
     })
 })
 
-module.exports = router;
+export default router;
