@@ -11,12 +11,14 @@ import {
   Checkbox,
   FormControlLabel,
   Chip,
+  Box,
   createTheme
 } from '@mui/material';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import SpellcheckIcon from '@mui/icons-material/Spellcheck';
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import { MuiChipsInput } from 'mui-chips-input'
 
 import InfoSnackbar from './infoSnackbar';
@@ -36,7 +38,8 @@ interface PsychologistEditorProps {
     keywords_cz: string[],
     keywords_en: string[],
     translate_keywords: boolean,
-    proposed_keywords: string[]
+    proposed_keywords: string[],
+    image?: string
   ) => void;
 }
 
@@ -54,6 +57,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const [keywords_en, setKeywordsEn] = useState<string[]>([]);
   const [translate_keywords] = useState(false);
   const [proposed_keywords, setProposedKeywords] = useState<string[]>([]);
+  const [image, setImage] = useState<string | undefined>(undefined);
 
   const TITLE = id ? "Editing " + name : "Add a new Psychologist";
 
@@ -74,6 +78,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setKeywordsCz(psychologist.keywords_cz);
       setKeywordsEn(psychologist.keywords_en);
       setProposedKeywords(psychologist.proposed_keywords || []);
+      setImage(psychologist.image);
     } else {
       // Reset state for new psychologist
       setId(null);
@@ -82,6 +87,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setKeywordsCz([]);
       setKeywordsEn([]);
       setProposedKeywords([]);
+      setImage(undefined);
     }
   }, [psychologist, editorMode]);
 
@@ -91,7 +97,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     const { onSave } = props
 
     // execute parent function in psychologistManager
-    onSave(id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords)
+    onSave(id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image)
   };
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -152,6 +158,17 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     setSuccess({ success: "Keyword '" + keyword + "' added to Keywords EN" })
   }
 
+  const handleImageChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const file = evt.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Modal
       sx={{
@@ -206,6 +223,41 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               variant="outlined"
               size="small"
             />
+
+            <Box sx={{
+              marginTop: theme.spacing(2),
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: theme.spacing(2)
+            }}>
+              <Button
+                variant="contained"
+                component="label"
+                startIcon={<PhotoCamera />}
+              >
+                Upload Image
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </Button>
+              {image && (
+                <Box
+                  component="img"
+                  src={image}
+                  alt="Psychologist"
+                  sx={{
+                    maxWidth: '200px',
+                    maxHeight: '200px',
+                    objectFit: 'cover',
+                    borderRadius: 1
+                  }}
+                />
+              )}
+            </Box>
 
             <MuiChipsInput
               sx={{

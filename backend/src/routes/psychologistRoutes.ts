@@ -55,6 +55,7 @@ router.post('/', (req, res, next) => {
     website: req.body.website,
     keywords_cz: req.body.keywords_cz,
     keywords_en: req.body.keywords_en,
+    image: req.body.image,
   });
 
   processPsychologist(psychologist, req.body.translate_keywords)

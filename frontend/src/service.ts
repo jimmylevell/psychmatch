@@ -31,6 +31,7 @@ export interface Psychologist {
   keywords_en: string[];
   proposed_keywords: string[];
   translate_keywords: boolean;
+  image?: string;
   updatedAt?: string;
   createdAt?: string;
 }
