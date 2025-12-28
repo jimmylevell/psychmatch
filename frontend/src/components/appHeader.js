@@ -93,11 +93,11 @@ function AppHeader() {
         sx={{
           position: 'fixed',
           top: theme.spacing(-0.5),
-          right: theme.spacing(),
+          right: theme.spacing(27),
           color: '#f50057',
           [theme.breakpoints.down('xs')]: {
             top: theme.spacing(-1),
-            right: theme.spacing(0),
+            right: theme.spacing(27),
           }
         }}
       >
