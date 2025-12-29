@@ -38,7 +38,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       -
         name: Build psychmatch backend docker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./backend
           target: psychmatch-backend-deploy
@@ -47,7 +47,7 @@ jobs:
             ghcr.io/jimmylevell/psychmatch/psychmatch_backend:latest
       -
         name: Build psychmatch frontend docker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./frontend
           target: psychmatch-frontend-deploy
@@ -56,7 +56,7 @@ jobs:
             ghcr.io/jimmylevell/psychmatch/psychmatch_frontend:latest
       -
         name: Build psychmatch nlp-model docker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: ./nlp-model
           target: psychmatch-nlp-model-deploy
@@ -65,7 +65,7 @@ jobs:
             ghcr.io/jimmylevell/psychmatch/psychmatch_nlp_model:latest
       -
         name: Push psychmatch backend docker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: true
           context: ./backend
@@ -74,7 +74,7 @@ jobs:
             ghcr.io/jimmylevell/psychmatch/psychmatch_backend:latest
       -
         name: Push psychmatch frontend docker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: true
           context: ./frontend
@@ -83,7 +83,7 @@ jobs:
             ghcr.io/jimmylevell/psychmatch/psychmatch_frontend:latest
       -
         name: Push psychmatch nlp-model docker
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           push: true
           context: ./nlp-model
