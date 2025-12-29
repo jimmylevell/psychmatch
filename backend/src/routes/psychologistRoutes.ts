@@ -155,10 +155,17 @@ router.put("/profile/me", (req: Request, res: Response, next: NextFunction) => {
         psychologist.image = req.body.image;
       }
       
-      // Ensure email cannot be changed through this endpoint
-      delete psychologist.email;
+      // Create update object without email to prevent email changes
+      const updateData = {
+        name: psychologist.name,
+        website: psychologist.website,
+        keywords_cz: psychologist.keywords_cz,
+        keywords_en: psychologist.keywords_en,
+        proposed_keywords: psychologist.proposed_keywords,
+        image: psychologist.image
+      };
       
-      Psychologist.findOneAndUpdate({ email: req.user!.email!.toLowerCase() }, psychologist, { new: true })
+      Psychologist.findOneAndUpdate({ email: req.user!.email!.toLowerCase() }, updateData, { new: true })
         .then((result: IPsychologist | null) => {
           if (!result) {
             return res.status(404).json({

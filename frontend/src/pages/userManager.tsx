@@ -39,7 +39,7 @@ const UserManager: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState('psychologist');
+  const [role, setRole] = useState<'psychologist' | 'administrator'>('psychologist');
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);

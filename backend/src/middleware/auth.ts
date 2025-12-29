@@ -19,10 +19,19 @@ export const populateUserRole = async (req: Request, res: Response, next: NextFu
       return next();
     }
 
-    // Extract email from JWT token claims
-    // Azure AD typically includes email in 'preferred_username' or 'upn' claim
+    // Extract email from JWT token payload
+    // Azure AD typically includes email in 'preferred_username', 'upn', or 'email' claim
+    // These are passed through the JWT strategy in the third parameter (info)
     const authInfo = req.authInfo as any;
-    const email = authInfo?.preferred_username || authInfo?.upn || authInfo?.email;
+    
+    // Try to get email from various possible claim locations
+    let email = authInfo?.preferred_username || authInfo?.upn || authInfo?.email;
+    
+    // Fallback: some configurations might put these in the user object
+    if (!email && req.user) {
+      const userObj = req.user as any;
+      email = userObj.preferred_username || userObj.upn || userObj.email;
+    }
 
     if (email) {
       const user = await User.findOne({ email: email.toLowerCase() });

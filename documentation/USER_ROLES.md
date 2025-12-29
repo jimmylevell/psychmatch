@@ -53,12 +53,17 @@ Two roles are supported:
 ### 1. Database Migration
 No automatic migration is provided. To use the new features:
 
-1. **Add email to existing psychologists** (run in MongoDB):
+1. **Update existing psychologists with email addresses** (run in MongoDB):
 ```javascript
-db.psychologist.updateMany(
-  { email: { $exists: false } },
-  { $set: { email: "" } }
+// First, manually set email addresses for existing psychologists
+// Example for a specific psychologist:
+db.psychologist.updateOne(
+  { name: "Dr. Smith" },
+  { $set: { email: "dr.smith@example.com" } }
 )
+
+// Note: Each psychologist must have a unique email address
+// You need to update each psychologist individually with their actual email
 ```
 
 2. **Create admin user** (run in MongoDB):
