@@ -18,6 +18,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import { orderBy, filter } from 'lodash';
 
 import { ModelService, Document } from '../service';
+import { ErrorState } from '../types';
 
 import LoadingBar from '../components/loadingBar';
 import InfoSnackbar from '../components/infoSnackbar';
@@ -27,10 +28,6 @@ const MAX_LENGTH_OF_CONTENT_PREVIEW = 500
 const MAX_NUMBER_OF_KEYWORDS = 50
 
 const theme = createTheme();
-
-interface ErrorState {
-  message: string;
-}
 
 const DocumentManager: React.FC = () => {
   const [query, setQuery] = useState("");

@@ -23,36 +23,9 @@ import { MuiChipsInput } from 'mui-chips-input'
 
 import InfoSnackbar from './infoSnackbar';
 import ErrorSnackbar from './errorSnackbar';
-import { Psychologist } from '../service';
+import { Psychologist, PsychologistEditorProps, ErrorState, SuccessState } from '../types';
 
 const theme = createTheme();
-
-interface PsychologistEditorProps {
-  classes?: any;
-  psychologist: Psychologist | null;
-  editorMode: string;
-  readOnlyEmail?: boolean;
-  onClose: () => void;
-  onSave: (
-    id: string | null,
-    name: string,
-    email: string,
-    website: string,
-    keywords_cz: string[],
-    keywords_en: string[],
-    translate_keywords: boolean,
-    proposed_keywords: string[],
-    image?: string
-  ) => void;
-}
-
-interface SuccessState {
-  success: string;
-}
-
-interface ErrorState {
-  message: string;
-}
 
 const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const { classes, psychologist, editorMode, readOnlyEmail = false, onClose } = props;

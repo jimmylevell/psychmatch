@@ -1,13 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { withMsal, IMsalContext } from "@azure/msal-react";
+import { withMsal } from "@azure/msal-react";
 
 import { tokenRequest } from "../authConfig";
 import { isTokenExpired } from "../utilities";
-
-interface LoginProps {
-  msalContext: IMsalContext;
-  tokenUpdated: (token: string | null) => void;
-}
+import { LoginProps } from '../types';
 
 function Login(props: LoginProps) {
   const [token, setToken] = useState<string | null>(null);

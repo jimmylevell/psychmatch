@@ -4,8 +4,9 @@ import * as deepl from '../utils/deepl';
 import * as keywordextraction from '../utils/keywordextraction';
 import * as matchMaking from '../utils/matchMaking';
 
-import Document, { IDocument } from '../database/models/Document';
+import Document from '../database/models/Document';
 import Psychologist from '../database/models/Psychologist';
+import { IDocument } from '../types';
 
 const router: Router = express.Router();
 

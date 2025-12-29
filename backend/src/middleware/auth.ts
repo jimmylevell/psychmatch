@@ -1,17 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 
-import User, { UserRole } from '../database/models/User';
+import User from '../database/models/User';
+import { UserRole } from '../types';
 
-// Extend Express Request type to include user information
-declare global {
-  namespace Express {
-    interface User {
-      userId: string;
-      email?: string;
-      role?: UserRole;
-    }
-  }
-}
+// Note: Express User type extension is in ../types/express.types.ts
 
 // Middleware to fetch user role from database based on JWT token email
 export const populateUserRole = async (req: Request, res: Response, next: NextFunction) => {

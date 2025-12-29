@@ -1,7 +1,8 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import mongoose from 'mongoose';
 
-import User, { UserRole } from '../database/models/User';
+import User from '../database/models/User';
+import { UserRole } from '../types';
 import { requireAdmin } from '../middleware/auth';
 
 const router: Router = express.Router();

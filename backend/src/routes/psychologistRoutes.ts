@@ -2,8 +2,8 @@ import express, { Request, Response, NextFunction, Router } from 'express';
 import mongoose from 'mongoose';
 
 import * as deepl from '../utils/deepl';
-import Psychologist, { IPsychologist } from '../database/models/Psychologist';
-import { UserRole } from '../database/models/User';
+import Psychologist from '../database/models/Psychologist';
+import { IPsychologist, UserRole } from '../types';
 
 const router: Router = express.Router();
 
