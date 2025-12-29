@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid,
   Avatar,
   CardActions,
   Button,
@@ -23,18 +22,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import { Link } from 'react-router-dom';
 
 import { ModelService, Match, Psychologist } from '../service';
+import { PsychologistCardProps } from '../types';
 
 const NUMBER_OF_MATCHES = 8; // number of matches to show
 
 const theme = createTheme();
-
-interface PsychologistCardProps {
-  id: string;
-  match_score: number;
-  keywords: string[];
-  most_important_matches: Match[];
-  addKeywordsToPsychologist: (id: string, keywords: string[]) => void;
-}
 
 const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
   const [id, setId] = useState<string | null>(null);
@@ -78,7 +70,7 @@ const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
   }
 
   return (
-    <Grid item xs={3} >
+    <Box sx={{ width: '25%', padding: 1 }}>
       {
         psychologist && (
           <Card>
@@ -152,7 +144,7 @@ const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
           </Card>
         )
       }
-    </Grid>
+    </Box>
   )
 }
 

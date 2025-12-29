@@ -8,16 +8,13 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 
 import { ModelService } from '../service';
+import { ErrorState } from '../types';
 
 import LoadingBar from '../components/loadingBar';
 import ErrorSnackbar from '../components/errorSnackbar';
 import InfoSnackbar from '../components/infoSnackbar'
 
 const theme = createTheme();
-
-interface ErrorState {
-  message: string;
-}
 
 const DocumentUploadComponent: React.FC = () => {
   const [document, setDocument] = useState('');

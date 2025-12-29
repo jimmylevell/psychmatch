@@ -33,32 +33,23 @@
   "scripts": {
     "start": "npx serve -s build -l 3100",
     "dev": "npx react-scripts start",
-    "build": "npx react-scripts build",
+    "build": "npx tsc &&npx react-scripts build",
     "test": "npx react-scripts test --watchAll=false",
     "eject": "npx react-scripts eject",
     "lint": "npx eslint --fix --ext .js,.ts,.tsx .",
     "prettier": "npx prettier --ignore-path build --write \"**/*.+(js|json|ts|tsx)\""
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": ["react-app", "react-app/jest"]
   },
   "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
   },
   "proxy": "http://localhost:10000/",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/lodash": "^4.17.21",
     "@types/node": "^22.10.5",
     "@types/react": "^19.1.5",
     "@types/react-dom": "^19.1.5",

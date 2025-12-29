@@ -67,6 +67,18 @@ const AppHeader: React.FC = () => {
             }}>
               Psychologists
             </Button>
+            <Button color="inherit" component={Link} to="/my-profile" sx={{
+              fontSize: '1em',
+              textTransform: 'none',
+            }}>
+              My Profile
+            </Button>
+            <Button color="inherit" component={Link} to="/users" sx={{
+              fontSize: '1em',
+              textTransform: 'none',
+            }}>
+              Users
+            </Button>
           </Box>
 
           {/* User info and logout */}

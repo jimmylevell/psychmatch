@@ -1,6 +1,5 @@
 import sys
 
-
 class Logger:
     def __init__(self, filename, output=False):
         self.console = sys.stdout

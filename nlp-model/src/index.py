@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, request
 import os
+
+from flask import Flask, jsonify, request
 from utils import load_nlp_model, get_list_of_existing_words, NLP_PREFIX
 from string import punctuation
 from Score import Score
@@ -59,7 +60,7 @@ def matchMaking():
 
 @app.route('/similarity', methods=['GET'])
 def word2vec():
-    similarity = 0
+    similarity = "0"
     word_x = request.args.get('word_x', None)
     word_y = request.args.get('word_y', None)
 

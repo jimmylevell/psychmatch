@@ -1,12 +1,15 @@
+import fetch from 'node-fetch';
+import config from '../../config/config';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../../config/config.js')[env];
-import fetch from 'node-fetch';
+
 const keyword_extractor = require("keyword-extractor");
 
+const env = (process.env.NODE_ENV || 'development') as keyof typeof config;
+const configEnv = config[env];
+
 export async function extractLanguageModel(text: string): Promise<string[]> {
-  const API = config.nlpmodel.API
+  const API = configEnv.nlpmodel.API
   const body = {
     content: text,
   }

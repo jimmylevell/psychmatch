@@ -7,14 +7,10 @@ import {
 } from '@mui/material';
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 
+import { InfoSnackbarProps } from '../types';
+
 const theme = createTheme();
 const AUTO_HIDE_DURATION = 6000
-
-interface InfoSnackbarProps {
-  id?: string;
-  message: string;
-  onClose: () => void;
-}
 
 const InfoSnackbar: React.FC<InfoSnackbarProps> = ({ id, message, onClose }) => (
   <Snackbar

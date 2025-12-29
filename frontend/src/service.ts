@@ -1,56 +1,33 @@
+import {
+  Document,
+  DocumentResponse,
+  DocumentsResponse,
+  Psychologist,
+  PsychologistResponse,
+  PsychologistsResponse,
+  User,
+  UserResponse,
+  UsersResponse,
+  Match,
+  MatchedPsychologist
+} from './types';
+
 const API = process.env.REACT_APP_BACKEND_URL;
 
-export interface Document {
-  _id: string;
-  content_cz: string;
-  content_en: string;
-  keywords_cz: string[];
-  keywords_en: string[];
-  matched_psychologists: MatchedPsychologist[];
-  updatedAt: string;
-  createdAt: string;
-}
-
-export interface MatchedPsychologist {
-  psychologist: string;
-  score: number;
-  most_important_matches: Match[];
-}
-
-export interface Match {
-  document_keyword: string;
-  psychologist_keyword: string;
-  score: number;
-}
-
-export interface Psychologist {
-  _id: string;
-  name: string;
-  website: string;
-  keywords_cz: string[];
-  keywords_en: string[];
-  proposed_keywords: string[];
-  translate_keywords: boolean;
-  image?: string;
-  updatedAt?: string;
-  createdAt?: string;
-}
-
-export interface DocumentsResponse {
-  documents: Document[];
-}
-
-export interface DocumentResponse {
-  document: Document;
-}
-
-export interface PsychologistsResponse {
-  psychologists: Psychologist[];
-}
-
-export interface PsychologistResponse {
-  psychologist: Psychologist;
-}
+// Re-export types for backward compatibility
+export type {
+  Document,
+  DocumentResponse,
+  DocumentsResponse,
+  Psychologist,
+  PsychologistResponse,
+  PsychologistsResponse,
+  User,
+  UserResponse,
+  UsersResponse,
+  Match,
+  MatchedPsychologist
+};
 
 export class ModelService {
   data: any[] = [];
@@ -254,6 +231,90 @@ export class ModelService {
   async deletePsychologist(psychologistId: string): Promise<any> {
     try {
       return this.fetch('DELETE', `/psychologists/${psychologistId}`, '').then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // get current user's psychologist profile
+  async getMyProfile(): Promise<Psychologist> {
+    try {
+      return this.fetch<PsychologistResponse>('GET', '/psychologists/profile/me', '').then((response) => {
+        return response.psychologist;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // update current user's psychologist profile
+  async updateMyProfile(psychologist: Partial<Psychologist>): Promise<any> {
+    try {
+      return this.fetch('PUT', '/psychologists/profile/me', psychologist).then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // get current user info
+  async getCurrentUser(): Promise<User> {
+    try {
+      return this.fetch<UserResponse>('GET', '/users/me', '').then((response) => {
+        return response.user;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // get all users (admin only)
+  async getUsers(): Promise<User[]> {
+    try {
+      return this.fetch<UsersResponse>('GET', '/users', '').then((response) => {
+        return response.users;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // create or update user (admin only)
+  async saveUser(user: Partial<User>): Promise<any> {
+    try {
+      return this.fetch('POST', '/users', user).then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // update user role (admin only)
+  async updateUserRole(userId: string, role: string): Promise<any> {
+    try {
+      return this.fetch('PUT', `/users/${userId}`, { role }).then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // delete user (admin only)
+  async deleteUser(userId: string): Promise<any> {
+    try {
+      return this.fetch('DELETE', `/users/${userId}`, '').then((response) => {
         return response;
       })
     }

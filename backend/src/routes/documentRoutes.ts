@@ -1,16 +1,23 @@
-import express, { Request, Response, NextFunction, Router } from 'express';
+import express, { Router } from 'express';
 import mongoose from 'mongoose';
 import * as deepl from '../utils/deepl';
 import * as keywordextraction from '../utils/keywordextraction';
 import * as matchMaking from '../utils/matchMaking';
 
-import Document, { IDocument } from '../database/models/Document';
+import Document from '../database/models/Document';
 import Psychologist from '../database/models/Psychologist';
+import { IDocument } from '../types';
 
 const router: Router = express.Router();
 
 function processDocument(document: IDocument): Promise<IDocument> {
   return new Promise(function (resolve, reject) {
+    // Validate document content exists
+    if (!document.content_cz || document.content_cz.trim() === '') {
+      reject(new Error('Document content_cz is empty or undefined'));
+      return;
+    }
+
     deepl.translate(document.content_cz, 'CS', 'EN')
       .then((result) => {
         document.content_en = result.translations[0].text;
@@ -44,10 +51,17 @@ function processDocument(document: IDocument): Promise<IDocument> {
 
 // post method - creation of a new document
 router.post('/', (req, res, next) => {
+  // Validate that document content is provided
+  if (!req.body.content_cz || req.body.content_cz.trim() === '') {
+    return res.status(400).json({
+      error: 'Document content is required and cannot be empty'
+    });
+  }
+
   const document = new Document({
     _id: new mongoose.Types.ObjectId(),
-    content_cz: req.body.document,
-    content_en: req.body.document,
+    content_cz: req.body.content_cz,
+    content_en: req.body.content_cz,
     keywords_cz: [],
     keywords_en: [],
     matched_psychologist: []

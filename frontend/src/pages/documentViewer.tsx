@@ -1,11 +1,11 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import {
   Typography,
-  Grid,
   CardContent,
   Card,
   Button,
-  createTheme
+  createTheme,
+  Box
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -22,15 +22,15 @@ const theme = createTheme();
 const DocumentViewer: React.FC = () => {
   const params = useParams();
 
-  const [documentId, setDocumentId] = useState(null);
+  const [documentId, setDocumentId] = useState<string | null>(null);
   const [document, setDocument] = useState<Document | null>(null);
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<{message: string} | null>(null);
-  const [success, setSuccess] = useState<{message: string} | null>(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
+  const [success, setSuccess] = useState<{ message: string } | null>(null);
 
-  const getDocument = useCallback(async (id) => {
+  const getDocument = useCallback(async (id: string) => {
     let document = null;
 
     try {
@@ -54,6 +54,8 @@ const DocumentViewer: React.FC = () => {
   }, [params.id, getDocument]);
 
   const handleReexecution = async () => {
+    if (!documentId) return;
+
     if (window.confirm(`Are you sure you would like to reprocess the following document? All previous matches will be lost.`)) {
       try {
         setLoading(true)
@@ -65,20 +67,20 @@ const DocumentViewer: React.FC = () => {
         setLoading(false)
       }
 
-      if (!error) {
+      if (!error && documentId) {
         setSuccess({ message: "Document reprocessed successfully." })
         setLoading(false)
-        getDocument()
+        getDocument(documentId)
       }
     }
   }
 
-  const addKeywordsToPsychologist = (id, keywords) => {
+  const addKeywordsToPsychologist = (id: string, keywords: string[]) => {
     try {
       service.addKeywordsToPsychologist(id, keywords)
         .then(() => {
 
-          setSuccess("Successfully added the keywords to the psychologist")
+          setSuccess({ message: "Successfully added the keywords to the psychologist" })
         })
     }
     catch (error) {
@@ -104,63 +106,65 @@ const DocumentViewer: React.FC = () => {
             </Button>
           </Typography>
 
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+            <Box sx={{ flex: '1 1 calc(50% - 8px)', minWidth: 300 }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary">Czech Content</Typography>
                   <Typography component="p"> {document.content_cz}</Typography>
                 </CardContent>
               </Card>
-            </Grid>
-            <Grid item xs={6}>
+            </Box>
+            <Box sx={{ flex: '1 1 calc(50% - 8px)', minWidth: 300 }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary">English Content</Typography>
                   <Typography component="p"> {document.content_en}</Typography>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
 
-            <Grid item xs={6}>
+            <Box sx={{ flex: '1 1 calc(50% - 8px)', minWidth: 300 }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary">Czech Keywords</Typography>
                   <Typography component="p"> {document.keywords_cz.join(", ")}</Typography>
                 </CardContent>
               </Card>
-            </Grid>
-            <Grid item xs={6}>
+            </Box>
+            <Box sx={{ flex: '1 1 calc(50% - 8px)', minWidth: 300 }}>
               <Card>
                 <CardContent>
                   <Typography color="textSecondary">English Keywords</Typography>
                   <Typography component="p"> {document.keywords_en.join(", ")}</Typography>
                 </CardContent>
               </Card>
-            </Grid>
+            </Box>
+          </Box>
 
-            <Typography sx={{
-              marginLeft: theme.spacing(1.5),
-            }} variant="h5">Document View</Typography>
-            <Grid container sx={{
-              marginTop: theme.spacing(0.5),
-              marginLeft: theme.spacing(0.2),
-            }} spacing={2}>
-              {document.matched_psychologists && (
-                document.matched_psychologists.sort((a, b) => b.score - a.score).map(function (match) {
-                  return <PsychologistCard
-                    key={match.psychologist}
-                    id={match.psychologist}
-                    match_score={match.score}
-                    most_important_matches={match.most_important_matches}
-                    keywords={document.keywords_en}
-                    token={props.token}
-                    addKeywordsToPsychologist={addKeywordsToPsychologist}
-                  />
-                })
-              )}
-            </Grid>
-          </Grid>
+          <Typography sx={{
+            marginLeft: theme.spacing(1.5),
+          }} variant="h5">Matched Psychologists</Typography>
+          <Box sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 2,
+            marginTop: theme.spacing(0.5),
+            marginLeft: theme.spacing(0.2),
+          }}>
+            {document.matched_psychologists && (
+              document.matched_psychologists.sort((a, b) => b.score - a.score).map(function (match) {
+                return <PsychologistCard
+                  key={match.psychologist}
+                  id={match.psychologist}
+                  match_score={match.score}
+                  most_important_matches={match.most_important_matches}
+                  keywords={document.keywords_en}
+                  addKeywordsToPsychologist={addKeywordsToPsychologist}
+                />
+              })
+            )}
+          </Box>
         </div>
       ) : (
         // no document could be found
@@ -191,7 +195,7 @@ const DocumentViewer: React.FC = () => {
       {success && (
         <InfoSnackbar
           onClose={() => setSuccess(null)}
-          message={success}
+          message={success.message}
         />
       )}
     </Fragment>

@@ -18,6 +18,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import { orderBy, filter } from 'lodash';
 
 import { ModelService, Document } from '../service';
+import { ErrorState } from '../types';
 
 import LoadingBar from '../components/loadingBar';
 import InfoSnackbar from '../components/infoSnackbar';
@@ -27,10 +28,6 @@ const MAX_LENGTH_OF_CONTENT_PREVIEW = 500
 const MAX_NUMBER_OF_KEYWORDS = 50
 
 const theme = createTheme();
-
-interface ErrorState {
-  message: string;
-}
 
 const DocumentManager: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -93,7 +90,7 @@ const DocumentManager: React.FC = () => {
   const handleSearchChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(evt.target.value);
 
-    setFilteredDocuments(filter(documents, function (obj) {
+    setFilteredDocuments(filter(documents, function (obj: Document) {
       return (obj.content_cz.toUpperCase().includes(query.toUpperCase())) ||
         (obj.content_en.toUpperCase().includes(query.toUpperCase()))
     }))
@@ -139,7 +136,7 @@ const DocumentManager: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orderBy(filteredDocuments, ['updatedAt'], ['desc']).map(document => (
+                {orderBy(filteredDocuments, ['updatedAt'], ['desc']).map((document: Document) => (
                   <TableRow key={document._id} sx={{
                     textDecoration: "none",
                     "&:hover": {

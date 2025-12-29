@@ -17,6 +17,8 @@ import DocumentUpload from '../pages/documentUpload';
 import DocumentManager from '../pages/documentManager';
 import DocumentViewer from '../pages/documentViewer';
 import PsychologistsManager from '../pages/psychologistsManager';
+import MyProfile from '../pages/myProfile';
+import UserManager from '../pages/userManager';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -56,6 +58,8 @@ const App: React.FC = () => {
                 <Route path="/psychologists/:id" element={<PsychologistsManager />} />
                 <Route path="/psychologists/:id/edit" element={<PsychologistsManager />} />
                 <Route path="/psychologists/:id/copy" element={<PsychologistsManager />} />
+                <Route path="/my-profile" element={<MyProfile />} />
+                <Route path="/users" element={<UserManager />} />
               </Routes>
             </AuthenticatedTemplate>
           )}

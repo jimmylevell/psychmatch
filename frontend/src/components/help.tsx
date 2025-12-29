@@ -10,12 +10,9 @@ import {
 } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 
-const theme = createTheme();
+import { HelpProps } from '../types';
 
-interface HelpProps {
-  showModal: boolean;
-  handleChange: () => void;
-}
+const theme = createTheme();
 
 const Help: React.FC<HelpProps> = (props) => {
   const APP_VERSION = process.env.REACT_APP_VERSION

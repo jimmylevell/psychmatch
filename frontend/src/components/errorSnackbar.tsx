@@ -7,14 +7,10 @@ import {
 } from '@mui/material';
 import { Error as ErrorIcon, Close as CloseIcon } from '@mui/icons-material';
 
+import { ErrorSnackbarProps } from '../types';
+
 const theme = createTheme();
 const AUTO_HIDE_DURATION = 6000
-
-interface ErrorSnackbarProps {
-  id?: string;
-  message: string;
-  onClose: () => void;
-}
 
 const ErrorSnackbar: React.FC<ErrorSnackbarProps> = ({ id, message, onClose }) => (
   <Snackbar
