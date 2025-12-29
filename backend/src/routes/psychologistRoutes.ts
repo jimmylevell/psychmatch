@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 
 import * as deepl from '../utils/deepl';
 import Psychologist, { IPsychologist } from '../database/models/Psychologist';
+import { UserRole } from '../database/models/User';
 
 const router: Router = express.Router();
 
@@ -52,6 +53,7 @@ router.post('/', (req, res, next) => {
   let psychologist = new Psychologist({
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
+    email: req.body.email,
     website: req.body.website,
     keywords_cz: req.body.keywords_cz,
     keywords_en: req.body.keywords_en,
@@ -91,6 +93,92 @@ router.get("/", (req, res, next) => {
         message: "Psychologist list retrieved successfully!",
         psychologists: data
       });
+    })
+    .catch(err => {
+      console.error(err)
+      res.status(500).json({
+        error: err
+      });
+    })
+});
+
+// get psychologist profile by email (for logged-in user)
+router.get("/profile/me", (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user || !req.user.email) {
+    return res.status(401).json({
+      error: 'User not authenticated'
+    });
+  }
+
+  Psychologist.findOne({ email: req.user.email.toLowerCase() })
+    .then(data => {
+      if (!data) {
+        return res.status(404).json({
+          error: 'Profile not found'
+        });
+      }
+
+      console.log("Info: Psychologist profile found: " + data._id);
+
+      res.status(200).json({
+        message: "Psychologist profile retrieved successfully!",
+        psychologist: data
+      })
+    })
+    .catch(err => {
+      console.error(err)
+      res.status(500).json({
+        error: err
+      });
+    });
+});
+
+// update psychologist profile by email (for logged-in user)
+router.put("/profile/me", (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user || !req.user.email) {
+    return res.status(401).json({
+      error: 'User not authenticated'
+    });
+  }
+
+  // Only allow psychologists or admins to update profiles
+  if (req.user.role !== UserRole.PSYCHOLOGIST && req.user.role !== UserRole.ADMINISTRATOR) {
+    return res.status(403).json({
+      error: 'Access denied: Insufficient permissions'
+    });
+  }
+
+  processPsychologist(req.body, req.body.translate_keywords)
+    .then((psychologist: any) => {
+      // Preserve the image field from the request
+      if (req.body.image !== undefined) {
+        psychologist.image = req.body.image;
+      }
+      
+      // Ensure email cannot be changed through this endpoint
+      delete psychologist.email;
+      
+      Psychologist.findOneAndUpdate({ email: req.user!.email!.toLowerCase() }, psychologist, { new: true })
+        .then((result: IPsychologist | null) => {
+          if (!result) {
+            return res.status(404).json({
+              error: 'Profile not found'
+            });
+          }
+
+          console.log("Info: Psychologist profile updated: " + result._id);
+
+          res.status(200).json({
+            message: "Psychologist profile updated successfully!",
+            psychologist: result
+          });
+        })
+        .catch(err => {
+          console.error(err)
+          res.status(500).json({
+            error: err
+          });
+        })
     })
     .catch(err => {
       console.error(err)

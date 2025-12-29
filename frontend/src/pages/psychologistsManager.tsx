@@ -67,9 +67,10 @@ const PsychologistManager: React.FC = () => {
     }))
   }, [psychologists, query]);
 
-  const onSavePsychologist = async (id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image) => {
+  const onSavePsychologist = async (id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image) => {
     var postData = {
       name: name,
+      email: email,
       website: website,
       keywords_cz: keywords_cz,
       keywords_en: keywords_en,

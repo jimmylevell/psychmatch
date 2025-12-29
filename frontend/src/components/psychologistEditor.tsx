@@ -35,6 +35,7 @@ interface PsychologistEditorProps {
   onSave: (
     id: string | null,
     name: string,
+    email: string,
     website: string,
     keywords_cz: string[],
     keywords_en: string[],
@@ -57,6 +58,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
 
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [keywords_cz, setKeywordsCz] = useState<string[]>([]);
   const [keywords_en, setKeywordsEn] = useState<string[]>([]);
@@ -80,6 +82,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
         setName(psychologist.name);
       }
 
+      setEmail(psychologist.email || "");
       setWebsite(psychologist.website);
       setKeywordsCz(psychologist.keywords_cz);
       setKeywordsEn(psychologist.keywords_en);
@@ -89,6 +92,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       // Reset state for new psychologist
       setId(null);
       setName("");
+      setEmail("");
       setWebsite("");
       setKeywordsCz([]);
       setKeywordsEn([]);
@@ -103,7 +107,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     const { onSave } = props
 
     // execute parent function in psychologistManager
-    onSave(id, name, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image)
+    onSave(id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image)
   };
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,6 +118,9 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     switch (name) {
       case 'name':
         setName(value as string)
+        break
+      case 'email':
+        setEmail(value as string)
         break
       case 'website':
         setWebsite(value as string)
@@ -225,6 +232,22 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               variant="outlined"
               size="small"
               autoFocus
+            />
+
+            <TextField
+              required
+              type="email"
+              name="email"
+              sx={{
+                marginTop: theme.spacing(2)
+              }}
+              key="inputPsychologistEmail"
+              placeholder="Psychologist Email"
+              label="Psychologist Email"
+              value={email}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
             />
 
             <TextField

@@ -3,6 +3,7 @@ import mongoose, { Schema, Document as MongooseDocument } from 'mongoose';
 export interface IPsychologist extends MongooseDocument {
   _id: mongoose.Types.ObjectId;
   name: string;
+  email: string;
   website: string;
   keywords_cz: string[];
   keywords_en: string[];
@@ -18,6 +19,11 @@ const psychologistSchema = new Schema<IPsychologist>({
   _id: Schema.Types.ObjectId,
   name: {
     type: String
+  },
+  email: {
+    type: String,
+    unique: true,
+    sparse: true
   },
   website: {
     type: String

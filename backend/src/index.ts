@@ -18,6 +18,8 @@ const config = configs[env];
 import swaggerDocument from './swagger';
 import documentApi from './routes/documentRoutes';
 import psychologistApi from './routes/psychologistRoutes';
+import userApi from './routes/userRoutes';
+import { populateUserRole } from './middleware/auth';
 
 const app: Application = express();
 const port = process.env.BACKEND_PORT || 3000;
@@ -71,9 +73,10 @@ passport.use(jwtStrategy);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// publish API
-app.use('/api/documents', passport.authenticate('jwt', { session: false }), documentApi);
-app.use('/api/psychologists', passport.authenticate('jwt', { session: false }), psychologistApi);
+// publish API with authentication and role population
+app.use('/api/documents', passport.authenticate('jwt', { session: false }), populateUserRole, documentApi);
+app.use('/api/psychologists', passport.authenticate('jwt', { session: false }), populateUserRole, psychologistApi);
+app.use('/api/users', passport.authenticate('jwt', { session: false }), populateUserRole, userApi);
 
 // publish Swagger UI
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

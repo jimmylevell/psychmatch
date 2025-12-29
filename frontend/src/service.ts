@@ -26,6 +26,7 @@ export interface Match {
 export interface Psychologist {
   _id: string;
   name: string;
+  email?: string;
   website: string;
   keywords_cz: string[];
   keywords_en: string[];
@@ -50,6 +51,22 @@ export interface PsychologistsResponse {
 
 export interface PsychologistResponse {
   psychologist: Psychologist;
+}
+
+export interface User {
+  _id: string;
+  email: string;
+  role: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UserResponse {
+  user: User;
+}
+
+export interface UsersResponse {
+  users: User[];
 }
 
 export class ModelService {
@@ -254,6 +271,90 @@ export class ModelService {
   async deletePsychologist(psychologistId: string): Promise<any> {
     try {
       return this.fetch('DELETE', `/psychologists/${psychologistId}`, '').then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // get current user's psychologist profile
+  async getMyProfile(): Promise<Psychologist> {
+    try {
+      return this.fetch<PsychologistResponse>('GET', '/psychologists/profile/me', '').then((response) => {
+        return response.psychologist;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // update current user's psychologist profile
+  async updateMyProfile(psychologist: Partial<Psychologist>): Promise<any> {
+    try {
+      return this.fetch('PUT', '/psychologists/profile/me', psychologist).then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // get current user info
+  async getCurrentUser(): Promise<User> {
+    try {
+      return this.fetch<UserResponse>('GET', '/users/me', '').then((response) => {
+        return response.user;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // get all users (admin only)
+  async getUsers(): Promise<User[]> {
+    try {
+      return this.fetch<UsersResponse>('GET', '/users', '').then((response) => {
+        return response.users;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // create or update user (admin only)
+  async saveUser(user: Partial<User>): Promise<any> {
+    try {
+      return this.fetch('POST', '/users', user).then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // update user role (admin only)
+  async updateUserRole(userId: string, role: string): Promise<any> {
+    try {
+      return this.fetch('PUT', `/users/${userId}`, { role }).then((response) => {
+        return response;
+      })
+    }
+    catch (error) {
+      throw new Error(String(error));
+    }
+  }
+
+  // delete user (admin only)
+  async deleteUser(userId: string): Promise<any> {
+    try {
+      return this.fetch('DELETE', `/users/${userId}`, '').then((response) => {
         return response;
       })
     }
