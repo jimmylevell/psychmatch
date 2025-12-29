@@ -1,6 +1,5 @@
 import json
 
-
 class Score:
     def __init__(self, document_keyword=None, psychologist_keyword=None, score=0):
         self.document_keyword = document_keyword

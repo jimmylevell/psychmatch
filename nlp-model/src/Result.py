@@ -1,6 +1,5 @@
 import json
 
-
 class Result:
     def __init__(self, overall_score=0, most_important_matches=[]):
         self.overall_score = overall_score

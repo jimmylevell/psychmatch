@@ -1,8 +1,11 @@
+import fetch from 'node-fetch';
 import dotenv from 'dotenv';
 dotenv.config({ path: '.env' });
-const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../../config/config.js')[env];
-import fetch from 'node-fetch';
+
+import config from '../../config/config';
+const env = (process.env.NODE_ENV || 'development') as keyof typeof config;
+
+const configEnv = config[env];
 
 interface Psychologist {
   keywords_en: string[];
@@ -13,7 +16,7 @@ interface Document {
 }
 
 export async function match(psychologists: Psychologist[], document: Document): Promise<any[]> {
-  const API = config.nlpmodel.API;
+  const API = configEnv.nlpmodel.API;
   const document_keywords = document.keywords_en;
 
   let final_output: any[] = [];
@@ -25,6 +28,7 @@ export async function match(psychologists: Psychologist[], document: Document): 
       psychologist_keywords: psychologist.keywords_en,
     };
 
+    console.log(API)
     const request = fetch(API + "/match", {
       headers: {
         'Content-Type': 'application/json'
@@ -32,6 +36,7 @@ export async function match(psychologists: Psychologist[], document: Document): 
       method: 'POST',
       body: JSON.stringify(body)
     })
+      .then(async res => { console.log(await res.text()); return res; })
       .then(res => res.json())
       .then(result => {
         return result;

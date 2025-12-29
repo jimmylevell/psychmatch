@@ -1,4 +1,3 @@
-# get only words which are in master list
 import os
 
 # take for development smaller model

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+
 import User, { UserRole } from '../database/models/User';
 
 // Extend Express Request type to include user information
@@ -23,10 +24,10 @@ export const populateUserRole = async (req: Request, res: Response, next: NextFu
     // Azure AD typically includes email in 'preferred_username', 'upn', or 'email' claim
     // These are passed through the JWT strategy in the third parameter (info)
     const authInfo = req.authInfo as any;
-    
+
     // Try to get email from various possible claim locations
     let email = authInfo?.preferred_username || authInfo?.upn || authInfo?.email;
-    
+
     // Fallback: some configurations might put these in the user object
     if (!email && req.user) {
       const userObj = req.user as any;

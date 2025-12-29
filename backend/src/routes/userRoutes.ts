@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction, Router } from 'express';
 import mongoose from 'mongoose';
+
 import User, { UserRole } from '../database/models/User';
 import { requireAdmin } from '../middleware/auth';
 
@@ -10,7 +11,7 @@ router.get('/', requireAdmin, async (req: Request, res: Response, next: NextFunc
   try {
     const users = await User.find().sort({ email: 1 });
     console.log(`Info: Users found: ${users.length}`);
-    
+
     res.status(200).json({
       message: 'Users retrieved successfully!',
       users: users
@@ -33,7 +34,7 @@ router.get('/me', async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const user = await User.findOne({ email: req.user.email.toLowerCase() });
-    
+
     res.status(200).json({
       message: 'User info retrieved successfully!',
       user: user || { email: req.user.email, role: null }
