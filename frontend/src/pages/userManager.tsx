@@ -39,11 +39,11 @@ const UserManager: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<'psychologist' | 'administrator'>('psychologist');
+  const [role, setRole] = useState<string>('psychologist');
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<{message: string} | null>(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const getCurrentUser = useCallback(() => {
@@ -151,7 +151,7 @@ const UserManager: React.FC = () => {
       {users.length > 0 ? (
         <Paper elevation={1} sx={{ marginTop: theme.spacing(2) }}>
           <List>
-            {orderBy(users, ['email'], ['asc']).map(user => (
+            {orderBy(users, ['email'], ['asc']).map((user: User) => (
               <ListItem key={user._id}>
                 <ListItemText
                   primary={user.email}

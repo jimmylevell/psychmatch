@@ -23,7 +23,7 @@ const MyProfile: React.FC = () => {
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<{message: string} | null>(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const getCurrentUser = useCallback(() => {
@@ -54,7 +54,7 @@ const MyProfile: React.FC = () => {
     }
   }, [getCurrentUser, getProfile]);
 
-  const onSaveProfile = async (id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image) => {
+  const onSaveProfile = async (id: string | null, name: string, email: string, website: string, keywords_cz: string[], keywords_en: string[], translate_keywords: boolean, proposed_keywords: string[], image?: string) => {
     var postData = {
       name: name,
       email: email,
@@ -99,7 +99,7 @@ const MyProfile: React.FC = () => {
           <Typography variant="body2">Email: {profile.email}</Typography>
           <Typography variant="body2">Keywords CZ: {profile.keywords_cz.join(', ')}</Typography>
           <Typography variant="body2">Keywords EN: {profile.keywords_en.join(', ')}</Typography>
-          
+
           {profile.image && (
             <Box
               component="img"
@@ -138,7 +138,7 @@ const MyProfile: React.FC = () => {
         <PsychologistEditor
           psychologist={profile}
           editorMode="edit"
-          errorMessage={error}
+          readOnlyEmail={true}
           onSave={onSaveProfile}
           onClose={() => setEditorOpen(false)}
         />

@@ -3,7 +3,6 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid,
   Avatar,
   CardActions,
   Button,
@@ -78,7 +77,7 @@ const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
   }
 
   return (
-    <Grid item xs={3} >
+    <Box sx={{ width: '25%', padding: 1 }}>
       {
         psychologist && (
           <Card>
@@ -152,7 +151,7 @@ const PsychologistCard: React.FC<PsychologistCardProps> = (props) => {
           </Card>
         )
       }
-    </Grid>
+    </Box>
   )
 }
 

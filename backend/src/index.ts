@@ -70,8 +70,8 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use(passport.initialize());
 passport.use(jwtStrategy);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
 
 // publish API with authentication and role population
 app.use('/api/documents', passport.authenticate('jwt', { session: false }), populateUserRole, documentApi);

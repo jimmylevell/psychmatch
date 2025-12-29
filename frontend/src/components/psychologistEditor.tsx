@@ -31,6 +31,7 @@ interface PsychologistEditorProps {
   classes?: any;
   psychologist: Psychologist | null;
   editorMode: string;
+  readOnlyEmail?: boolean;
   onClose: () => void;
   onSave: (
     id: string | null,
@@ -54,7 +55,7 @@ interface ErrorState {
 }
 
 const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
-  const { classes, psychologist, editorMode, onClose } = props;
+  const { classes, psychologist, editorMode, readOnlyEmail = false, onClose } = props;
 
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -68,7 +69,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
 
   const TITLE = id ? "Editing " + name : "Add a new Psychologist";
 
-  const [success, setSuccess] = useState<SuccessState | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<ErrorState | null>(null);
 
   useEffect(() => {
@@ -168,7 +169,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
 
     setProposedKeywords(updated_proposed_keywords)
     setKeywordsEn(updated_keywords_en)
-    setSuccess({ success: "Keyword '" + keyword + "' added to Keywords EN" })
+    setSuccess("Keyword '" + keyword + "' added to Keywords EN")
   }
 
   const handleImageChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,14 +180,14 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
         setError({ message: "Please upload an image file" });
         return;
       }
-      
+
       // Validate file size (max 2MB)
       const maxSize = 2 * 1024 * 1024; // 2MB in bytes
       if (file.size > maxSize) {
         setError({ message: "Image size must be less than 2MB" });
         return;
       }
-      
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
@@ -244,10 +245,15 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               key="inputPsychologistEmail"
               placeholder="Psychologist Email"
               label="Psychologist Email"
+              disabled={readOnlyEmail}
               value={email}
               onChange={handleChange}
               variant="outlined"
               size="small"
+              InputProps={{
+                readOnly: readOnlyEmail,
+              }}
+              helperText={readOnlyEmail ? "Email cannot be changed to maintain user identity" : ""}
             />
 
             <TextField
@@ -307,8 +313,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               }}
               label="Keywords CZ"
               value={keywords_cz}
-              onAdd={(chip) => handleAddKeyword(chip, "CZ")}
-              onDelete={(chip, index) => handleDeleteKeyword(chip, index, "CZ")}
+              onChange={(newChips: string[]) => setKeywordsCz(newChips)}
             />
 
             <MuiChipsInput
@@ -317,8 +322,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               }}
               label="Keywords EN"
               value={keywords_en}
-              onAdd={(chip) => handleAddKeyword(chip, "EN")}
-              onDelete={(chip, index) => handleDeleteKeyword(chip, index, "EN")}
+              onChange={(newChips: string[]) => setKeywordsEn(newChips)}
             />
 
             <Typography variant="body2" color="textSecondary" sx={{
@@ -359,13 +363,13 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
 
           <CardActions>
             <Button size="small" color="primary" type="submit"><SaveAltIcon />Save</Button>
-            <Button size="small"><ClearIcon />Cancel</Button>
+            <Button size="small" onClick={onClose}><ClearIcon />Cancel</Button>
           </CardActions>
         </form>
         { /* Flag based display of info snackbar */}
         {success && (
           <InfoSnackbar
-            onClose={() => setSuccess({ success: null })}
+            onClose={() => setSuccess(null)}
             message={success}
           />
         )}

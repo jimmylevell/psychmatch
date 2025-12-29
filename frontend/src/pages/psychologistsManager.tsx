@@ -1,5 +1,4 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import {
   Typography,
   Fab,
@@ -36,12 +35,12 @@ const PsychologistManager: React.FC = () => {
   const [filteredPsychologists, setFilteredPsychologists] = useState<Psychologist[]>([]);
 
   const [psychologist, setPsychologist] = useState<Psychologist | null>(null);
-  const [editorMode, setEditorMode] = useState(null);
+  const [editorMode, setEditorMode] = useState<string | null>(null);
   const [editorOpen, setEditorOpen] = useState(false);
 
   const service = ModelService.getInstance();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<{message: string} | null>(null);
+  const [error, setError] = useState<{ message: string } | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const getPsychologists = useCallback(() => {
@@ -58,7 +57,7 @@ const PsychologistManager: React.FC = () => {
   }, [getPsychologists]);
 
   useEffect(() => {
-    setFilteredPsychologists(filter(psychologists, function (obj) {
+    setFilteredPsychologists(filter(psychologists, function (obj: Psychologist) {
       if (obj.name) {
         return obj.name.toUpperCase().includes(query.toUpperCase());
       } else {
@@ -67,7 +66,7 @@ const PsychologistManager: React.FC = () => {
     }))
   }, [psychologists, query]);
 
-  const onSavePsychologist = async (id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image) => {
+  const onSavePsychologist = async (id: string | null, name: string, email: string, website: string, keywords_cz: string[], keywords_en: string[], translate_keywords: boolean, proposed_keywords: string[], image?: string) => {
     var postData = {
       name: name,
       email: email,
@@ -96,13 +95,9 @@ const PsychologistManager: React.FC = () => {
     setLoading(false)
     getPsychologists();
     setEditorOpen(false);
-
-    if (error === null) {
-      props.history.goBack();
-    }
   }
 
-  const deletePsychologist = async (psychologist) => {
+  const deletePsychologist = async (psychologist: Psychologist) => {
     if (window.confirm(`Are you sure you want to delete "${psychologist.name}"`)) {
       try {
         await service.deletePsychologist(psychologist._id)
@@ -119,11 +114,11 @@ const PsychologistManager: React.FC = () => {
     getPsychologists();
   }
 
-  const handleSearchChange = evt => {
+  const handleSearchChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(evt.target.value);
   };
 
-  const handleEditorOpen = (psychologist, mode) => {
+  const handleEditorOpen = (psychologist: Psychologist | null, mode: string) => {
     setPsychologist(psychologist);
     setEditorMode(mode);
     setEditorOpen(true);
@@ -153,7 +148,7 @@ const PsychologistManager: React.FC = () => {
         // psychologist available
         <Paper elevation={1}>
           <List>
-            {orderBy(filteredPsychologists, ['updatedAt', 'name'], ['desc', 'asc']).map(psychologist => (
+            {orderBy(filteredPsychologists, ['updatedAt', 'name'], ['desc', 'asc']).map((psychologist: Psychologist) => (
               <ListItem key={psychologist._id}>
                 <ListItemText
                   primary={psychologist.name}
@@ -161,10 +156,10 @@ const PsychologistManager: React.FC = () => {
                 />
 
                 <ListItemSecondaryAction>
-                  <IconButton component={Link} onClick={() => handleEditorOpen(psychologist, "copy")} color="inherit">
+                  <IconButton onClick={() => handleEditorOpen(psychologist, "copy")} color="inherit">
                     <FileCopyIcon />
                   </IconButton>
-                  <IconButton component={Link} onClick={() => handleEditorOpen(psychologist, "edit")} color="inherit">
+                  <IconButton onClick={() => handleEditorOpen(psychologist, "edit")} color="inherit">
                     <CreateIcon />
                   </IconButton>
                   <IconButton onClick={() => deletePsychologist(psychologist)} color="inherit">
@@ -197,7 +192,6 @@ const PsychologistManager: React.FC = () => {
               right: theme.spacing(2),
             }
           }}
-          component={Link}
           onClick={() => { handleEditorOpen(null, 'create') }}
         >
           <AddIcon />
@@ -208,8 +202,8 @@ const PsychologistManager: React.FC = () => {
       {editorOpen && (
         <PsychologistEditor
           psychologist={psychologist}
-          editorMode={editorMode}
-          errorMessage={error}
+          editorMode={editorMode || 'view'}
+
           onSave={onSavePsychologist}
           onClose={() => { setEditorOpen(false) }}
         />

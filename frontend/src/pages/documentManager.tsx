@@ -93,7 +93,7 @@ const DocumentManager: React.FC = () => {
   const handleSearchChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(evt.target.value);
 
-    setFilteredDocuments(filter(documents, function (obj) {
+    setFilteredDocuments(filter(documents, function (obj: Document) {
       return (obj.content_cz.toUpperCase().includes(query.toUpperCase())) ||
         (obj.content_en.toUpperCase().includes(query.toUpperCase()))
     }))
@@ -139,7 +139,7 @@ const DocumentManager: React.FC = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orderBy(filteredDocuments, ['updatedAt'], ['desc']).map(document => (
+                {orderBy(filteredDocuments, ['updatedAt'], ['desc']).map((document: Document) => (
                   <TableRow key={document._id} sx={{
                     textDecoration: "none",
                     "&:hover": {
