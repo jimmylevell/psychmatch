@@ -110,6 +110,19 @@ Ensure your Azure AD application is configured to include these claims in the to
 4. **JWT Authentication**: All endpoints require valid JWT authentication
 5. **Authorization**: Endpoints are protected with role-based middleware
 
+### Known Security Limitations
+1. **Rate Limiting**: The API endpoints do not currently implement rate limiting. This is a pre-existing condition affecting all routes in the application. Consider adding rate-limiting middleware (e.g., express-rate-limit) to prevent abuse:
+   ```javascript
+   import rateLimit from 'express-rate-limit';
+   
+   const limiter = rateLimit({
+     windowMs: 15 * 60 * 1000, // 15 minutes
+     max: 100 // limit each IP to 100 requests per windowMs
+   });
+   
+   app.use('/api/', limiter);
+   ```
+
 ## Frontend Pages
 
 ### New Pages
