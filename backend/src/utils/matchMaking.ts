@@ -29,14 +29,13 @@ export async function match(psychologists: Psychologist[], document: Document): 
     };
 
     console.log(API)
-    const request = fetch(API + "/match", {
+    const request = fetch(API + "/similarities", {
       headers: {
         'Content-Type': 'application/json'
       },
       method: 'POST',
       body: JSON.stringify(body)
     })
-      .then(async res => { console.log(await res.text()); return res; })
       .then(res => res.json())
       .then(result => {
         return result;
