@@ -3,12 +3,11 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 dotenv.config({ path: '.env' });
 
-import config from '../../config/config';
+import configs from '../config/config';
 import { IMatchedPsychologist } from '../types';
-const env = (process.env.NODE_ENV || 'development') as keyof typeof config;
+const env = (process.env.NODE_ENV || 'development') as keyof typeof configs;
 
-const configEnv = config[env];
-
+const configEnv = configs[env];
 interface Psychologist {
   _id: mongoose.Types.ObjectId;
   keywords_en: string[];

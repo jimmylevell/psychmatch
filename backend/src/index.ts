@@ -10,7 +10,7 @@ import passport from 'passport';
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptions } from 'passport-jwt';
 import jwksRsa from 'jwks-rsa';
 import swaggerUi from 'swagger-ui-express';
-import configs from '../config/config';
+import configs from './config/config';
 
 const env = (process.env.NODE_ENV || 'development') as keyof typeof configs;
 const config = configs[env];
