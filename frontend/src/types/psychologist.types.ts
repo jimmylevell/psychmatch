@@ -3,7 +3,6 @@ export interface Psychologist {
   name: string;
   email?: string;
   website: string;
-  description?: string;
   keywords_cz: string[];
   keywords_en: string[];
   proposed_keywords: string[];
