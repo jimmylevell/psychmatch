@@ -54,12 +54,11 @@ const MyProfile: React.FC = () => {
     }
   }, [getCurrentUser, getProfile]);
 
-  const onSaveProfile = async (id: string | null, name: string, email: string, website: string, keywords_cz: string[], keywords_en: string[], translate_keywords: boolean, proposed_keywords: string[], description?: string, image?: string) => {
+  const onSaveProfile = async (id: string | null, name: string, email: string, website: string, keywords_cz: string[], keywords_en: string[], translate_keywords: boolean, proposed_keywords: string[], image?: string) => {
     var postData = {
       name: name,
       email: email,
       website: website,
-      description: description,
       keywords_cz: keywords_cz,
       keywords_en: keywords_en,
       translate_keywords: translate_keywords,
@@ -98,9 +97,6 @@ const MyProfile: React.FC = () => {
           <Typography variant="h6">{profile.name}</Typography>
           <Typography variant="body2">Website: {profile.website}</Typography>
           <Typography variant="body2">Email: {profile.email}</Typography>
-          {profile.description && (
-            <Typography variant="body2">Description: {profile.description}</Typography>
-          )}
           <Typography variant="body2">Keywords CZ: {profile.keywords_cz.join(', ')}</Typography>
           <Typography variant="body2">Keywords EN: {profile.keywords_en.join(', ')}</Typography>
 

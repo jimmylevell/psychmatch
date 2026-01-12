@@ -55,7 +55,6 @@ router.post('/', (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     website: req.body.website,
-    description: req.body.description,
     keywords_cz: req.body.keywords_cz,
     keywords_en: req.body.keywords_en,
     image: req.body.image,
@@ -160,7 +159,6 @@ router.put("/profile/me", (req: Request, res: Response, next: NextFunction) => {
       const updateData = {
         name: psychologist.name,
         website: psychologist.website,
-        description: psychologist.description,
         keywords_cz: psychologist.keywords_cz,
         keywords_en: psychologist.keywords_en,
         proposed_keywords: psychologist.proposed_keywords,
