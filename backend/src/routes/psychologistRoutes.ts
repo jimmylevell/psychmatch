@@ -151,14 +151,6 @@ router.put("/profile/me", (req: Request, res: Response, next: NextFunction) => {
 
   processPsychologist(req.body, req.body.translate_keywords)
     .then((psychologist: any) => {
-      // Preserve the image and description fields from the request if provided
-      if (req.body.image !== undefined) {
-        psychologist.image = req.body.image;
-      }
-      if (req.body.description !== undefined) {
-        psychologist.description = req.body.description;
-      }
-      
       // Create update object without email to prevent email changes
       const updateData = {
         name: psychologist.name,
@@ -227,14 +219,6 @@ router.put("/:id", (req, res, next) => {
 
   processPsychologist(req.body, req.body.translate_keywords)
     .then((psychologist: any) => {
-      // Preserve the image and description fields from the request if provided
-      if (req.body.image !== undefined) {
-        psychologist.image = req.body.image;
-      }
-      if (req.body.description !== undefined) {
-        psychologist.description = req.body.description;
-      }
-      
       // Create selective update object to prevent unintended field overwrites
       const updateData = {
         name: psychologist.name,
