@@ -39,7 +39,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const [translate_keywords] = useState(false);
   const [proposed_keywords, setProposedKeywords] = useState<string[]>([]);
   const [image, setImage] = useState<string | undefined>(undefined);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState<string | undefined>(undefined);
 
   const TITLE = id ? "Editing " + name : "Add a new Psychologist";
 
@@ -74,7 +74,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setKeywordsEn([]);
       setProposedKeywords([]);
       setImage(undefined);
-      setDescription("");
+      setDescription(undefined);
     }
   }, [psychologist, editorMode]);
 
@@ -260,7 +260,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               key="inputPsychologistDescription"
               placeholder="Psychologist Description"
               label="Psychologist Description"
-              value={description}
+              value={description || ""}
               onChange={handleChange}
               variant="outlined"
               size="small"

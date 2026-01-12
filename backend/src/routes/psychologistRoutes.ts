@@ -235,7 +235,19 @@ router.put("/:id", (req, res, next) => {
         psychologist.description = req.body.description;
       }
       
-      Psychologist.findOneAndUpdate({ '_id': psychologistId }, psychologist)
+      // Create selective update object to prevent unintended field overwrites
+      const updateData = {
+        name: psychologist.name,
+        email: psychologist.email,
+        website: psychologist.website,
+        keywords_cz: psychologist.keywords_cz,
+        keywords_en: psychologist.keywords_en,
+        proposed_keywords: psychologist.proposed_keywords,
+        image: psychologist.image,
+        description: psychologist.description
+      };
+      
+      Psychologist.findOneAndUpdate({ '_id': psychologistId }, updateData)
         .then((result: IPsychologist | null) => {
           console.log("Info: Psychologist updated: " + psychologistId);
 
