@@ -16,6 +16,9 @@ const psychologistSchema = new Schema<IPsychologist>({
   website: {
     type: String
   },
+  description: {
+    type: String
+  },
   keywords_cz: [{
     type: String
   }],
