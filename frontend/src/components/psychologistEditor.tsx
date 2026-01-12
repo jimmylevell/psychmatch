@@ -34,6 +34,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
+  const [description, setDescription] = useState("");
   const [keywords_cz, setKeywordsCz] = useState<string[]>([]);
   const [keywords_en, setKeywordsEn] = useState<string[]>([]);
   const [translate_keywords] = useState(false);
@@ -58,6 +59,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
 
       setEmail(psychologist.email || "");
       setWebsite(psychologist.website);
+      setDescription(psychologist.description || "");
       setKeywordsCz(psychologist.keywords_cz);
       setKeywordsEn(psychologist.keywords_en);
       setProposedKeywords(psychologist.proposed_keywords || []);
@@ -68,6 +70,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setName("");
       setEmail("");
       setWebsite("");
+      setDescription("");
       setKeywordsCz([]);
       setKeywordsEn([]);
       setProposedKeywords([]);
@@ -81,7 +84,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     const { onSave } = props
 
     // execute parent function in psychologistManager
-    onSave(id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image)
+    onSave(id, name, email, website, description, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image)
   };
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +101,9 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
         break
       case 'website':
         setWebsite(value as string)
+        break
+      case 'description':
+        setDescription(value as string)
         break
       case 'keywords_cz':
         setKeywordsCz(value as any)
@@ -243,6 +249,23 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               onChange={handleChange}
               variant="outlined"
               size="small"
+            />
+
+            <TextField
+              type="text"
+              name="description"
+              sx={{
+                marginTop: theme.spacing(2)
+              }}
+              key="inputPsychologistDescription"
+              placeholder="Psychologist Description"
+              label="Psychologist Description"
+              value={description}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              multiline
+              rows={4}
             />
 
             <Box sx={{
