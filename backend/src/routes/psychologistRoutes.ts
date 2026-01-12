@@ -224,9 +224,13 @@ router.put("/:id", (req, res, next) => {
 
   processPsychologist(req.body, req.body.translate_keywords)
     .then((psychologist: any) => {
-      // Preserve the image and description fields from the request
-      psychologist.image = req.body.image;
-      psychologist.description = req.body.description;
+      // Preserve the image and description fields from the request if provided
+      if (req.body.image !== undefined) {
+        psychologist.image = req.body.image;
+      }
+      if (req.body.description !== undefined) {
+        psychologist.description = req.body.description;
+      }
       
       Psychologist.findOneAndUpdate({ '_id': psychologistId }, psychologist)
         .then((result: IPsychologist | null) => {
