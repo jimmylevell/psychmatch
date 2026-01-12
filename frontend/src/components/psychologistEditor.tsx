@@ -39,6 +39,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
   const [translate_keywords] = useState(false);
   const [proposed_keywords, setProposedKeywords] = useState<string[]>([]);
   const [image, setImage] = useState<string | undefined>(undefined);
+  const [description, setDescription] = useState("");
 
   const TITLE = id ? "Editing " + name : "Add a new Psychologist";
 
@@ -62,6 +63,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setKeywordsEn(psychologist.keywords_en);
       setProposedKeywords(psychologist.proposed_keywords || []);
       setImage(psychologist.image);
+      setDescription(psychologist.description || "");
     } else {
       // Reset state for new psychologist
       setId(null);
@@ -72,6 +74,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setKeywordsEn([]);
       setProposedKeywords([]);
       setImage(undefined);
+      setDescription("");
     }
   }, [psychologist, editorMode]);
 
@@ -81,7 +84,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     const { onSave } = props
 
     // execute parent function in psychologistManager
-    onSave(id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image)
+    onSave(id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image, description)
   };
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,6 +101,9 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
         break
       case 'website':
         setWebsite(value as string)
+        break
+      case 'description':
+        setDescription(value as string)
         break
       case 'keywords_cz':
         setKeywordsCz(value as any)
@@ -243,6 +249,23 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
               onChange={handleChange}
               variant="outlined"
               size="small"
+            />
+
+            <TextField
+              type="text"
+              name="description"
+              sx={{
+                marginTop: theme.spacing(2)
+              }}
+              key="inputPsychologistDescription"
+              placeholder="Psychologist Description"
+              label="Psychologist Description"
+              value={description}
+              onChange={handleChange}
+              variant="outlined"
+              size="small"
+              multiline
+              rows={4}
             />
 
             <Box sx={{

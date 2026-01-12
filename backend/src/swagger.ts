@@ -60,6 +60,9 @@ const swaggerDocument = {
                         type: "string",
                         description: "Base64 encoded image"
                     },
+                    description: {
+                        type: "string",
+                    },
                 }
             },
             Document: {

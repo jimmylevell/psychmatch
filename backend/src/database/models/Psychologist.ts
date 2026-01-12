@@ -27,6 +27,9 @@ const psychologistSchema = new Schema<IPsychologist>({
   }],
   image: {
     type: String
+  },
+  description: {
+    type: String
   }
 }, {
   collection: 'psychologist',

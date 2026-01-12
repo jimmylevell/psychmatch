@@ -17,7 +17,8 @@ export interface PsychologistEditorProps {
     keywords_en: string[],
     translate_keywords: boolean,
     proposed_keywords: string[],
-    image?: string
+    image?: string,
+    description?: string
   ) => void;
 }
 

@@ -10,6 +10,7 @@ export interface IPsychologist extends MongooseDocument {
   proposed_keywords: string[];
   translate_keywords?: boolean;
   image?: string;
+  description?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

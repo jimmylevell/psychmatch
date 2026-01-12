@@ -8,6 +8,7 @@ export interface Psychologist {
   proposed_keywords: string[];
   translate_keywords: boolean;
   image?: string;
+  description?: string;
   updatedAt?: string;
   createdAt?: string;
 }

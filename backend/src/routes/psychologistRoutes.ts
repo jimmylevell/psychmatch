@@ -58,6 +58,7 @@ router.post('/', (req, res, next) => {
     keywords_cz: req.body.keywords_cz,
     keywords_en: req.body.keywords_en,
     image: req.body.image,
+    description: req.body.description,
   });
 
   processPsychologist(psychologist, req.body.translate_keywords)
@@ -162,7 +163,8 @@ router.put("/profile/me", (req: Request, res: Response, next: NextFunction) => {
         keywords_cz: psychologist.keywords_cz,
         keywords_en: psychologist.keywords_en,
         proposed_keywords: psychologist.proposed_keywords,
-        image: psychologist.image
+        image: psychologist.image,
+        description: psychologist.description
       };
       
       Psychologist.findOneAndUpdate({ email: req.user!.email!.toLowerCase() }, updateData, { new: true })
