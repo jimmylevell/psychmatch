@@ -84,7 +84,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
     const { onSave } = props
 
     // execute parent function in psychologistManager
-    onSave(id, name, email, website, description, keywords_cz, keywords_en, translate_keywords, proposed_keywords, image)
+    onSave(id, name, email, website, keywords_cz, keywords_en, translate_keywords, proposed_keywords, description, image)
   };
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
