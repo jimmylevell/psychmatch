@@ -13,6 +13,7 @@ export interface PsychologistEditorProps {
     name: string,
     email: string,
     website: string,
+    description: string,
     keywords_cz: string[],
     keywords_en: string[],
     translate_keywords: boolean,
