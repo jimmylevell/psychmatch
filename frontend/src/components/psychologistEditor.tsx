@@ -63,7 +63,7 @@ const PsychologistEditor: React.FC<PsychologistEditorProps> = (props) => {
       setKeywordsEn(psychologist.keywords_en);
       setProposedKeywords(psychologist.proposed_keywords || []);
       setImage(psychologist.image);
-      setDescription(psychologist.description || "");
+      setDescription(psychologist.description);
     } else {
       // Reset state for new psychologist
       setId(null);
