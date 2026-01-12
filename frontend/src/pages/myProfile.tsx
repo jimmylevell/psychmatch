@@ -98,6 +98,9 @@ const MyProfile: React.FC = () => {
           <Typography variant="h6">{profile.name}</Typography>
           <Typography variant="body2">Website: {profile.website}</Typography>
           <Typography variant="body2">Email: {profile.email}</Typography>
+          {profile.description && (
+            <Typography variant="body2">Description: {profile.description}</Typography>
+          )}
           <Typography variant="body2">Keywords CZ: {profile.keywords_cz.join(', ')}</Typography>
           <Typography variant="body2">Keywords EN: {profile.keywords_en.join(', ')}</Typography>
 
