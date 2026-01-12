@@ -50,6 +50,9 @@ const swaggerDocument = {
                     website: {
                         type: "string",
                     },
+                    description: {
+                        type: "string",
+                    },
                     keywords_cz: {
                         type: "array",
                     },
