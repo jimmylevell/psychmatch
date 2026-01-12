@@ -151,9 +151,12 @@ router.put("/profile/me", (req: Request, res: Response, next: NextFunction) => {
 
   processPsychologist(req.body, req.body.translate_keywords)
     .then((psychologist: any) => {
-      // Preserve the image field from the request
+      // Preserve the image and description fields from the request if provided
       if (req.body.image !== undefined) {
         psychologist.image = req.body.image;
+      }
+      if (req.body.description !== undefined) {
+        psychologist.description = req.body.description;
       }
       
       // Create update object without email to prevent email changes
