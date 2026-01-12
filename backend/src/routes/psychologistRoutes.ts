@@ -229,6 +229,11 @@ router.put("/:id", (req, res, next) => {
         psychologist.image = req.body.image;
       }
       
+      // Preserve the description field from the request
+      if (req.body.description !== undefined) {
+        psychologist.description = req.body.description;
+      }
+      
       Psychologist.findOneAndUpdate({ '_id': psychologistId }, psychologist)
         .then((result: IPsychologist | null) => {
           console.log("Info: Psychologist updated: " + psychologistId);
