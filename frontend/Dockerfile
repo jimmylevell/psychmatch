@@ -1,7 +1,7 @@
 ###############################################################################################
 # Psychmatch - Frontend - Base
 ###############################################################################################
-FROM node:25.2.1 as psychmatch-frontend-base
+FROM node:25.6.1 as psychmatch-frontend-base
 
 RUN mkdir -p /srv/app
 WORKDIR /srv/app
