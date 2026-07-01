@@ -15,6 +15,8 @@ RUN apt-get install vim -y
 RUN apt-get install net-tools -y
 RUN apt-get install dos2unix -y
 
+RUN groupadd -r app && useradd -r -g app app
+
 ###############################################################################################
 # Psychmatch - Frontend - DEVELOPMENT
 ###############################################################################################
@@ -45,5 +47,6 @@ RUN chmod +x /docker/set_env_secrets.sh
 RUN dos2unix /docker/entrypoint.prod.sh
 RUN dos2unix /docker/set_env_secrets.sh
 
+USER app
 EXPOSE 3100
 ENTRYPOINT [ "/docker/entrypoint.prod.sh" ]
